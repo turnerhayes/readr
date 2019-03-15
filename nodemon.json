@@ -1,0 +1,8 @@
+{
+	"verbose": true,
+	"watch": [
+		"server",
+		"webpack.config.js"
+	],
+	"ignore": ["client", "tools", "logs"]
+}

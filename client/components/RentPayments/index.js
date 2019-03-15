@@ -1,0 +1,1 @@
+export { RentPayments } from "./RentPayments";

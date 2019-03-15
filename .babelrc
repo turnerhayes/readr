@@ -1,0 +1,32 @@
+{
+  "plugins": [
+    "transform-undefined-to-void",
+    "@babel/plugin-proposal-class-properties",
+  ],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": false
+      }
+    ],
+    "@babel/preset-react",
+  ],
+  "env": {
+    "production": {
+      "only": [
+        "client",
+      ],
+      "plugins": [
+        "transform-react-remove-prop-types",
+        "@babel/plugin-transform-react-constant-elements",
+        "@babel/plugin-transform-react-inline-elements"
+      ]
+    },
+    "test": {
+      "plugins": [
+        "dynamic-import-node"
+      ]
+    }
+  }
+}
