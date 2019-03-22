@@ -1,3 +1,9 @@
-export const reducer = function reducer(state = {}) {
-  return state;
-};
+import { combineReducers } from "redux";
+
+import { rentReducer } from "./rent";
+import { UIReducer } from "./ui";
+
+export const reducer = combineReducers({
+  rent: rentReducer,
+  ui: UIReducer,
+});

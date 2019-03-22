@@ -1,0 +1,346 @@
+import React from "react";
+import PropTypes from "prop-types";
+import ImmutablePropTypes from "react-immutable-proptypes";
+import { withStyles } from "@material-ui/core/styles";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import { format } from "date-fns";
+
+const DATE_DISPLAY_STRING = "MM/DD/YYYY";
+
+const styles = {
+  table: {},
+
+  cell: {
+    width: "25%",
+  },
+};
+
+/**
+ * Rent payments table component
+ */
+class RentPayments extends React.PureComponent {
+  /**
+   * @property {object} props
+   *
+   * @param {object} props.payments data about the payments
+   * @param {number|null} props.editingPaidDate the due date for the row
+   * whose Paid Date cell is being edited (if any)
+   * @param {number|null} props.editingPaidAmount the due date for the row
+   * whose Paid Amount cell is being edited (if any)
+   * @param {function} props.setEditingPaidDate callback to set what row has
+   * its Paid Date column being edited (if any)
+   * @param {function} props.setEditingPaidAmount callback to set what row has
+   * its Paid Amount column being edited (if any)
+   * @param {function} props.setPaidDate callback to set the value of a Paid
+   * Date column
+   * @param {function} props.setPaidAmount callback to set the value of a Paid
+   * Amount column
+   */
+
+  static propTypes = {
+    classes: PropTypes.shape({
+      table: PropTypes.string,
+      cell: PropTypes.string,
+    }).isRequired,
+    payments: ImmutablePropTypes.mapOf(
+      ImmutablePropTypes.contains({
+        paidDate: PropTypes.oneOfType([
+          PropTypes.number,
+          PropTypes.instanceOf(Date),
+        ]).isRequired,
+        paidAmount: PropTypes.number.isRequired,
+      }),
+      PropTypes.number
+    ).isRequired,
+    editingPaidAmount: PropTypes.number,
+    editingPaidDate: PropTypes.number,
+    setEditingPaidAmount: PropTypes.func.isRequired,
+    setEditingPaidDate: PropTypes.func.isRequired,
+    setPaidDate: PropTypes.func.isRequired,
+    setPaidAmount: PropTypes.func.isRequired,
+  }
+
+
+  /**
+   * Sets the Paid Date from an input element
+   *
+   * @param {HTMLInputElement} input the element to set from
+   */
+  setPaidDateFromInput = (input) => {
+    const dueDate = Number(input.dataset.date);
+
+    const paidDate = new Date(input.value).getTime();
+
+    if (!Number.isNaN(paidDate)) {
+      this.props.setPaidDate({ dueDate, paidDate });
+    }
+  }
+
+  /**
+   * Sets the Paid Amount from an input element
+   *
+   * @param {HTMLInputElement} input the element to set from
+   */
+  setPaidAmountFromInput = (input) => {
+    const dueDate = Number(input.dataset.date);
+
+    let paidAmount = input.valueAsNumber;
+
+    if (!Number.isNaN(paidAmount)) {
+      // Convert to cents
+      paidAmount = Math.floor(paidAmount * 100);
+
+      this.props.setPaidAmount({ dueDate, paidAmount });
+    }
+  }
+
+
+  /**
+   * Handles the keyUp event for the Paid Date input
+   *
+   * @param {event} event the keyPress event
+   */
+  onKeyUpPaidDate = (event) => {
+    if (event.key === "Enter") {
+      this.setPaidDateFromInput(event.target);
+      this.onBlurPaidDate(event, true);
+    } else if (event.key === "Escape") {
+      this.onBlurPaidDate(event);
+    }
+  }
+
+  /**
+   * Handles the keyUp event for the Paid Amount input
+   *
+   * @param {event} event the keyPress event
+   */
+  onKeyUpPaidAmount = (event) => {
+    if (event.key === "Enter") {
+      this.setPaidAmountFromInput(event.target);
+      this.onBlurPaidAmount(event, true);
+    } else if (event.key === "Escape") {
+      this.onBlurPaidAmount(event);
+    }
+  }
+
+  /**
+   * Handles the blur event for the Paid Date input
+   *
+   * @param {event} event the blur event
+   * @param {boolean} [skipUpdate=false] if true, will not save the value in
+   * the field
+   */
+  onBlurPaidDate = (event, skipUpdate = false) => {
+    if (!skipUpdate) {
+      this.setPaidDateFromInput(event.target);
+    }
+    this.props.setEditingPaidDate(null);
+  }
+
+  /**
+   * Handles the blur event for the Paid Amount input
+   *
+   * @param {event} event the blur event
+   * @param {boolean} [skipUpdate=false] if true, will not save the value in
+   * the field
+   */
+  onBlurPaidAmount = (event, skipUpdate = false) => {
+    if (!skipUpdate) {
+      this.setPaidAmountFromInput(event.target);
+    }
+    this.props.setEditingPaidAmount(null);
+  }
+
+  /**
+   * Handles the click event for the Paid Date cell
+   *
+   * @param {event} event the click event
+   */
+  onClickPaidDate = (event) => {
+    const date = Number(event.currentTarget.dataset.date);
+
+    if (date === this.props.editingPaidDate) {
+      return;
+    }
+
+    this.props.setEditingPaidDate(date);
+
+    if (this.props.editingPaidAmount !== null) {
+      this.props.setEditingPaidAmount(null);
+    }
+  }
+
+  /**
+   * Handles the click event for the Paid Amount cell
+   *
+   * @param {event} event the click event
+   */
+  onClickPaidAmount = (event) => {
+    const date = Number(event.currentTarget.dataset.date);
+
+    if (date === this.props.editingPaidAmount) {
+      return;
+    }
+
+    this.props.setEditingPaidAmount(date);
+
+    if (this.props.editingPaidDate !== null) {
+      this.props.setEditingPaidDate(null);
+    }
+  }
+
+  /**
+   * Renders the component.
+   *
+   * @return {React.ReactElement} the component
+   */
+  render() {
+    const {
+      classes,
+      payments,
+      editingPaidDate,
+      editingPaidAmount,
+    } = this.props;
+
+
+    const rows = [];
+
+    payments.forEach(
+      (paymentData, dueDate) => {
+        dueDate = new Date(dueDate);
+
+        let paidDate = paymentData.get("paidDate");
+        let paidDateInputValue;
+
+        if (paidDate === undefined) {
+          paidDateInputValue = format(
+            dueDate.toUTCString(),
+            "YYYY-MM-DD"
+          );
+        } else {
+          paidDate = new Date(paidDate);
+
+          paidDateInputValue = format(
+            paidDate.toUTCString(),
+            "YYYY-MM-DD"
+          );
+        }
+
+        let paidAmount = paymentData.get("paidAmount");
+
+        if (paidAmount !== undefined) {
+          paidAmount = (paidAmount / 100).toFixed(2);
+        }
+
+        rows.push(
+          <TableRow
+            key={dueDate.getTime()}
+          >
+            <TableCell
+            >
+              {format(dueDate, DATE_DISPLAY_STRING)}
+            </TableCell>
+            <TableCell
+            ></TableCell>
+            <TableCell
+              onClick={this.onClickPaidDate}
+              data-date={dueDate.getTime()}
+            >
+              {
+                editingPaidDate === dueDate.getTime() ?
+                  (
+                    <TextField
+                      onBlur={this.onBlurPaidDate}
+                      onKeyUp={this.onKeyUpPaidDate}
+                      type="date"
+                      defaultValue={paidDateInputValue}
+                      inputProps={{
+                        "data-date": dueDate.getTime(),
+                      }}
+                    />
+                  ) : paidDate ?
+                    format(
+                      paidDate,
+                      DATE_DISPLAY_STRING
+                    ) :
+                    null
+              }
+            </TableCell>
+            <TableCell
+              onClick={this.onClickPaidAmount}
+              data-date={dueDate.getTime()}
+            >
+              {
+                editingPaidAmount === dueDate.getTime() ?
+                  (
+                    <TextField
+                      onBlur={this.onBlurPaidAmount}
+                      onKeyUp={this.onKeyUpPaidAmount}
+                      type="number"
+                      defaultValue={paidAmount}
+                      inputProps={{
+                        "data-date": dueDate.getTime(),
+                      }}
+                    />
+                  ) : paidAmount === undefined ?
+                    null :
+                    `$${paidAmount}`
+              }
+            </TableCell>
+          </TableRow>
+        );
+      }
+    );
+
+    return (
+      <div>
+        <Typography
+          variant="h2"
+          align="center"
+        >
+          Rent Payments
+        </Typography>
+        <Table
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell
+                classes={{
+                  root: classes.cell,
+                }}
+              >Due Date</TableCell>
+              <TableCell
+                classes={{
+                  root: classes.cell,
+                }}
+              >Amount Due</TableCell>
+              <TableCell
+                classes={{
+                  root: classes.cell,
+                }}
+              >Paid Date</TableCell>
+              <TableCell
+                classes={{
+                  root: classes.cell,
+                }}
+              >Amount Paid</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows}
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
+}
+
+const StyledRentPayments = withStyles(styles)(RentPayments);
+
+export { StyledRentPayments as RentPayments };

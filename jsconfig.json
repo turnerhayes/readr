@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "+app/*": ["client/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

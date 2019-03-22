@@ -2,8 +2,20 @@
 
 "use strict";
 
-const app = require("../app");
+const path = require("path");
+
+const PROJECT_ROOT = path.resolve(__dirname, "..", "..");
+
+require("dotenv").config({
+  path: path.join(PROJECT_ROOT, ".env"),
+});
+
+const fs = require("fs");
+
 const http = require("http");
+const spdy = require("spdy");
+
+const app = require("../app");
 
 /**
  * Normalize a port into a number, string, or false.
@@ -41,7 +53,38 @@ app.set("port", port);
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+let key;
+let cert;
+
+try {
+  key = fs.readFileSync(
+    path.join(PROJECT_ROOT, process.env.APP_SSL_KEY),
+    "utf8"
+  );
+
+  cert = fs.readFileSync(
+    path.join(PROJECT_ROOT, process.env.APP_SSL_CERT),
+    "utf8"
+  );
+} catch (ex) {
+  if (ex.code !== "ENOENT") {
+    throw ex;
+  }
+}
+
+let server;
+
+if (key && cert) {
+  const options = {
+    key,
+    cert,
+  };
+
+  server = spdy.createServer(options, app);
+} else {
+  server = http.createServer(app);
+}
+
 
 /**
  * Event listener for HTTP server "error" event.
@@ -59,18 +102,18 @@ function onError(error) {
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
-  case "EACCES":
-    // eslint-disable-next-line no-console
-    console.error(bind + " requires elevated privileges");
-    process.exit(1);
-    break;
-  case "EADDRINUSE":
-    // eslint-disable-next-line no-console
-    console.error(bind + " is already in use");
-    process.exit(1);
-    break;
-  default:
-    throw error;
+    case "EACCES":
+      // eslint-disable-next-line no-console
+      console.error(bind + " requires elevated privileges");
+      process.exit(1);
+      break;
+    case "EADDRINUSE":
+      // eslint-disable-next-line no-console
+      console.error(bind + " is already in use");
+      process.exit(1);
+      break;
+    default:
+      throw error;
   }
 }
 

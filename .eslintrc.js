@@ -4,7 +4,6 @@ module.exports = {
   },
   "extends": [
     "eslint:recommended",
-    "plugin:react/recommended",
     "google",
   ],
   "parser": "babel-eslint",
@@ -13,25 +12,19 @@ module.exports = {
     "SharedArrayBuffer": "readonly",
   },
   "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true,
-    },
     "ecmaVersion": 2018,
     "sourceType": "module",
   },
   "plugins": [
-    "react",
+    "babel",
   ],
-  "settings": {
-    "react": {
-      "version": "detect",
-    },
-  },
   "rules": {
     "quotes": ["error", "double"],
     "require-jsdoc": ["warn"],
     "max-len": ["warn"],
     "object-curly-spacing": ["warn", "always"],
+    "no-invalid-this": ["off"],
+    "babel/no-invalid-this": ["error"],
     "indent": [
       "error",
       2,
@@ -39,7 +32,28 @@ module.exports = {
         "CallExpression": {
           "arguments": 1,
         },
+        "SwitchCase": 1
+      },
+    ],
+    "new-cap": [
+      "warn",
+      {
+        "capIsNewExceptions": [
+          "Map",
+          "OrderedMap",
+          "Set",
+        ],
       },
     ],
   },
+  "overrides": [
+    {
+      "files": [
+        "**/*.test.js",
+      ],
+      "env": {
+        "jest": true,
+      },
+    },
+  ]
 };

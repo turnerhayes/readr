@@ -25,7 +25,8 @@
     },
     "test": {
       "plugins": [
-        "dynamic-import-node"
+        "dynamic-import-node",
+        "@babel/plugin-transform-modules-commonjs",
       ]
     }
   }
