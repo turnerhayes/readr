@@ -5,9 +5,9 @@ import {
   setUIState,
   setRentPaidDate,
   setRentPaidAmount,
+  fetchRentPayments,
 } from "+app/actions";
 import { RentPayments } from "./RentPayments";
-import { Map } from "immutable";
 
 const UI_SECTION_NAME = "RentPayments";
 
@@ -31,8 +31,7 @@ export const RentPaymentsContainer = () => {
           null
         ),
         payments: state.rent.get(
-          "payments",
-          Map()
+          "payments"
         ),
       };
     },
@@ -80,6 +79,12 @@ export const RentPaymentsContainer = () => {
     },
     [dispatch]
   );
+
+  if (!mappedState.payments) {
+    dispatch(fetchRentPayments());
+
+    return null;
+  }
 
   return (
     <RentPayments

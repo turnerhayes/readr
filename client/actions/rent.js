@@ -1,3 +1,5 @@
+import { getRentPayments } from "+app/api";
+
 export const SET_RENT_PAID_DATE = "SET_RENT_PAID_DATE";
 
 /**
@@ -61,5 +63,41 @@ export function setRentPaidAmount({ dueDate, paidAmount }) {
       dueDate,
       paidAmount,
     },
+  };
+}
+
+export const FETCH_RENT_PAYMENTS_START = "FETCH_RENT_PAYMENTS_START";
+
+export const FETCH_RENT_PAYMENTS_FAIL = "FETCH_RENT_PAYMENTS_FAIL";
+
+export const FETCH_RENT_PAYMENTS_COMPLETE = "FETCH_RENT_PAYMENTS_COMPLETE";
+
+/**
+ * Action creator for fetching rent payments
+ *
+ * @return {Promise<object>} A promise that resolves with an action
+ */
+export function fetchRentPayments() {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_RENT_PAYMENTS_START,
+        payload: {},
+      });
+
+      const rentPayments = await getRentPayments();
+
+      dispatch({
+        type: FETCH_RENT_PAYMENTS_COMPLETE,
+        payload: {
+          rentPayments: rentPayments,
+        },
+      });
+    } catch (ex) {
+      dispatch({
+        type: FETCH_RENT_PAYMENTS_FAIL,
+        error: ex,
+      });
+    }
   };
 }

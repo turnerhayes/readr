@@ -1,6 +1,5 @@
 "use strict";
 
-const path = require("path");
 const createError = require("http-errors");
 const express = require("express");
 const cookieParser = require("cookie-parser");
@@ -18,6 +17,8 @@ app.locals.IS_DEVELOPMENT = IS_DEVELOPMENT;
 app.use(logger("dev"));
 app.use(cookieParser());
 app.use(manifestRouter);
+
+app.use("/api", require("./routes/api"));
 
 if (IS_DEVELOPMENT) {
   require("./middleware/dev")(app);
@@ -39,7 +40,12 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || INTERNAL_SERVER_ERROR);
-  res.json(err);
+  res.json({
+    message: err.message,
+    stack: IS_DEVELOPMENT ?
+      err.stack :
+      null,
+  });
 
   if (IS_DEVELOPMENT) {
     // eslint-disable-next-line no-console

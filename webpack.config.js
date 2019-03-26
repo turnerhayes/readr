@@ -11,6 +11,7 @@ const environment = process.env.NODE_ENV || "development";
 
 let config = {
   entry: [
+    "babel-polyfill",
     "./client/index.js",
   ],
   output: {

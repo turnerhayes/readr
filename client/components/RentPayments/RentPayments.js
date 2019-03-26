@@ -296,15 +296,15 @@ class RentPayments extends React.PureComponent {
 
     payments.forEach(
       (paymentData, dueDate) => {
-        const paidAmount = paymentData.get("paidAmount");
+        const totalPayment = paymentData.get("totalPayment");
         const dueAmount = paymentData.get("dueAmount");
 
         let discrepancy = null;
 
-        if (paidAmount !== null && paidAmount !== dueAmount) {
+        if (totalPayment !== null && totalPayment !== dueAmount) {
           mismatchedPaymentDueDates.push(dueDate);
 
-          discrepancy = dueAmount - paidAmount;
+          discrepancy = dueAmount - totalPayment;
         }
 
         const row = {
@@ -312,7 +312,7 @@ class RentPayments extends React.PureComponent {
           dueDate: dueDate,
           dueAmount,
           paidDate: paymentData.get("paidDate"),
-          paidAmount,
+          totalPayment,
           discrepancy,
         };
 
@@ -344,13 +344,13 @@ class RentPayments extends React.PureComponent {
           field="paidDate"
           header="Date Paid"
           editor={this.paidDateEditor}
-          body={DateCellFormatter}
+          // body={DateCellFormatter}
         />
       ),
       (
         <Column
-          key="paidAmount"
-          field="paidAmount"
+          key="totalPayment"
+          field="totalPayment"
           header="Amount Paid"
           editor={this.paidAmountEditor}
           editorValidator={({ rowData, field }) => {

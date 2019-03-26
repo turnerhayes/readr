@@ -1,6 +1,6 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import CssBaseline from "@material-ui/core/CssBaseline"
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { Home } from "+app/components/Home";
 import { TopNav } from "+app/components/TopNav";
