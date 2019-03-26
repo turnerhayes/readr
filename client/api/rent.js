@@ -19,10 +19,12 @@ export const getRentPayments = async () => {
 
           payment = payment.set(
             "totalPayment",
-            payment.get("payments").reduce(
-              (sum, payment) => sum + payment.get("paidAmount"),
-              0
-            )
+            payment.get("payments") ?
+              payment.get("payments").reduce(
+                (sum, payment) => sum + payment.get("paidAmount"),
+                0
+              ) :
+              null
           );
 
           payments.set(

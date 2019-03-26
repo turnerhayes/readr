@@ -21,6 +21,7 @@ exports.up = async function(knex, Promise) {
     table.increments("id");
     table.integer("rent_id").references("id").inTable("rents");
     table.integer("paid_amount").unsigned();
+    table.date("paid_date");
     table.timestamps();
     table.timestamp("deleted_at");
   });

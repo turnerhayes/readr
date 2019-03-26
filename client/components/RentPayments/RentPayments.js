@@ -311,7 +311,11 @@ class RentPayments extends React.PureComponent {
           id: dueDate,
           dueDate: dueDate,
           dueAmount,
-          paidDate: paymentData.get("paidDate"),
+          paidDate: paymentData.get("payments") ?
+            paymentData.get("payments")
+              .last()
+              .get("paidDate") :
+            null,
           totalPayment,
           discrepancy,
         };

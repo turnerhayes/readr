@@ -24,12 +24,7 @@ const getRentPayments = async () => {
       .where({
         "rent_payments.rent_id": data.column("rents.id"),
       }).whereNull("rent_payments.deleted_at"),
-  }).from("rents").leftOuterJoin(
-    "rent_payments",
-    "rents.id",
-    "=",
-    "rent_payments.rent_id",
-  ).whereNotNull(
+  }).from("rents").whereNull(
     "rents.deleted_at"
   ).groupBy(
     "rents.id"
