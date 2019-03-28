@@ -12,8 +12,8 @@ exports.up = async function(knex, Promise) {
   await knex.schema.createTable("rents", (table) => {
     table.increments("id");
     table.integer("due_amount").unsigned().notNullable();
-    table.date("due_date").notNullable();
-    table.timestamps();
+    table.date("due_date").notNullable().unique();
+    table.timestamps(false, true);
     table.timestamp("deleted_at");
   });
 
@@ -22,7 +22,7 @@ exports.up = async function(knex, Promise) {
     table.integer("rent_id").references("id").inTable("rents");
     table.integer("paid_amount").unsigned();
     table.date("paid_date");
-    table.timestamps();
+    table.timestamps(false, true);
     table.timestamp("deleted_at");
   });
 };
