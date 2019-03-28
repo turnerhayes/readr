@@ -51,12 +51,6 @@ const styles = {
       color: "white",
     },
   },
-
-  incompletePayment: {
-    "&&&&": {
-      backgroundColor: "pink",
-    },
-  },
 };
 
 /**
@@ -210,13 +204,11 @@ class RentPayments extends React.PureComponent {
 
     const {
       lateRow,
-      incompletePayment,
     } = this.props.classes;
 
     return {
       [lateRow]: new Date(dueDate) < new Date() &&
         rowData.totalPayment < rowData.dueAmount,
-      [incompletePayment]: rowData.dueAmount > rowData.totalPayment,
     };
   }
 
