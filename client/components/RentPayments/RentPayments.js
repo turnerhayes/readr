@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { format } from "date-fns";
@@ -14,7 +13,6 @@ import "primereact/resources/primereact.min.css";
 import {
   AddRentPaymentFormContainer,
 } from "+app/components/AddRentPaymentForm";
-import { CurrencyField } from "+app/components/Fields/CurrencyField";
 
 const CurrencyFormatter = new Intl.NumberFormat(
   navigator.languages,
