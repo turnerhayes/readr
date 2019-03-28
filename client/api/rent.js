@@ -37,7 +37,37 @@ export const getRentPayments = async () => {
   }
 
   throw new Error(
-    `Request to /api/rent/ returned with status ${response.status}`
+    `GET Request to /api/rent/ returned with status ${response.status}`
+  );
+};
+
+export const addRentPayment = async ({ paidDate, paidAmount, dueDate }) => {
+  const response = await fetch(
+    "/api/rent/",
+    {
+      method: "post",
+      body: JSON.stringify({
+        paidDate,
+        paidAmount,
+        dueDate,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error adding rent payment");
+  }
+
+  if (response.status < 300) {
+    return;
+  }
+
+  throw new Error(
+    `POST Request to /api/rent/ returned with status ${response.status}`
   );
 };
 

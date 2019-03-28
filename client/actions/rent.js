@@ -1,4 +1,4 @@
-import { getRentPayments } from "+app/api";
+import * as api from "+app/api";
 
 export const SET_RENT_PAID_DATE = "SET_RENT_PAID_DATE";
 
@@ -66,38 +66,113 @@ export function setRentPaidAmount({ dueDate, paidAmount }) {
   };
 }
 
-export const FETCH_RENT_PAYMENTS_START = "FETCH_RENT_PAYMENTS_START";
+export const FETCH_GET_RENT_PAYMENTS_START = "FETCH_GET_RENT_PAYMENTS_START";
 
-export const FETCH_RENT_PAYMENTS_FAIL = "FETCH_RENT_PAYMENTS_FAIL";
+export const FETCH_GET_RENT_PAYMENTS_FAIL = "FETCH_GET_RENT_PAYMENTS_FAIL";
 
-export const FETCH_RENT_PAYMENTS_COMPLETE = "FETCH_RENT_PAYMENTS_COMPLETE";
+// eslint-disable-next-line max-len
+export const FETCH_GET_RENT_PAYMENTS_COMPLETE = "FETCH_GET_RENT_PAYMENTS_COMPLETE";
 
 /**
  * Action creator for fetching rent payments
  *
- * @return {Promise<object>} A promise that resolves with an action
+ * @return {function} an action creator function
  */
 export function fetchRentPayments() {
   return async (dispatch) => {
     try {
       dispatch({
-        type: FETCH_RENT_PAYMENTS_START,
+        type: FETCH_GET_RENT_PAYMENTS_START,
         payload: {},
       });
 
-      const rentPayments = await getRentPayments();
+      const rentPayments = await api.getRentPayments();
 
       dispatch({
-        type: FETCH_RENT_PAYMENTS_COMPLETE,
+        type: FETCH_GET_RENT_PAYMENTS_COMPLETE,
         payload: {
           rentPayments: rentPayments,
         },
       });
     } catch (ex) {
       dispatch({
-        type: FETCH_RENT_PAYMENTS_FAIL,
+        type: FETCH_GET_RENT_PAYMENTS_FAIL,
         error: ex,
       });
     }
   };
 }
+
+export const FETCH_ADD_RENT_PAYMENT_START = "FETCH_ADD_RENT_PAYMENT_START";
+
+export const FETCH_ADD_RENT_PAYMENT_FAIL = "FETCH_ADD_RENT_PAYMENT_FAIL";
+
+// eslint-disable-next-line max-len
+export const FETCH_ADD_RENT_PAYMENT_COMPLETE = "FETCH_ADD_RENT_PAYMENT_COMPLETE";
+
+/**
+ * Action creator for the add rent payment action
+ *
+ * @param {object} args
+ * @param {string} args.dueDate the rent date to which this payment applies,
+ * as an ISO date string
+ * @param {string} args.paidDate the date on which this payment was made,
+ * as an ISO date string
+ * @param {number} args.paidAmount the amount of the payment, as a number of
+ * cents
+ *
+ * @return {function} an action creator function
+ */
+export const addRentPayment = ({ dueDate, paidDate, paidAmount }) => {
+  if (!dueDate) {
+    throw new Error(
+      "addRentPayment action creator requires a `dueDate` parameter"
+    );
+  }
+
+  if (!paidDate) {
+    throw new Error(
+      "addRentPayment action creator requires a `paidDate` parameter"
+    );
+  }
+
+  if (!paidAmount) {
+    throw new Error(
+      "addRentPayment action creator requires a `paidAmount` parameter"
+    );
+  }
+
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_ADD_RENT_PAYMENT_START,
+        payload: {
+          dueDate,
+          paidDate,
+          paidAmount,
+        },
+      });
+
+      await api.addRentPayment({
+        paidAmount,
+        paidDate,
+        dueDate,
+      });
+
+      const rentPayments = await api.getRentPayments();
+
+      dispatch({
+        type: FETCH_ADD_RENT_PAYMENT_COMPLETE,
+        payload: {
+          rentPayments: rentPayments,
+        },
+      });
+    } catch (ex) {
+      dispatch({
+        type: FETCH_ADD_RENT_PAYMENT_FAIL,
+        error: ex,
+      });
+    }
+  };
+};
+
