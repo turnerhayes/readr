@@ -20,9 +20,25 @@ import {
 import { CurrencyField } from "+app/components/Fields/CurrencyField";
 
 const validatePaidDate = (value) => {
+  if (!value) {
+    return "Paid Date is required";
+  }
+
   return isValid(new Date(value)) ?
     undefined :
-    "Invalid paid date";
+    "Invalid Paid Date";
+};
+
+const validatePaidAmount = (value) => {
+  if (!value) {
+    return "Paid Amount is required";
+  }
+
+  if (isNaN(parseFloat(value))) {
+    return "Paid Amount is not a valid number";
+  }
+
+  return undefined;
 };
 
 /**
@@ -39,7 +55,6 @@ class FormComponent extends React.PureComponent {
     isSubmitting: PropTypes.bool,
     setSubmitting: PropTypes.func,
     isValid: PropTypes.bool,
-    dirty: PropTypes.bool,
     isAPICallRunning: PropTypes.bool.isRequired,
   }
 
@@ -127,6 +142,7 @@ class FormComponent extends React.PureComponent {
           <div>
             <Field
               name="paidAmount"
+              validate={validatePaidAmount}
             >
               {
                 ({ field }) => (
@@ -146,7 +162,6 @@ class FormComponent extends React.PureComponent {
             <Button
               type="submit"
               disabled={
-                !this.props.dirty ||
                 !this.props.isValid ||
                 this.props.isSubmitting
               }
@@ -203,6 +218,19 @@ export class AddRentPaymentForm extends React.PureComponent {
       <Formik
         initialValues={this.props.initialValues}
         onSubmit={(values) => this.handleSubmit(values)}
+        isInitialValid={
+          ({ initialValues: { paidDate, dueDate, paidAmount } }) => {
+            return !!dueDate &&
+              (
+                !paidDate ||
+                isValid(parseISO(paidDate))
+              ) &&
+              (
+                !paidAmount ||
+                !isNaN(parseFloat(paidAmount))
+              );
+          }
+        }
       >
         {
           (props) => (

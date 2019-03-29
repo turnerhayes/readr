@@ -13,10 +13,23 @@ export const AddRentPaymentFormContainer = connect(
         paymentData.get("dueAmount")
     ).keySeq();
 
+    const dueDate = dueDates.first();
+
+    const dueAmount = state.rent.getIn(
+      [
+        "payments",
+        dueDate,
+        "dueAmount",
+      ]
+    );
+
     return {
       initialValues: {
         paidDate: format(new Date(), "yyyy-MM-dd"),
-        dueDate: dueDates.first(),
+        dueDate,
+        paidAmount: dueAmount === undefined ?
+          "" :
+          (dueAmount / 100).toFixed(2),
       },
       dueDates,
       isAPICallRunning: state.api.getIn(
