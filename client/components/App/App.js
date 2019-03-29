@@ -1,5 +1,5 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
 import DateFnsUtils from "@date-io/date-fns";
@@ -27,14 +27,16 @@ export class App extends React.PureComponent {
         >
           <CssBaseline />
           <TopNav />
-          <Route
-            exact path="/"
-            component={Home}
-          />
-          <Route
-            exact path="/rent"
-            component={RentPayments}
-          />
+          <Switch>
+            <Route
+              exact path="/rent"
+              component={RentPayments}
+            />
+            <Route
+              exact path="/"
+              component={Home}
+            />
+          </Switch>
         </MuiPickersUtilsProvider>
       </div>
     );
