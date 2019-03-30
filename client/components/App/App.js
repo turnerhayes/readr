@@ -9,6 +9,7 @@ import { TopNav } from "+app/components/TopNav";
 import {
   RentPaymentsContainer as RentPayments,
 } from "+app/components/RentPayments";
+import { Issues } from "+app/components/Issues";
 
 /**
  * Main App component.
@@ -31,6 +32,10 @@ export class App extends React.PureComponent {
             <Route
               exact path="/rent"
               component={RentPayments}
+            />
+            <Route
+              exact path="/Issues"
+              component={Issues}
             />
             <Route
               exact path="/"

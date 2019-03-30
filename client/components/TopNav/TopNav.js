@@ -10,11 +10,12 @@ import IconButton from "@material-ui/core/IconButton";
 import HomeIcon from "@material-ui/icons/Home";
 import { Link } from "react-router-dom";
 
-const styles = {
-  grow: {
-    flexGrow: 1,
+const styles = (theme) => ({
+  pageLinks: {
+    marginRight: "auto",
+    marginLeft: theme.spacing.unit * 2,
   },
-};
+});
 
 /**
  * Top application bar component
@@ -29,6 +30,11 @@ function TopNav({ classes, location }) {
     {
       path: "/rent",
       text: "Rent Payments",
+    },
+
+    {
+      path: "/issues",
+      text: "Issues",
     },
   ];
 
@@ -47,33 +53,28 @@ function TopNav({ classes, location }) {
         <Typography
           variant="h6"
           color="inherit"
-          className={classes.grow}
         >
           Fief
         </Typography>
-        {
-          pageLinks.map(
-            ({ path, text }) => (
-              location.pathname === path ?
-                (
-                  <Typography
-                    key={path}
-                    color="inherit"
-                  >{text}</Typography>
-                ) :
-                (
-                  <Button
-                    key={path}
-                    component={Link}
-                    color="inherit"
-                    to={path}
-                  >
-                    {text}
-                  </Button>
-                )
+        <div
+          className={classes.pageLinks}
+        >
+          {
+            pageLinks.map(
+              ({ path, text }, index) => (
+                <Button
+                  key={path}
+                  component={Link}
+                  color="inherit"
+                  to={path}
+                  disabled={location.pathname === path}
+                >
+                  {text}
+                </Button>
+              )
             )
-          )
-        }
+          }
+        </div>
       </Toolbar>
     </AppBar>
   );
@@ -81,7 +82,7 @@ function TopNav({ classes, location }) {
 
 TopNav.propTypes = {
   classes: PropTypes.shape({
-    grow: PropTypes.string.isRequired,
+    pageLinks: PropTypes.string.isRequired,
   }).isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string,
