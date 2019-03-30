@@ -1,7 +1,7 @@
 import { OrderedMap, fromJS } from "immutable";
 
 export const getRentPayments = async () => {
-  const response = await fetch("/api/rent/");
+  const response = await fetch("/api/rent/payments");
 
   if (!response.ok) {
     throw new Error("Error getting rent payments");
@@ -37,13 +37,13 @@ export const getRentPayments = async () => {
   }
 
   throw new Error(
-    `GET Request to /api/rent/ returned with status ${response.status}`
+    `GET Request to /api/rent/payments returned with status ${response.status}`
   );
 };
 
 export const addRentPayment = async ({ paidDate, paidAmount, dueDate }) => {
   const response = await fetch(
-    "/api/rent/",
+    "/api/rent/payments",
     {
       method: "post",
       body: JSON.stringify({
@@ -60,6 +60,42 @@ export const addRentPayment = async ({ paidDate, paidAmount, dueDate }) => {
 
   if (!response.ok) {
     throw new Error("Error adding rent payment");
+  }
+
+  if (response.status < 300) {
+    return;
+  }
+
+  throw new Error(
+    `POST Request to /api/rent/payments returned with status ${response.status}`
+  );
+};
+
+export const addRentDates = async ({
+  numDates,
+  firstRentDate,
+  rentPeriod,
+  dueAmountPerDate,
+}) => {
+  const response = await fetch(
+    "/api/rent/",
+    {
+      method: "post",
+      body: JSON.stringify({
+        numDates,
+        firstRentDate,
+        rentPeriod,
+        dueAmountPerDate,
+      }),
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error adding rent dates");
   }
 
   if (response.status < 300) {

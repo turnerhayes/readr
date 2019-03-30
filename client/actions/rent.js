@@ -84,6 +84,10 @@ export function fetchRentPayments() {
       dispatch({
         type: FETCH_GET_RENT_PAYMENTS_START,
         payload: {},
+        api: {
+          callName: "fetchRentPayments",
+          status: "started",
+        },
       });
 
       const rentPayments = await api.getRentPayments();
@@ -93,10 +97,18 @@ export function fetchRentPayments() {
         payload: {
           rentPayments: rentPayments,
         },
+        api: {
+          callName: "fetchRentPayments",
+          status: "complete",
+        },
       });
     } catch (ex) {
       dispatch({
         type: FETCH_GET_RENT_PAYMENTS_FAIL,
+        api: {
+          callName: "fetchRentPayments",
+          status: "complete",
+        },
         error: ex,
       });
     }
@@ -151,6 +163,10 @@ export const addRentPayment = ({ dueDate, paidDate, paidAmount }) => {
           paidDate,
           paidAmount,
         },
+        api: {
+          callName: "addRentPayment",
+          status: "started",
+        },
       });
 
       await api.addRentPayment({
@@ -159,17 +175,134 @@ export const addRentPayment = ({ dueDate, paidDate, paidAmount }) => {
         dueDate,
       });
 
-      const rentPayments = await api.getRentPayments();
+      dispatch(
+        fetchRentPayments()
+      );
 
       dispatch({
         type: FETCH_ADD_RENT_PAYMENT_COMPLETE,
         payload: {
-          rentPayments: rentPayments,
+          dueDate,
+          paidDate,
+          paidAmount,
+        },
+        api: {
+          callName: "addRentPayment",
+          status: "complete",
         },
       });
     } catch (ex) {
       dispatch({
         type: FETCH_ADD_RENT_PAYMENT_FAIL,
+        payload: {
+          dueDate,
+          paidDate,
+          paidAmount,
+        },
+        api: {
+          callName: "addRentPayment",
+          status: "complete",
+        },
+        error: ex,
+      });
+    }
+  };
+};
+
+export const FETCH_ADD_RENT_DATES_START = "FETCH_ADD_RENT_DATES_START";
+
+export const FETCH_ADD_RENT_DATES_FAIL = "FETCH_ADD_RENT_DATES_FAIL";
+
+// eslint-disable-next-line max-len
+export const FETCH_ADD_RENT_DATES_COMPLETE = "FETCH_ADD_RENT_DATES_COMPLETE";
+
+/**
+ * Creates an action for ADD_RENT_DATES
+ *
+ * @return {object}
+ */
+export const addRentDates = ({
+  numDates,
+  firstRentDate,
+  rentPeriod,
+  dueAmountPerDate,
+}) => {
+  if (!numDates) {
+    throw new Error(
+      "addRentDates action creator requires a `numDates` parameter"
+    );
+  } else if (numDates > 1 && !rentPeriod) {
+    throw new Error(
+      // eslint-disable-next-line max-len
+      "addRentDates action creator requires a `rentPeriod` parameter if `numDates` is greater than 1"
+    );
+  }
+
+  if (!firstRentDate) {
+    throw new Error(
+      "addRentDates action creator requires a `firstRentDate` parameter"
+    );
+  }
+
+  if (!dueAmountPerDate) {
+    throw new Error(
+      "addRentDates action creator requires a `dueAmountPerDate` parameter"
+    );
+  }
+
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_ADD_RENT_DATES_START,
+        payload: {
+          numDates,
+          firstRentDate,
+          rentPeriod,
+          dueAmountPerDate,
+        },
+        api: {
+          callName: "addRentDates",
+          status: "started",
+        },
+      });
+
+      await api.addRentDates({
+        numDates,
+        firstRentDate,
+        rentPeriod,
+        dueAmountPerDate,
+      });
+
+      dispatch(
+        fetchRentPayments()
+      );
+
+      dispatch({
+        type: FETCH_ADD_RENT_DATES_COMPLETE,
+        payload: {
+          numDates,
+          firstRentDate,
+          rentPeriod,
+          dueAmountPerDate,
+        },
+        api: {
+          callName: "addRentDates",
+          status: "complete",
+        },
+      });
+    } catch (ex) {
+      dispatch({
+        type: FETCH_ADD_RENT_DATES_FAIL,
+        payload: {
+          numDates,
+          firstRentDate,
+          rentPeriod,
+          dueAmountPerDate,
+        },
+        api: {
+          callName: "addRentDates",
+          status: "complete",
+        },
         error: ex,
       });
     }

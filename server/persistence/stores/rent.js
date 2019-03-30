@@ -1,5 +1,12 @@
 const { getDataConnection } = require("../connections");
 
+/**
+ * @typedef RentDate
+ *
+ * @property {string} dueDate the date the rent is due, as a date string
+ * @property {number} dueAmount the amount of rent due, in cents
+ */
+
 const getRentPayments = async () => {
   const data = await getDataConnection();
 
@@ -59,8 +66,31 @@ const addRentPayment = async ({
   }).into("rent_payments");
 };
 
+/**
+ * Adds rent dates
+ *
+ * @param {object} args
+ * @param {RentDate[]} args.dates the dates to add
+ *
+ * @return {Promise<void>}
+ */
+const addRentDates = async ({ dates }) => {
+  const data = await getDataConnection();
+
+  return data.batchInsert(
+    "rents",
+    dates.map(
+      ({ dueDate, dueAmount }) => ({
+        "due_date": dueDate,
+        "due_amount": dueAmount,
+      })
+    )
+  );
+};
+
 module.exports = {
   getRentPayments,
   addRentPayment,
+  addRentDates,
 };
 

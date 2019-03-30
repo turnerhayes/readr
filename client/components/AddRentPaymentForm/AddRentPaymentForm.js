@@ -1,11 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import { DatePicker } from "material-ui-pickers";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
@@ -18,6 +17,7 @@ import {
 } from "formik";
 
 import { CurrencyField } from "+app/components/Fields/CurrencyField";
+import { InputLabel } from "@material-ui/core";
 
 const validatePaidDate = (value) => {
   if (!value) {
@@ -41,6 +41,8 @@ const validatePaidAmount = (value) => {
   return undefined;
 };
 
+let componentID = 0;
+
 /**
  * The form component rendered by Formik
  */
@@ -49,14 +51,19 @@ class FormComponent extends React.PureComponent {
     dueDates: ImmutablePropTypes.iterableOf(
       PropTypes.string,
     ).isRequired,
-    errors: PropTypes.object,
+    errors: PropTypes.object.isRequired,
     status: PropTypes.string,
-    touched: PropTypes.object,
-    isSubmitting: PropTypes.bool,
-    setSubmitting: PropTypes.func,
-    isValid: PropTypes.bool,
+    touched: PropTypes.object.isRequired,
+    isSubmitting: PropTypes.bool.isRequired,
+    setSubmitting: PropTypes.func.isRequired,
+    setFieldError: PropTypes.func.isRequired,
+    setFieldValue: PropTypes.func.isRequired,
+    handleReset: PropTypes.func.isRequired,
+    isValid: PropTypes.bool.isRequired,
     isAPICallRunning: PropTypes.bool.isRequired,
   }
+
+  componentID = componentID++
 
   /**
    */
@@ -66,6 +73,7 @@ class FormComponent extends React.PureComponent {
       !this.props.isAPICallRunning
     ) {
       this.props.setSubmitting(false);
+      this.props.handleReset();
     }
   }
 
@@ -75,26 +83,30 @@ class FormComponent extends React.PureComponent {
    * @return {JSX.Element}
    */
   render() {
+    const dueDateInputID = `dueDate-add-rent-payment-form-${this.componentID}`;
+
     return (
       <Form>
-        <FormControl
-          component="fieldset"
+        <Grid container
+          direction="column"
         >
-          <FormLabel
-            component="legend"
-          >
-            Add Rent Payment
-          </FormLabel>
-          <div>
+          <Grid item>
+            <InputLabel
+              htmlFor={dueDateInputID}
+            >
+              Due Date
+            </InputLabel>
             <Field
               name="dueDate"
-              label="Due Date"
             >
               {
                 ({ field }) => (
                   <Select
                     {...field}
                     required
+                    inputProps={{
+                      id: dueDateInputID,
+                    }}
                   >
                     {
                       this.props.dueDates.map(
@@ -117,8 +129,8 @@ class FormComponent extends React.PureComponent {
                 )
               }
             </Field>
-          </div>
-          <div>
+          </Grid>
+          <Grid item>
             <Field
               name="paidDate"
               label="Paid Date"
@@ -127,10 +139,25 @@ class FormComponent extends React.PureComponent {
               {
                 ({ field }) => (
                   <DatePicker
-                    {...field}
                     format="yyyy-MM-dd"
                     keyboard
                     required
+                    error={
+                      Boolean(
+                        this.props.errors[field.name] &&
+                        this.props.touched[field.name]
+                      )
+                    }
+                    helperText={this.props.errors[field.name]}
+                    {...field}
+                    onError={
+                      (_, error) => {
+                        this.props.setFieldError(field.name, error);
+                      }
+                    }
+                    onChange={(value) => {
+                      this.props.setFieldValue(field.name, value);
+                    }}
                   />
                 )
               }
@@ -138,8 +165,8 @@ class FormComponent extends React.PureComponent {
             <ErrorMessage
               name="paidDate"
             />
-          </div>
-          <div>
+          </Grid>
+          <Grid item>
             <Field
               name="paidAmount"
               validate={validatePaidAmount}
@@ -148,8 +175,8 @@ class FormComponent extends React.PureComponent {
                 ({ field }) => (
                   <CurrencyField
                     {...field}
+                    label="Amount paid"
                     errorText={this.props.errors.paidAmount}
-                    required
                   />
                 )
               }
@@ -157,8 +184,8 @@ class FormComponent extends React.PureComponent {
             <ErrorMessage
               name="paidAmount"
             />
-          </div>
-          <div>
+          </Grid>
+          <Grid item>
             <Button
               type="submit"
               disabled={
@@ -168,8 +195,8 @@ class FormComponent extends React.PureComponent {
             >
               Submit
             </Button>
-          </div>
-        </FormControl>
+          </Grid>
+        </Grid>
       </Form>
     );
   }
