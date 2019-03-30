@@ -13,9 +13,9 @@ import {
   Form,
   Field,
 } from "formik";
-import { DatePicker } from "material-ui-pickers";
 
 import { CurrencyField } from "+app/components/Fields/CurrencyField";
+import { DatePickerField } from "+app/components/Fields/DatePickerField";
 
 const RENT_PERIOD_OPTIONS = [
   {
@@ -62,61 +62,6 @@ const validateForm = (values) => {
   }
 
   return undefined;
-};
-
-const DatePickerField = ({ field, form }) => (
-  <DatePicker
-    format="dd/MM/yyyy"
-    mask={(value) => value ?
-      [
-        /\d/,
-        /\d/,
-        "/",
-        /\d/,
-        /\d/,
-        "/",
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-      ] :
-      []
-    }
-    keyboard
-    autoOk
-    error={
-      Boolean(
-        form.errors[field.name] &&
-        form.touched[field.name]
-      )
-    }
-    helperText={
-      form.touched[field.name] ?
-        form.errors[field.name] :
-        ""
-    }
-    {...field}
-    onError={
-      (_, error) => {
-        form.setFieldError(field.name, error);
-      }
-    }
-    onChange={(value) => {
-      form.setFieldValue(field.name, value);
-    }}
-  />
-);
-
-DatePickerField.propTypes = {
-  field: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  form: PropTypes.shape({
-    errors: PropTypes.object.isRequired,
-    touched: PropTypes.object.isRequired,
-    setFieldError: PropTypes.func.isRequired,
-    setFieldValue: PropTypes.func.isRequired,
-  }).isRequired,
 };
 
 const checkIsInitialValid = ({
@@ -190,6 +135,13 @@ class FormComponent extends React.PureComponent {
               name="firstRentDate"
               component={DatePickerField}
               validate={validatefirstRentDate}
+              label={
+                `Date ${
+                  values.numDates > 1 ?
+                    "first " :
+                    ""
+                }rent payment is due`
+              }
             >
             </Field>
           </Grid>
@@ -263,17 +215,10 @@ class FormComponent extends React.PureComponent {
           <Grid item>
             <Field
               name="dueAmountPerDate"
+              component={CurrencyField}
+              label="Amount due per rent date"
               validate={validateDueAmountPerDate}
-            >
-              {
-                ({ field }) => (
-                  <CurrencyField
-                    label="Amount due per rent date"
-                    {...field}
-                  />
-                )
-              }
-            </Field>
+            />
           </Grid>
         </Grid>
         <Button

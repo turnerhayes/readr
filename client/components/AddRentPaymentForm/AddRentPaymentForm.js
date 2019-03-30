@@ -5,7 +5,6 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import { DatePicker } from "material-ui-pickers";
 import parseISO from "date-fns/parseISO";
 import format from "date-fns/format";
 import isValid from "date-fns/isValid";
@@ -13,11 +12,12 @@ import {
   Formik,
   Form,
   Field,
-  ErrorMessage,
 } from "formik";
 
 import { CurrencyField } from "+app/components/Fields/CurrencyField";
+import { DatePickerField } from "+app/components/Fields/DatePickerField";
 import { InputLabel } from "@material-ui/core";
+import { DATE_DISPLAY_FORMAT } from "+app/constants";
 
 const validatePaidDate = (value) => {
   if (!value) {
@@ -90,8 +90,11 @@ class FormComponent extends React.PureComponent {
         <Grid container
           direction="column"
         >
-          <Grid item>
+          <Grid item container
+            direction="column"
+          >
             <InputLabel
+              shrink
               htmlFor={dueDateInputID}
             >
               Due Date
@@ -118,7 +121,7 @@ class FormComponent extends React.PureComponent {
                             {
                               format(
                                 parseISO(date),
-                                "MMM yyyy"
+                                DATE_DISPLAY_FORMAT
                               )
                             }
                           </MenuItem>
@@ -135,54 +138,15 @@ class FormComponent extends React.PureComponent {
               name="paidDate"
               label="Paid Date"
               validate={validatePaidDate}
-            >
-              {
-                ({ field }) => (
-                  <DatePicker
-                    format="yyyy-MM-dd"
-                    keyboard
-                    required
-                    error={
-                      Boolean(
-                        this.props.errors[field.name] &&
-                        this.props.touched[field.name]
-                      )
-                    }
-                    helperText={this.props.errors[field.name]}
-                    {...field}
-                    onError={
-                      (_, error) => {
-                        this.props.setFieldError(field.name, error);
-                      }
-                    }
-                    onChange={(value) => {
-                      this.props.setFieldValue(field.name, value);
-                    }}
-                  />
-                )
-              }
-            </Field>
-            <ErrorMessage
-              name="paidDate"
+              component={DatePickerField}
             />
           </Grid>
           <Grid item>
             <Field
               name="paidAmount"
+              label="Paid Amount"
               validate={validatePaidAmount}
-            >
-              {
-                ({ field }) => (
-                  <CurrencyField
-                    {...field}
-                    label="Amount paid"
-                    errorText={this.props.errors.paidAmount}
-                  />
-                )
-              }
-            </Field>
-            <ErrorMessage
-              name="paidAmount"
+              component={CurrencyField}
             />
           </Grid>
           <Grid item>
