@@ -7,9 +7,11 @@ const webpack = require("webpack");
 const HTMLWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-const environment = process.env.NODE_ENV || "development";
+require("dotenv").config();
 
-let config = {
+const Config = require("./server/config");
+
+let webpackConfig = {
   entry: [
     "babel-polyfill",
     "./client/index.js",
@@ -30,7 +32,7 @@ let config = {
       {
         test: /\.css$/,
         use: [
-          environment === "development" ?
+          Config.app.isDevelopment ?
             "style-loader" :
             {
               loader: MiniCssExtractPlugin.loader,
@@ -77,7 +79,7 @@ let config = {
     }),
 
     new webpack.EnvironmentPlugin({
-      NODE_ENV: environment,
+      NODE_ENV: Config.app.environment,
     }),
 
     new MiniCssExtractPlugin({
@@ -88,17 +90,19 @@ let config = {
   resolve: {
     alias: require("./config/webpack/aliases"),
   },
-  mode: environment,
+  mode: Config.app.environment,
   devtool: "inline-source-map",
 };
 
 try {
-  const additionalConfig = require(`./webpack.${environment}.config`);
+  const additionalConfig = require(
+    `./webpack.${Config.app.environment}.config`
+  );
   const merge = require("webpack-merge");
 
-  config = merge.smartStrategy({
+  webpackConfig = merge.smartStrategy({
     entry: "prepend",
-  })(config, additionalConfig);
+  })(webpackConfig, additionalConfig);
 } catch (ex) {
   if (
     !(ex instanceof Error && ex.code === "MODULE_NOT_FOUND")
@@ -107,4 +111,4 @@ try {
   }
 }
 
-module.exports = config;
+module.exports = webpackConfig;

@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 /**
  * Runs the forward migration.
  *

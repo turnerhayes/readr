@@ -2,9 +2,11 @@ const debug = require("debug")("fief:server:db");
 const knex = require("knex");
 const pg = require("pg");
 
+const Config = require("../config");
+
 const dataConnection = knex({
   client: "pg",
-  connection: process.env.DATA_DB_URL,
+  connection: Config.db.connectionString,
   debug: debug.enabled,
   asyncStackTraces: debug.enabled,
 });

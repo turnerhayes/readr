@@ -4,6 +4,8 @@
 
 require("dotenv").config();
 
+const Config = require("./server/config");
+
 module.exports = exports = {
   collectCoverageFrom: [
     "client/**/*.js",
@@ -36,5 +38,5 @@ module.exports = exports = {
   // For some reason, verbose often makes console.logs in tests not visible.
   // Disabling verbose fixes this, but is probably not the best thing for
   // tests in general
-  verbose: process.env.NODE_ENV === "development",
+  verbose: Config.app.isDevelopment,
 };

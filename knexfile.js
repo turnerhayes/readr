@@ -6,7 +6,9 @@ require("dotenv").config({
   path: path.join(__dirname, ".env"),
 });
 
-const dbURL = process.env.DATA_DB_URL;
+const Config = require("./server/config");
+
+const dbURL = Config.db.connectionString;
 
 if (!dbURL) {
   // eslint-disable-next-line no-console
