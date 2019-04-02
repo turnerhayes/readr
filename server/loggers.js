@@ -11,6 +11,6 @@ const Logger = winston.createLogger({
 });
 
 module.exports = {
-  logger: Logger,
+  Logger,
 };
 
