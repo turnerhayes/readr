@@ -6,21 +6,22 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const { NOT_FOUND, INTERNAL_SERVER_ERROR } = require("http-status-codes");
 
-const manifestRouter = require("./routes/manifest");
+const Config = require("./config");
 
 const app = express();
 
-const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
+app.use(require("./session"));
 
-app.locals.IS_DEVELOPMENT = IS_DEVELOPMENT;
+app.locals.IS_DEVELOPMENT = Config.app.isDevelopment;
 
 app.use(logger("dev"));
 app.use(cookieParser());
-app.use(manifestRouter);
 
-app.use("/api", require("./routes/api"));
+require("./middleware/passport")(app);
 
-if (IS_DEVELOPMENT) {
+app.use(require("./routes"));
+
+if (Config.app.isDevelopment) {
   require("./middleware/dev")(app);
 } else {
   require("./middleware/prod")(app);
@@ -36,18 +37,18 @@ app.use(function(req, res, next) {
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = IS_DEVELOPMENT ? err : {};
+  res.locals.error = Config.app.isDevelopment ? err : {};
 
   // render the error page
   res.status(err.status || INTERNAL_SERVER_ERROR);
   res.json({
     message: err.message,
-    stack: IS_DEVELOPMENT ?
+    stack: Config.app.isDevelopment ?
       err.stack :
       null,
   });
 
-  if (IS_DEVELOPMENT) {
+  if (Config.app.isDevelopment) {
     // eslint-disable-next-line no-console
     console.error(err);
   }
