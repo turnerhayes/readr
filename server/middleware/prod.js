@@ -17,7 +17,7 @@ module.exports = function addProdMiddleware(app) {
       try {
         if (!indexString) {
           indexString = await getIndexString({
-            path,
+            outputPath: path,
           });
         }
 

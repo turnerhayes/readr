@@ -47,7 +47,7 @@ app.use(function(err, req, res, next) {
     message: err.message,
     stack: Config.app.isDevelopment ?
       err.stack :
-      err.stack,
+      null,
   });
 
   Logger.error(err);
