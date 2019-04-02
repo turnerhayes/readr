@@ -13,6 +13,9 @@ let {
   FIEF_APP_IS_SECURE: isSecure,
 } = process.env;
 
+port = Number(port);
+externalPort = Number(externalPort);
+
 const HTTP_DEFAULT_PORT = 80;
 const HTTPS_DEFAULT_PORT = 443;
 
