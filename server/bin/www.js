@@ -27,19 +27,24 @@ app.set("port", Config.app.address.port);
 let key;
 let cert;
 
-try {
-  key = fs.readFileSync(
-    Config.app.address.ssl.keyPath,
-    "utf8"
-  );
+if (
+  Config.app.address.ssl.keyPath &&
+  Config.app.address.ssl.certPath
+) {
+  try {
+    key = fs.readFileSync(
+      Config.app.address.ssl.keyPath,
+      "utf8"
+    );
 
-  cert = fs.readFileSync(
-    Config.app.address.ssl.certPath,
-    "utf8"
-  );
-} catch (ex) {
-  if (ex.code !== "ENOENT") {
-    throw ex;
+    cert = fs.readFileSync(
+      Config.app.address.ssl.certPath,
+      "utf8"
+    );
+  } catch (ex) {
+    if (ex.code !== "ENOENT") {
+      throw ex;
+    }
   }
 }
 
