@@ -16,11 +16,7 @@ let webpackConfig = {
     "babel-polyfill",
     "./client/index.js",
   ],
-  output: {
-    filename: "main.js",
-    publicPath: "/",
-    path: path.resolve(__dirname, "dist"),
-  },
+  output: require("./config/webpack/output"),
   module: {
     rules: [
       {

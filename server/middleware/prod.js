@@ -3,16 +3,13 @@ const compression = require("compression");
 const Mustache = require("mustache");
 
 const { getIndexString } = require("./common");
-const webpackConfig = require("../../webpack.config");
+const { path, publicPath } = require("../../config/webpack/output");
 
 let indexString;
 
 module.exports = function addProdMiddleware(app) {
-  const outputPath = webpackConfig.output.path;
-  const publicPath = webpackConfig.output.publicPath;
-
   app.use(compression());
-  app.use(publicPath, express.static(outputPath));
+  app.use(publicPath, express.static(path));
 
   app.use(
     "*",
@@ -20,7 +17,7 @@ module.exports = function addProdMiddleware(app) {
       try {
         if (!indexString) {
           indexString = await getIndexString({
-            outputPath,
+            path,
           });
         }
 
