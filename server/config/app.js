@@ -6,7 +6,7 @@ const DEFAULT_PORT = 7000;
 let {
   NODE_ENV: environment = "development",
   FIEF_HOST: host = "localhost",
-  FIEF_PORT: port = DEFAULT_PORT,
+  FIEF_PORT: port = process.env.PORT || DEFAULT_PORT,
   FIEF_EXTERNAL_PORT: externalPort = port,
   FIEF_APP_SSL_KEY: sslKeyPath,
   FIEF_APP_SSL_CERT: sslCertPath,
