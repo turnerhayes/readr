@@ -10,6 +10,8 @@ const Config = require("./config");
 
 const app = express();
 
+const { Logger } = require("./loggers");
+
 app.use(require("./session"));
 
 app.locals.IS_DEVELOPMENT = Config.app.isDevelopment;
@@ -48,10 +50,7 @@ app.use(function(err, req, res, next) {
       null,
   });
 
-  if (Config.app.isDevelopment) {
-    // eslint-disable-next-line no-console
-    console.error(err);
-  }
+  Logger.error(err);
 });
 
 module.exports = app;
