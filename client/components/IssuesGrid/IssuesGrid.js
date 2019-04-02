@@ -1,25 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
+import ImmutablePropTypes from "react-immutable-proptypes";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-
-const ISSUES = [
-  {
-    id: 1,
-    description: "Test Issue 1",
-    status: "Open",
-    priority: 4,
-  },
-  {
-    id: 2,
-    description: "Test Issue 2",
-    status: "Open",
-    priority: 1,
-  },
-];
 
 const ViewIssueLink = ({ id }) => (
   <Link
@@ -33,13 +19,6 @@ ViewIssueLink.propTypes = {
   id: PropTypes.number.isRequired,
 };
 
-const sortByPriority = ({ order }) => {
-  return ISSUES.slice().sort(
-    (a, b) => {
-      return (b.priority - a.priority) * order;
-    }
-  );
-};
 
 const styles = {
   idColumn: {
@@ -61,11 +40,28 @@ const styles = {
 class IssuesGrid extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    issues: ImmutablePropTypes.map,
   }
 
   state = {
     sortField: null,
     sortOrder: null,
+  }
+
+  /**
+   * Sorts the issues prop by priority
+   *
+   * @param {object} args
+   * @param {-1|1} args.order the sort order
+   *
+   * @return {object[]} the sorted issues
+   */
+  sortByPriority = ({ order }) => {
+    return this.props.issues.sort(
+      (a, b) => {
+        return (b.priority - a.priority) * order;
+      }
+    ).toList().toJS();
   }
 
   /**
@@ -127,7 +123,7 @@ class IssuesGrid extends React.PureComponent {
     return (
       <DataTable
         emptyMessage="No issues"
-        value={ISSUES}
+        value={this.props.issues.toList().toJS()}
         sortField={this.state.sortField}
         sortOrder={this.state.sortOrder}
         onSort={this.handleSort}
@@ -142,7 +138,7 @@ class IssuesGrid extends React.PureComponent {
           field="priority"
           header={this.addSortIndicator("Priority", "priority")}
           sortable
-          sortFunction={sortByPriority}
+          sortFunction={this.sortByPriority}
         />
         <Column
           field="description"

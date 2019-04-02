@@ -7,11 +7,27 @@ import { history } from "+app/history";
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
+const middlewares = [
+  thunk,
+  routerMiddleware(history),
+];
+
+// eslint-disable-next-line no-undef
+if (process.env.NODE_ENV === "development") {
+  const errorMiddleware = () =>(next) => (action) => {
+    if (action.error) {
+      // eslint-disable-next-line no-console
+      console.error(action.error);
+    }
+
+    next(action);
+  };
+
+  middlewares.push(errorMiddleware);
+}
+
 const storeEnhancer = composeEnhancers(
-  applyMiddleware(
-    thunk,
-    routerMiddleware(history)
-  )
+  applyMiddleware(...middlewares)
 );
 
 export const store = createStore(

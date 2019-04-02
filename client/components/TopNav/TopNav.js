@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 import { AccountDropDown } from "+app/components/AccountDropDown";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
 
-const AccountDropDownTrigger = () => {
+const AccountDropDownTrigger = ({ className }) => {
   const [state, setState] = useState({
     anchorEl: null,
     isPopperOpen: false,
@@ -42,6 +42,7 @@ const AccountDropDownTrigger = () => {
     <IconButton
       color="inherit"
       onClick={handleClick}
+      className={className}
     >
       <PersonIcon />
       <Popper
@@ -58,11 +59,19 @@ const AccountDropDownTrigger = () => {
   );
 };
 
-const styles = {
-  grow: {
-    flexGrow: 1,
-  },
+AccountDropDownTrigger.propTypes = {
+  className: PropTypes.string,
 };
+
+const styles = (theme) => ({
+  accountIcon: {
+    marginLeft: "auto",
+  },
+
+  pageLinks: {
+    marginLeft: theme.spacing.unit * 2,
+  },
+});
 
 /**
  * Top application bar component
@@ -112,26 +121,32 @@ function TopNav({ classes, location }) {
         >
           Fief
         </Typography>
-        {
-          pageLinks.map(
-            ({ path, text }) => (
-              <Button
-                key={path}
-                component={Link}
-                color="inherit"
-                to={path}
-                disabled={
-                  location.pathname === path
-                }
-              >
-                {text}
-              </Button>
+        <div
+          className={classes.pageLinks}
+        >
+          {
+            pageLinks.map(
+              ({ path, text }) => (
+                <Button
+                  key={path}
+                  component={Link}
+                  color="inherit"
+                  to={path}
+                  disabled={
+                    location.pathname === path
+                  }
+                >
+                  {text}
+                </Button>
+              )
             )
-          )
-        }
+          }
+        </div>
         {
           isLoggedIn && (
-            <AccountDropDownTrigger />
+            <AccountDropDownTrigger
+              className={classes.accountIcon}
+            />
           )
         }
       </Toolbar>

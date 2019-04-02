@@ -1,7 +1,7 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
-import { IssuesGrid } from "+app/components/IssuesGrid";
+import { IssuesGridContainer } from "+app/components/IssuesGrid";
 
 /**
  * Issues page component
@@ -21,7 +21,7 @@ export class Issues extends React.PureComponent {
           variant="h2"
         >Issues</Typography>
 
-        <IssuesGrid
+        <IssuesGridContainer
         />
       </Grid>
     );
