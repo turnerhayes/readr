@@ -1,13 +1,12 @@
 import React from "react";
 import { render } from "react-dom";
 import { Provider } from "react-redux";
-import {
-  BrowserRouter as Router,
-} from "react-router-dom";
+import { ConnectedRouter } from "connected-react-router/immutable";
 import { StoreContext } from "redux-react-hook";
 
+import { history } from "+app/history";
 import { store } from "+app/store/configure-store";
-import { App } from "+app/components/App";
+import { AppContainer } from "+app/components/App";
 
 const run = () => {
   render(
@@ -18,10 +17,11 @@ const run = () => {
         <Provider
           store={store}
         >
-          <Router>
-            <App>
-            </App>
-          </Router>
+          <ConnectedRouter
+            history={history}
+          >
+            <AppContainer />
+          </ConnectedRouter>
         </Provider>
       </StoreContext.Provider>
     ),

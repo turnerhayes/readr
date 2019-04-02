@@ -1,20 +1,25 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Route, Switch } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
 import DateFnsUtils from "@date-io/date-fns";
 
+import { requireLogin } from "+app/components/requireLogin";
 import { Home } from "+app/components/Home";
 import { TopNav } from "+app/components/TopNav";
 import {
   RentPaymentsContainer as RentPayments,
 } from "+app/components/RentPayments";
 import { Issues } from "+app/components/Issues";
+import { LoginPage } from "+app/components/LoginPage";
+import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
+import { useMappedState } from "redux-react-hook";
 
+// Do not use PureComponent; messes with react-router
 /**
  * Main App component.
  */
-export class App extends React.PureComponent {
+export class App extends React.Component {
   /**
    * Renders the component.
    *
@@ -31,7 +36,7 @@ export class App extends React.PureComponent {
           <Switch>
             <Route
               exact path="/rent"
-              component={RentPayments}
+              component={requireLogin(RentPayments)}
             />
             <Route
               exact path="/Issues"
@@ -39,7 +44,7 @@ export class App extends React.PureComponent {
             />
             <Route
               exact path="/"
-              component={Home}
+              component={requireLogin(Home)}
             />
           </Switch>
         </MuiPickersUtilsProvider>
@@ -47,3 +52,29 @@ export class App extends React.PureComponent {
     );
   }
 }
+
+const AppContainer = (props) => {
+  const mapState = useCallback(
+    (state) => ({
+      isLoggedIn: isLoggedInSelector(state),
+    }),
+    []
+  );
+
+  const { isLoggedIn } = useMappedState(mapState);
+
+  if (isLoggedIn) {
+    return (
+      <App
+        {...props}
+      />
+    );
+  }
+
+  return (
+    <LoginPage />
+  );
+};
+
+export { AppContainer };
+

@@ -15,39 +15,10 @@ const fs = require("fs");
 const http = require("http");
 const spdy = require("spdy");
 
+const Config = require("../config");
 const app = require("../app");
 
-/**
- * Normalize a port into a number, string, or false.
- *
- * @param {string|number} val the port to normalize; either a port number or
- * a named pipe
- *
- * @return {string|number|false} the normaized port or false if `val` is a
- * number less than 0
- */
-function normalizePort(val) {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-
-  return false;
-}
-
-/*
- * Get port from environment and store in Express.
- */
-
-const port = normalizePort(process.env.PORT || "4500");
-app.set("port", port);
+app.set("port", Config.app.address.port);
 
 /*
  * Create HTTP server.
@@ -56,19 +27,24 @@ app.set("port", port);
 let key;
 let cert;
 
-try {
-  key = fs.readFileSync(
-    path.join(PROJECT_ROOT, process.env.APP_SSL_KEY),
-    "utf8"
-  );
+if (
+  Config.app.address.ssl.keyPath &&
+  Config.app.address.ssl.certPath
+) {
+  try {
+    key = fs.readFileSync(
+      Config.app.address.ssl.keyPath,
+      "utf8"
+    );
 
-  cert = fs.readFileSync(
-    path.join(PROJECT_ROOT, process.env.APP_SSL_CERT),
-    "utf8"
-  );
-} catch (ex) {
-  if (ex.code !== "ENOENT") {
-    throw ex;
+    cert = fs.readFileSync(
+      Config.app.address.ssl.certPath,
+      "utf8"
+    );
+  } catch (ex) {
+    if (ex.code !== "ENOENT") {
+      throw ex;
+    }
   }
 }
 
@@ -96,9 +72,7 @@ function onError(error) {
     throw error;
   }
 
-  const bind = typeof port === "string" ?
-    "Pipe " + port :
-    "Port " + port;
+  const bind = "Port " + Config.app.address.port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
@@ -133,6 +107,6 @@ function onListening() {
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(Config.app.address.port);
 server.on("error", onError);
 server.on("listening", onListening);

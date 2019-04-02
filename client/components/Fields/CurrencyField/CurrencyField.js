@@ -15,22 +15,15 @@ function FormattedNumberField(props) {
   const {
     inputRef,
     onChange,
-    name,
     ...other
   } = props;
 
   return (
     <NumberFormat
       {...other}
-      name={name}
       getInputRef={inputRef}
       onValueChange={({ value }) => {
-        onChange({
-          target: {
-            name,
-            value,
-          },
-        });
+        onChange(value);
       }}
       thousandSeparator
       decimalScale={2}
@@ -53,17 +46,24 @@ FormattedNumberField.propTypes = {
  */
 export const CurrencyField = (props) => {
   const {
-    errorText,
+    field,
+    form,
     inputProps,
     InputProps,
     ...otherProps
   } = props;
 
+  const errorText = form.errors[field.name];
+
   return (
     <TextField
       autoComplete="off"
-      error={!!errorText}
-      helperText={errorText}
+      error={Boolean(errorText && form.touched[field.name])}
+      helperText={
+        form.touched[field.name] ?
+          errorText :
+          ""
+      }
       inputProps={{
         step: 0.01,
         min: 0,
@@ -78,13 +78,27 @@ export const CurrencyField = (props) => {
         ),
         ...InputProps,
       }}
+      {...field}
+      onChange={(value) => form.setFieldValue(field.name, value)}
+      onError={
+        (_, error) => {
+          form.setFieldError(field.name, error);
+        }
+      }
       {...otherProps}
     />
   );
 };
 
 CurrencyField.propTypes = {
-  errorText: PropTypes.string,
+  form: PropTypes.shape({
+    errors: PropTypes.object.isRequired,
+    touched: PropTypes.object.isRequired,
+    setFieldValue: PropTypes.func.isRequired,
+  }).isRequired,
+  field: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+  }).isRequired,
   inputProps: PropTypes.object,
   InputProps: PropTypes.object,
 };
