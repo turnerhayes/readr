@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Route, Switch } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
@@ -11,6 +11,8 @@ import {
   RentPaymentsContainer as RentPayments,
 } from "+app/components/RentPayments";
 import { LoginPage } from "+app/components/LoginPage";
+import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
+import { useMappedState } from "redux-react-hook";
 
 // Do not use PureComponent; messes with react-router
 /**
@@ -32,10 +34,6 @@ export class App extends React.Component {
           <TopNav />
           <Switch>
             <Route
-              exact path="/login"
-              component={LoginPage}
-            />
-            <Route
               exact path="/rent"
               component={requireLogin(RentPayments)}
             />
@@ -49,3 +47,29 @@ export class App extends React.Component {
     );
   }
 }
+
+const AppContainer = (props) => {
+  const mapState = useCallback(
+    (state) => ({
+      isLoggedIn: isLoggedInSelector(state),
+    }),
+    []
+  );
+
+  const { isLoggedIn } = useMappedState(mapState);
+
+  if (isLoggedIn) {
+    return (
+      <App
+        {...props}
+      />
+    );
+  }
+
+  return (
+    <LoginPage />
+  );
+};
+
+export { AppContainer };
+

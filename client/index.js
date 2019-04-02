@@ -6,7 +6,7 @@ import { StoreContext } from "redux-react-hook";
 
 import { history } from "+app/history";
 import { store } from "+app/store/configure-store";
-import { App } from "+app/components/App";
+import { AppContainer } from "+app/components/App";
 
 const run = () => {
   render(
@@ -20,8 +20,7 @@ const run = () => {
           <ConnectedRouter
             history={history}
           >
-            <App>
-            </App>
+            <AppContainer />
           </ConnectedRouter>
         </Provider>
       </StoreContext.Provider>
