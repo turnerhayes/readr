@@ -3,12 +3,12 @@ exports.up = async function(knex, Promise) {
     table.increments("id");
     table.string("description").notNullable();
     table.text("body");
-    table.string("created_by").notNullable();
-    table.integer("created_by_user_id")
+    table.string("created_by_text");
+    table.integer("created_by")
       .references("id")
       .inTable("users");
-    table.string("updated_by").notNullable();
-    table.integer("updated_by_user_id")
+    table.string("updated_by_text");
+    table.integer("updated_by")
       .references("id")
       .inTable("users");
     table.string("status").notNullable();

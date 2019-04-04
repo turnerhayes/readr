@@ -3,8 +3,8 @@ import { Set } from "immutable";
 import { fetchUsers } from "./users";
 
 const ISSUE_USER_ID_PROPERTIES = [
-  "createdByUserID",
-  "updatedByUserID",
+  "createdBy",
+  "updatedBy",
 ];
 
 const getUserIDsFromIssues = (issues) => {
@@ -34,21 +34,26 @@ export const FETCH_GET_ISSUES_COMPLETE = "FETCH_GET_ISSUES_COMPLETE";
 /**
  * Action creator for fetching issues
  *
+ * @param {object} [args]
+ * @param {number[]} [args.ids] a list of issue ids to get
+ *
  * @return {function} an action creator function
  */
-export function fetchIssues() {
+export function fetchIssues({ ids } = {}) {
   return async (dispatch, getState) => {
     try {
       dispatch({
         type: FETCH_GET_ISSUES_START,
-        payload: {},
+        payload: {
+          ids,
+        },
         api: {
           callName: "fetchIssues",
           status: "started",
         },
       });
 
-      const issues = await api.getIssues();
+      const issues = await api.getIssues({ ids });
 
       const issueUserIDs = getUserIDsFromIssues(issues);
 
@@ -77,6 +82,9 @@ export function fetchIssues() {
     } catch (ex) {
       dispatch({
         type: FETCH_GET_ISSUES_FAIL,
+        payload: {
+          ids,
+        },
         api: {
           callName: "fetchIssues",
           status: "complete",
@@ -86,3 +94,66 @@ export function fetchIssues() {
     }
   };
 }
+
+export const FETCH_UPDATE_ISSUE_START = "FETCH_UPDATE_ISSUE_START";
+
+export const FETCH_UPDATE_ISSUE_FAIL = "FETCH_GET_ISSUES_FAIL";
+
+export const FETCH_UPDATE_ISSUE_COMPLETE = "FETCH_UPDATE_ISSUE_COMPLETE";
+
+/**
+ * Action creator for updating an issue
+ *
+ * @param {object} args
+ * @param {number} args.issueID the ID of the issue to update
+ * @param {object} args.updates a map of properties to update
+ *
+ * @return {function} an action creator function
+ */
+export function updateIssue({ issueID, updates }) {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_UPDATE_ISSUE_START,
+        payload: {
+          issueID,
+          updates,
+        },
+        api: {
+          callName: "updateIssue",
+          status: "started",
+        },
+      });
+
+      const issue = await api.updateIssue({
+        issueID,
+        updates,
+      });
+
+      dispatch({
+        type: FETCH_UPDATE_ISSUE_COMPLETE,
+        payload: {
+          issue,
+        },
+        api: {
+          callName: "updateIssue",
+          status: "complete",
+        },
+      });
+    } catch (ex) {
+      dispatch({
+        type: FETCH_UPDATE_ISSUE_FAIL,
+        payload: {
+          issueID,
+          updates,
+        },
+        api: {
+          callName: "updateIssue",
+          status: "complete",
+        },
+        error: ex,
+      });
+    }
+  };
+}
+

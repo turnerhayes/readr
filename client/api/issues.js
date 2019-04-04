@@ -13,8 +13,20 @@ const issueArrayToMap = (issues) => {
   );
 };
 
-export const getIssues = async () => {
-  const response = await fetch("/api/issues");
+export const getIssues = async ({ ids } = {}) => {
+  let url = "/api/issues";
+
+  if (ids && ids.length > 0) {
+    const qs = new URLSearchParams();
+
+    for (const id of ids) {
+      qs.append("id", id);
+    }
+
+    url += `?${qs.toString()}`;
+  }
+
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error("Error getting issues");
@@ -30,5 +42,35 @@ export const getIssues = async () => {
 
   throw new Error(
     `GET Request to /api/issues/ returned with status ${response.status}`
+  );
+};
+
+export const updateIssue = async ({ issueID, updates }) => {
+  const response = await fetch(
+    `/api/issues/${issueID}`,
+    {
+      method: "PATCH",
+      body: JSON.stringify(updates),
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error updating issue");
+  }
+
+  if (response.status < 300) {
+    const issue = await response.json();
+
+    return fromJS(issue);
+  }
+
+  throw new Error(
+    `PATCH Request to /api/issues/${issueID} returned with status ${
+      response.status
+    }`
   );
 };
