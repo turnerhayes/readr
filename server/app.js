@@ -37,12 +37,21 @@ app.use(function(req, res, next) {
 // error handler
 // eslint-disable-next-line no-unused-vars
 app.use(function(err, req, res, next) {
+  const { status, headers } = err;
+  delete err.status;
+  delete err.headers;
+
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = Config.app.isDevelopment ? err : {};
 
   // render the error page
-  res.status(err.status || INTERNAL_SERVER_ERROR);
+  res.status(status || INTERNAL_SERVER_ERROR);
+
+  if (headers) {
+    res.set(headers);
+  }
+
   res.json({
     message: err.message,
     stack: Config.app.isDevelopment ?
@@ -50,7 +59,10 @@ app.use(function(err, req, res, next) {
       null,
   });
 
-  Logger.error(err);
+  Logger.error({
+    message: err.message,
+    stack: err.stack,
+  });
 });
 
 module.exports = app;

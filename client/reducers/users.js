@@ -1,4 +1,5 @@
 import { Map, fromJS } from "immutable";
+import { FETCH_GET_USERS_COMPLETE } from "+app/actions";
 
 let items = Map();
 
@@ -26,6 +27,15 @@ const initialState = Map({
 
 export const UsersReducer = (state = initialState, action) => {
   switch (action.type) {
+    case FETCH_GET_USERS_COMPLETE: {
+      return state.mergeIn(
+        [
+          "items",
+        ],
+        action.payload.users
+      );
+    }
+
     default: {
       return state;
     }
