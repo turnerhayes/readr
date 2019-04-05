@@ -1,6 +1,8 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import { Typography } from "@material-ui/core";
+import { Typography, IconButton } from "@material-ui/core";
+import AddIcon from "@material-ui/icons/Add";
 import { IssuesGridContainer } from "+app/components/IssuesGrid";
 
 /**
@@ -17,12 +19,28 @@ export class Issues extends React.PureComponent {
       <Grid container
         direction="column"
       >
-        <Typography
-          variant="h2"
-        >Issues</Typography>
-
-        <IssuesGridContainer
-        />
+        <Grid item container
+          justify="space-between"
+        >
+          <Grid item>
+            <Typography
+              variant="h2"
+            >Issues</Typography>
+          </Grid>
+          <Grid item>
+            <IconButton
+              component={Link}
+              to="/issues/add"
+              title="Add an issue"
+              aria-label="Add an issue"
+            >
+              <AddIcon />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <Grid item>
+          <IssuesGridContainer />
+        </Grid>
       </Grid>
     );
   }

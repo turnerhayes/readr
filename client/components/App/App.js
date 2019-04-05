@@ -1,7 +1,10 @@
 import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 import { Route, Switch } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import { Grid, withStyles } from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
+import { useMappedState } from "redux-react-hook";
 import DateFnsUtils from "@date-io/date-fns";
 
 import { requireLogin } from "+app/components/requireLogin";
@@ -15,13 +18,27 @@ import { IssueDetailContainer } from "+app/components/IssueDetail";
 import { AddIssueContainer } from "+app/components/AddIssue";
 import { LoginPage } from "+app/components/LoginPage";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
-import { useMappedState } from "redux-react-hook";
+
+const styles = {
+  root: {
+    width: "100%",
+    height: "100%",
+  },
+
+  mainContent: {
+    flex: 1,
+  },
+};
 
 // Do not use PureComponent; messes with react-router
 /**
  * Main App component.
  */
-export class App extends React.Component {
+class App extends React.Component {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  }
+
   /**
    * Renders the component.
    *
@@ -29,44 +46,57 @@ export class App extends React.Component {
    */
   render() {
     return (
-      <div>
+      <Grid container
+        direction="column"
+        className={this.props.classes.root}
+      >
         <MuiPickersUtilsProvider
           utils={DateFnsUtils}
         >
           <CssBaseline />
-          <TopNav />
-          <Switch>
-            <Route
-              exact path="/rent"
-              component={requireLogin(RentPayments)}
-            />
-            <Route
-              exact path="/issues/add"
-              component={requireLogin(AddIssueContainer)}
-            />
-            <Route
-              exact path="/issues/:issueID"
-              component={requireLogin(({ match, ...props }) => (
-                <IssueDetailContainer
-                  id={Number(match.params.issueID)}
-                  {...props}
-                />
-              ))}
-            />
-            <Route
-              exact path="/issues"
-              component={Issues}
-            />
-            <Route
-              exact path="/"
-              component={requireLogin(Home)}
-            />
-          </Switch>
+          <Grid item>
+            <TopNav />
+          </Grid>
+          <Grid item
+            className={this.props.classes.mainContent}
+          >
+            <Switch>
+              <Route
+                exact path="/rent"
+                component={requireLogin(RentPayments)}
+              />
+              <Route
+                exact path="/issues/add"
+                component={requireLogin(AddIssueContainer)}
+              />
+              <Route
+                exact path="/issues/:issueID"
+                component={requireLogin(({ match, ...props }) => (
+                  <IssueDetailContainer
+                    id={Number(match.params.issueID)}
+                    {...props}
+                  />
+                ))}
+              />
+              <Route
+                exact path="/issues"
+                component={Issues}
+              />
+              <Route
+                exact path="/"
+                component={requireLogin(Home)}
+              />
+            </Switch>
+          </Grid>
         </MuiPickersUtilsProvider>
-      </div>
+      </Grid>
     );
   }
 }
+
+const StyledApp = withStyles(styles)(App);
+
+export { StyledApp as App };
 
 const AppContainer = (props) => {
   const mapState = useCallback(
@@ -80,7 +110,7 @@ const AppContainer = (props) => {
 
   if (isLoggedIn) {
     return (
-      <App
+      <StyledApp
         {...props}
       />
     );

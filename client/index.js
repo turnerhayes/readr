@@ -8,6 +8,8 @@ import { history } from "+app/history";
 import { store } from "+app/store/configure-store";
 import { AppContainer } from "+app/components/App";
 
+import "./site.css";
+
 const run = () => {
   render(
     (

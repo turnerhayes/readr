@@ -10,6 +10,11 @@ import {
   draftjsToMd,
   mdToDraftjs,
 } from "draftjs-md-converter";
+import {
+  Card,
+  CardContent,
+  withStyles,
+} from "@material-ui/core";
 
 const MARKDOWN_DICTIONARY = {
   BOLD: "__",
@@ -39,11 +44,18 @@ const DEFAULT_TOOLBAR_OPTIONS = {
   },
 };
 
+const styles = {
+  editor: {
+    maxHeight: "60vh",
+  },
+};
+
 /**
  * Markdown editor component
  */
-export class MarkdownEditor extends React.PureComponent {
+class MarkdownEditor extends React.PureComponent {
   static propTypes = {
+    classes: PropTypes.object.isRequired,
     editorState: PropTypes.instanceOf(EditorState).isRequired,
     toolbar: PropTypes.object,
   }
@@ -86,17 +98,28 @@ export class MarkdownEditor extends React.PureComponent {
   render() {
     const {
       toolbar,
+      classes,
       ...otherProps
     } = this.props;
 
     return (
-      <Editor
-        toolbar={{
-          ...DEFAULT_TOOLBAR_OPTIONS,
-          ...toolbar,
-        }}
-        {...otherProps}
-      />
+      <Card>
+        <CardContent>
+          <Editor
+            editorClassName={classes.editor}
+            toolbar={{
+              ...DEFAULT_TOOLBAR_OPTIONS,
+              ...toolbar,
+            }}
+            {...otherProps}
+          />
+        </CardContent>
+      </Card>
     );
   }
 }
+
+const StyledMarkdownEditor = withStyles(styles)(MarkdownEditor);
+
+export { StyledMarkdownEditor as MarkdownEditor };
+
