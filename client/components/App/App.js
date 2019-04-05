@@ -12,6 +12,7 @@ import {
 } from "+app/components/RentPayments";
 import { Issues } from "+app/components/Issues";
 import { IssueDetailContainer } from "+app/components/IssueDetail";
+import { AddIssueContainer } from "+app/components/AddIssue";
 import { LoginPage } from "+app/components/LoginPage";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
 import { useMappedState } from "redux-react-hook";
@@ -40,13 +41,17 @@ export class App extends React.Component {
               component={requireLogin(RentPayments)}
             />
             <Route
+              exact path="/issues/add"
+              component={requireLogin(AddIssueContainer)}
+            />
+            <Route
               exact path="/issues/:issueID"
-              component={({ match, ...props }) => (
+              component={requireLogin(({ match, ...props }) => (
                 <IssueDetailContainer
                   id={Number(match.params.issueID)}
                   {...props}
                 />
-              )}
+              ))}
             />
             <Route
               exact path="/issues"

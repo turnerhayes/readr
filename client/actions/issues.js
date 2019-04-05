@@ -91,13 +91,70 @@ export function fetchIssues({ ids } = {}) {
         },
         error: ex,
       });
+
+      throw ex;
+    }
+  };
+}
+
+export const FETCH_CREATE_ISSUE_START = "FETCH_CREATE_ISSUE_START";
+
+export const FETCH_CREATE_ISSUE_FAIL = "FETCH_CREATE_ISSUE_FAIL";
+
+export const FETCH_CREATE_ISSUE_COMPLETE = "FETCH_CREATE_ISSUE_COMPLETE";
+
+/**
+ * Action creator for creating an issue
+ *
+ * @param {object} issueData the issue to create
+ *
+ * @return {function} an action creator function
+ */
+export function createIssue(issueData) {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_CREATE_ISSUE_START,
+        payload: issueData,
+        api: {
+          callName: "createIssue",
+          status: "started",
+        },
+      });
+
+      const issue = await api.createIssue(issueData);
+
+      dispatch({
+        type: FETCH_CREATE_ISSUE_COMPLETE,
+        payload: {
+          issue,
+        },
+        api: {
+          callName: "createIssue",
+          status: "complete",
+        },
+      });
+
+      return issue;
+    } catch (ex) {
+      dispatch({
+        type: FETCH_UPDATE_ISSUE_FAIL,
+        payload: issueData,
+        api: {
+          callName: "createIssue",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
     }
   };
 }
 
 export const FETCH_UPDATE_ISSUE_START = "FETCH_UPDATE_ISSUE_START";
 
-export const FETCH_UPDATE_ISSUE_FAIL = "FETCH_GET_ISSUES_FAIL";
+export const FETCH_UPDATE_ISSUE_FAIL = "FETCH_UPDATTE_ISSUE_FAIL";
 
 export const FETCH_UPDATE_ISSUE_COMPLETE = "FETCH_UPDATE_ISSUE_COMPLETE";
 
@@ -153,6 +210,8 @@ export function updateIssue({ issueID, updates }) {
         },
         error: ex,
       });
+
+      throw ex;
     }
   };
 }

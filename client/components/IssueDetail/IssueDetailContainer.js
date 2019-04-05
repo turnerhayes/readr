@@ -26,7 +26,8 @@ export const IssueDetailContainer = ({ id }) => {
           updates,
         })
       );
-    }
+    },
+    [dispatch, id]
   );
 
   if (!issue) {

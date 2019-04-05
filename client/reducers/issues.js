@@ -3,6 +3,7 @@ import { Map } from "immutable";
 import {
   FETCH_GET_ISSUES_COMPLETE,
   FETCH_UPDATE_ISSUE_COMPLETE,
+  FETCH_CREATE_ISSUE_COMPLETE,
 } from "+app/actions";
 
 const initialState = Map({
@@ -21,6 +22,7 @@ export const IssuesReducer = (state = initialState, action) => {
       ).set("isFetched", true);
     }
 
+    case FETCH_CREATE_ISSUE_COMPLETE:
     case FETCH_UPDATE_ISSUE_COMPLETE: {
       return state.setIn(
         [

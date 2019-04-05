@@ -1,7 +1,7 @@
-import { fromJS, Map } from "immutable";
+import { fromJS, OrderedMap } from "immutable";
 
 const issueArrayToMap = (issues) => {
-  return Map().withMutations(
+  return OrderedMap().withMutations(
     (issueMap) => {
       for (const issue of issues) {
         issueMap.set(
@@ -42,6 +42,36 @@ export const getIssues = async ({ ids } = {}) => {
 
   throw new Error(
     `GET Request to /api/issues/ returned with status ${response.status}`
+  );
+};
+
+export const createIssue = async (issueData) => {
+  const response = await fetch(
+    "/api/issues",
+    {
+      method: "POST",
+      body: JSON.stringify(issueData),
+      headers: {
+        "Accept": "application/json",
+        "Content-type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error creating issue");
+  }
+
+  if (response.status < 300) {
+    const issue = await response.json();
+
+    return fromJS(issue);
+  }
+
+  throw new Error(
+    `POST Request to /api/issues/ returned with status ${
+      response.status
+    }`
   );
 };
 

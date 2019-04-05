@@ -10,42 +10,12 @@ import EditIcon from "@material-ui/icons/Edit";
 import CancelEditingIcon from "@material-ui/icons/Cancel";
 import SaveIcon from "@material-ui/icons/Save";
 import ReactMarkdown from "react-markdown";
-import {
-  EditorState,
-  convertFromRaw,
-  convertToRaw,
-} from "draft-js";
-import {
-  mdToDraftjs,
-  draftjsToMd,
-} from "draftjs-md-converter";
-import { Editor } from "react-draft-wysiwyg";
 import parseISO from "date-fns/parseISO";
 import formatRelative from "date-fns/formatRelative";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { MarkdownEditor } from "../MarkdownEditor";
 
-const TOOLBAR_OPTIONS = {
-  options: [
-    "inline",
-    "blockType",
-    "fontSize",
-    "list",
-    "link",
-    "emoji",
-    "image",
-    "remove",
-    "history",
-  ],
-  inline: {
-    options: [
-      "bold",
-      "italic",
-      "underline",
-      "strikethrough",
-    ],
-  },
-};
 
 const SaveToolbarButton = ({ onClick }) => {
   return (
@@ -74,21 +44,30 @@ export class IssueDetail extends React.PureComponent {
    * Constructs an IssueDetail component
    *
    * @param {object} props same as for React.Component
-   * @param  {...any} args same as for React.Component
+   * @param  {...any[]} args same as for React.Component
    */
   constructor(props, ...args) {
     super(props, ...args);
 
     this.state = {
-      editorState: EditorState.createWithContent(
-        convertFromRaw(mdToDraftjs(props.issue.get("body")))
+      editorState: MarkdownEditor.markdownToEditorState(
+        props.issue.get("body")
       ),
       isEditing: false,
     };
   }
 
   /**
-   * Handles the editor"s state change event
+   * Converts the current editor state to a Markdown string
+   *
+   * @return {string}
+   */
+  getCurrentMarkdown = () => {
+    return MarkdownEditor.editorStateToMarkdown(this.state.editorState);
+  }
+
+  /**
+   * Handles the editor's editor state change event
    *
    * @param {EditorState} editorState the new state
    */
@@ -107,15 +86,12 @@ export class IssueDetail extends React.PureComponent {
     }));
   }
 
+  /**
+   * Handles a click of the Save toolbar button
+   */
   handleSaveBodyClick = () => {
-    const body = draftjsToMd(
-      convertToRaw(
-        this.state.editorState.getCurrentContent()
-      )
-    );
-
     this.props.updateIssue({
-      body,
+      body: this.getCurrentMarkdown(),
     });
   }
 
@@ -167,10 +143,9 @@ export class IssueDetail extends React.PureComponent {
           </IconButton>
           {
             this.state.isEditing ? (
-              <Editor
+              <MarkdownEditor
                 editorState={this.state.editorState}
                 onEditorStateChange={this.handleEditorStateChange}
-                toolbar={TOOLBAR_OPTIONS}
                 toolbarCustomButtons={[
                   (
                     <SaveToolbarButton
