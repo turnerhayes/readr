@@ -5,6 +5,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const { NOT_FOUND, INTERNAL_SERVER_ERROR } = require("http-status-codes");
+const ngrok = require("ngrok");
 
 const Config = require("./config");
 
@@ -64,5 +65,37 @@ app.use(function(err, req, res, next) {
     stack: err.stack,
   });
 });
+
+if (Config.app.isDevelopment) {
+  (async function() {
+    const tunnelURL = await ngrok.connect({
+      addr: Config.app.address.externalPort,
+      authtoken: process.env.NGROK_AUTHTOKEN,
+    });
+
+    console.log(`Tunnel URL: ${tunnelURL}`);
+
+    const closeApp = async (killProcess = false) => {
+      await ngrok.kill();
+
+      if (killProcess) {
+        process.exit();
+      }
+    };
+
+    const sigUsr2 = async () => {
+      await closeApp();
+
+      process.kill(process.pid, "SIGUSR2");
+    };
+
+    process.once("SIGTERM", closeApp);
+    process.once("SIGINT", closeApp);
+    // Used by nodemon to restart
+    process.once("SIGUSR2", sigUsr2);
+    process.once("uncaughtException", closeApp);
+    process.once("unhandledRejection", closeApp);
+  })();
+}
 
 module.exports = app;
