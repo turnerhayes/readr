@@ -14,8 +14,8 @@
   "license": "MIT",
   "scripts": {
     "prebuild": "npm run build:clean",
-    "postinstall": "env-cmd ./.env if-env-defined DATA_DB_URL && npm run migrate || npm run warn-no-db",
-    "warn-no-db": "echo 'Set the DATA_DB_URL environment variable and run `npm migrate` to set up the database' >&2",
+    "postinstall": "env-cmd ./.env if-env-defined FIEF_DATA_DB_URL && npm run migrate || npm run warn-no-db",
+    "warn-no-db": "echo 'Set the FIEF_DATA_DB_URL environment variable and run `npm migrate` to set up the database' >&2",
     "build": "cross-env NODE_ENV=production webpack --env.NODE_ENV=production --config webpack.config.js --color --progress --hide-modules",
     "build:clean": "rimraf ./dist",
     "start": "per-env",
