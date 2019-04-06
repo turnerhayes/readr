@@ -20,6 +20,7 @@
     "build:clean": "rimraf ./dist",
     "start": "per-env",
     "start:development": "cross-env NODE_ENV=development nodemon server/bin/www --debug",
+    "prestart:production": "npm run build",
     "start:production": "cross-env NODE_ENV=production node server/bin/www",
     "test": "cross-env NODE_ENV=test jest --watch",
     "test:prod": "cross-env NODE_ENV=test jest",
