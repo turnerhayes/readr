@@ -13,8 +13,11 @@ import {
 import {
   Card,
   CardContent,
+  IconButton,
   withStyles,
 } from "@material-ui/core";
+import SaveIcon from "@material-ui/icons/Save";
+
 
 const MARKDOWN_DICTIONARY = {
   BOLD: "__",
@@ -50,6 +53,21 @@ const styles = {
   },
 };
 
+
+const SaveToolbarButton = ({ onClick }) => {
+  return (
+    <IconButton
+      onClick={onClick}
+    >
+      <SaveIcon />
+    </IconButton>
+  );
+};
+
+SaveToolbarButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
+
 /**
  * Markdown editor component
  */
@@ -58,6 +76,13 @@ class MarkdownEditor extends React.PureComponent {
     classes: PropTypes.object.isRequired,
     editorState: PropTypes.instanceOf(EditorState).isRequired,
     toolbar: PropTypes.object,
+    toolbarCustomButtons: PropTypes.arrayOf(PropTypes.element),
+    includeSaveButton: PropTypes.bool.isRequired,
+    onSave: PropTypes.func,
+  }
+
+  static defaultProps = {
+    includeSaveButton: false,
   }
 
   /**
@@ -91,6 +116,15 @@ class MarkdownEditor extends React.PureComponent {
   }
 
   /**
+   * Handles a click of the Save toolbar button
+   */
+  handleSaveClick = () => {
+    if (this.props.onSave) {
+      this.props.onSave();
+    }
+  }
+
+  /**
    * Renders the component.
    *
    * @return {JSX.Element}
@@ -98,9 +132,26 @@ class MarkdownEditor extends React.PureComponent {
   render() {
     const {
       toolbar,
+      toolbarCustomButtons,
+      includeSaveButton,
       classes,
       ...otherProps
     } = this.props;
+
+    let customButtons = toolbarCustomButtons;
+
+    if (includeSaveButton) {
+      if (!customButtons) {
+        customButtons = [];
+      }
+
+      customButtons.push(
+        <SaveToolbarButton
+          key="save"
+          onClick={this.handleSaveClick}
+        />
+      );
+    }
 
     return (
       <Card>
@@ -111,6 +162,7 @@ class MarkdownEditor extends React.PureComponent {
               ...DEFAULT_TOOLBAR_OPTIONS,
               ...toolbar,
             }}
+            toolbarCustomButtons={customButtons}
             {...otherProps}
           />
         </CardContent>

@@ -48,6 +48,7 @@ class App extends React.Component {
     return (
       <Grid container
         direction="column"
+        wrap="nowrap"
         className={this.props.classes.root}
       >
         <MuiPickersUtilsProvider
