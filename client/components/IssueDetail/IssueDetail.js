@@ -5,30 +5,40 @@ import {
   Grid,
   Typography,
   IconButton,
+  ListItem,
+  List,
+  Card,
+  CardContent,
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import CancelEditingIcon from "@material-ui/icons/Cancel";
-import SaveIcon from "@material-ui/icons/Save";
+import ReplyIcon from "@material-ui/icons/Reply";
 import ReactMarkdown from "react-markdown";
+import { EditorState } from "draft-js";
 import parseISO from "date-fns/parseISO";
 import formatRelative from "date-fns/formatRelative";
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { MarkdownEditor } from "../MarkdownEditor";
+
+import { MarkdownEditor } from "+app/components/MarkdownEditor";
 
 
-const SaveToolbarButton = ({ onClick }) => {
+const IssueComment = ({ comment }) => {
   return (
-    <IconButton
-      onClick={onClick}
-    >
-      <SaveIcon />
-    </IconButton>
+    <ListItem>
+      <Card>
+        <CardContent>
+          <ReactMarkdown
+            source={comment.get("body")}
+          />
+        </CardContent>
+      </Card>
+    </ListItem>
   );
 };
 
-SaveToolbarButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+IssueComment.propTypes = {
+  comment: ImmutablePropTypes.map.isRequired,
 };
 
 /**
@@ -38,6 +48,7 @@ export class IssueDetail extends React.PureComponent {
   static propTypes = {
     issue: ImmutablePropTypes.map.isRequired,
     updateIssue: PropTypes.func.isRequired,
+    addComment: PropTypes.func.isRequired,
   }
 
   /**
@@ -54,16 +65,27 @@ export class IssueDetail extends React.PureComponent {
         props.issue.get("body")
       ),
       isEditing: false,
+      isReplying: false,
+      replyContent: null,
     };
   }
 
   /**
-   * Converts the current editor state to a Markdown string
+   * Converts the current issue editor state to a Markdown string
    *
    * @return {string}
    */
-  getCurrentMarkdown = () => {
+  getCurrentIssueMarkdown = () => {
     return MarkdownEditor.editorStateToMarkdown(this.state.editorState);
+  }
+
+  /**
+   * Converts the current comment editor state to a Markdown string
+   *
+   * @return {string}
+   */
+  getCurrentCommentMarkdown = () => {
+    return MarkdownEditor.editorStateToMarkdown(this.state.replyContent);
   }
 
   /**
@@ -87,11 +109,53 @@ export class IssueDetail extends React.PureComponent {
   }
 
   /**
-   * Handles a click of the Save toolbar button
+   * Handles a click of the Save toolbar button for the issue editor
    */
-  handleSaveBodyClick = () => {
+  handleSaveIssueBodyClick = () => {
     this.props.updateIssue({
-      body: this.getCurrentMarkdown(),
+      body: this.getCurrentIssueMarkdown(),
+    });
+  }
+
+  /**
+   * Handles a click of the Save toolbar button for the comment editor
+   */
+  handleSaveCommentClick = async () => {
+    await this.props.addComment({
+      body: this.getCurrentCommentMarkdown(),
+    });
+
+    this.setState({
+      replyContent: null,
+      isReplying: false,
+    })
+  }
+
+  /**
+   * Handles a click of the Reply button
+   */
+  handleReplyButtonClick = () => {
+    this.setState((prevState) => {
+      const newState = {
+        isReplying: true,
+      };
+
+      if (prevState.replyContent === null) {
+        newState.replyContent = EditorState.createEmpty();
+      }
+
+      return newState;
+    });
+  }
+
+  /**
+   * Handles change of the reply editor's state
+   *
+   * @param {EditorState} editorState the new editor state
+   */
+  handleReplyEditorContentChange = (editorState) => {
+    this.setState({
+      replyContent: editorState,
     });
   }
 
@@ -146,14 +210,8 @@ export class IssueDetail extends React.PureComponent {
               <MarkdownEditor
                 editorState={this.state.editorState}
                 onEditorStateChange={this.handleEditorStateChange}
-                toolbarCustomButtons={[
-                  (
-                    <SaveToolbarButton
-                      key="save"
-                      onClick={this.handleSaveBodyClick}
-                    />
-                  ),
-                ]}
+                includeSaveButton
+                onSave={this.handleSaveIssueBodyClick}
               />
             ) : (
               <ReactMarkdown
@@ -162,6 +220,39 @@ export class IssueDetail extends React.PureComponent {
             )
           }
         </Grid>
+        <Grid item>
+          <List>
+            {
+              this.props.issue.get("comments").map(
+                (comment) => (
+                  <IssueComment
+                    key={comment.get("id")}
+                    comment={comment}
+                  />
+                )
+              ).toArray()
+            }
+          </List>
+          <IconButton
+            onClick={this.handleReplyButtonClick}
+            title="Reply"
+            aria-label="Reply"
+          >
+            <ReplyIcon />
+          </IconButton>
+        </Grid>
+        {
+          this.state.isReplying && (
+            <Grid item>
+              <MarkdownEditor
+                editorState={this.state.replyContent}
+                onEditorStateChange={this.handleReplyEditorContentChange}
+                includeSaveButton
+                onSave={this.handleSaveCommentClick}
+              />
+            </Grid>
+          )
+        }
       </Grid>
     );
   }

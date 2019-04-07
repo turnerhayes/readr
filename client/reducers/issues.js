@@ -4,6 +4,8 @@ import {
   FETCH_GET_ISSUES_COMPLETE,
   FETCH_UPDATE_ISSUE_COMPLETE,
   FETCH_CREATE_ISSUE_COMPLETE,
+  FETCH_GET_ISSUE_COMMENTS_COMPLETE,
+  FETCH_GET_ISSUE_COMPLETE,
 } from "+app/actions";
 
 const initialState = Map({
@@ -22,6 +24,7 @@ export const IssuesReducer = (state = initialState, action) => {
       ).set("isFetched", true);
     }
 
+    case FETCH_GET_ISSUE_COMPLETE:
     case FETCH_CREATE_ISSUE_COMPLETE:
     case FETCH_UPDATE_ISSUE_COMPLETE: {
       return state.setIn(
@@ -30,6 +33,19 @@ export const IssuesReducer = (state = initialState, action) => {
           action.payload.issue.get("id"),
         ],
         action.payload.issue
+      );
+    }
+
+    case FETCH_GET_ISSUE_COMMENTS_COMPLETE: {
+      const { issueComments, issueID } = action.payload;
+
+      return state.setIn(
+        [
+          "items",
+          issueID,
+          "comments",
+        ],
+        issueComments
       );
     }
 
