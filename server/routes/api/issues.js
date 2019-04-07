@@ -1,13 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const {
+  CREATED,
   BAD_REQUEST,
 } = require("http-status-codes");
 
 const {
+  getIssue,
   getIssues,
   createIssue,
   updateIssue,
+  getComments,
+  addComment,
 } = require("../../persistence/stores/issues");
 const { ensureLoggedIn } = require("../utils");
 
@@ -15,6 +19,7 @@ const router = new express.Router();
 
 router.route("/")
   .get(
+    ensureLoggedIn,
     async (req, res, next) => {
       try {
         const issues = await getIssues();
@@ -43,7 +48,10 @@ router.route("/")
           issueData,
         });
 
-        res.json(issue);
+        res
+          .status(CREATED)
+          .location(`${req.baseUrl}/${issue.id}`)
+          .json(issue);
       } catch (ex) {
         next(ex);
       }
@@ -51,6 +59,32 @@ router.route("/")
   );
 
 router.route("/:issueID")
+  .get(
+    ensureLoggedIn,
+    async (req, res, next) => {
+      const issueID = Number(req.params.issueID);
+
+      if (isNaN(issueID)) {
+        const err = new Error("Issue ID must be a number");
+        err.status = BAD_REQUEST;
+
+        return next(err);
+      }
+
+      const includeComments = !!req.query.includeComments;
+
+      try {
+        const issue = await getIssue({
+          id: issueID,
+          includeComments,
+        });
+
+        res.json(issue);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  )
   .patch(
     ensureLoggedIn,
     bodyParser.json(),
@@ -81,6 +115,71 @@ router.route("/:issueID")
         });
 
         res.json(issue);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  );
+
+router.route("/:issueID/comments")
+  .get(
+    ensureLoggedIn,
+    async (req, res, next) => {
+      let { issueID } = req.params;
+
+      issueID = Number(issueID);
+
+      if (isNaN(issueID)) {
+        const err = new Error("Must provide an integer issueID parameter");
+        err.status = BAD_REQUEST;
+
+        return next(err);
+      }
+
+      try {
+        const comments = await getComments({ issueID });
+
+        res.json(comments);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  )
+  .post(
+    ensureLoggedIn,
+    bodyParser.json(),
+    async (req, res, next) => {
+      let { issueID } = req.params;
+
+      issueID = Number(issueID);
+
+      if (isNaN(issueID)) {
+        const err = new Error("Must provide an integer issueID parameter");
+        err.status = BAD_REQUEST;
+
+        return next(err);
+      }
+
+      const commentData = req.body;
+
+      if (!commentData || Object.keys(commentData).length === 0) {
+        const err = new Error("No comment data provided");
+        err.status = BAD_REQUEST;
+
+        return next(err);
+      }
+
+      try {
+        const comment = await addComment({
+          issueID,
+          userID: req.user.id,
+          commentData,
+        });
+
+        res
+          .status(CREATED)
+          .location(`${req.baseUrl}/${comment.id}`)
+          .json(comment);
       } catch (ex) {
         next(ex);
       }

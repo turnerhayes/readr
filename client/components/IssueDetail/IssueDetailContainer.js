@@ -3,7 +3,12 @@ import PropTypes from "prop-types";
 import { useMappedState, useDispatch } from "redux-react-hook";
 
 import { IssueDetail } from "./IssueDetail";
-import { fetchIssues, updateIssue } from "+app/actions";
+import {
+  fetchIssue,
+  updateIssue,
+  fetchIssueComments,
+  addIssueComment,
+} from "+app/actions";
 import { getIssue } from "+app/selectors/issues";
 
 export const IssueDetailContainer = ({ id }) => {
@@ -30,10 +35,28 @@ export const IssueDetailContainer = ({ id }) => {
     [dispatch, id]
   );
 
+  const addCommentCallback = useCallback(
+    (commentData) => {
+      return dispatch(
+        addIssueComment({
+          issueID: id,
+          commentData,
+        })
+      );
+    },
+    [dispatch, id]
+  );
+
   if (!issue) {
     dispatch(
-      fetchIssues({
-        ids: [id],
+      fetchIssue({
+        id,
+      })
+    );
+
+    dispatch(
+      fetchIssueComments({
+        issueID: id,
       })
     );
 
@@ -44,6 +67,7 @@ export const IssueDetailContainer = ({ id }) => {
     <IssueDetail
       issue={issue}
       updateIssue={updateIssueCallback}
+      addComment={addCommentCallback}
     />
   );
 };
