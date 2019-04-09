@@ -129,16 +129,10 @@ class IssuesGrid extends React.PureComponent {
         onSort={this.handleSort}
       >
         <Column
-          field="id"
-          header="ID"
-          className={this.props.classes.idColumn}
-          style={{ width: "3em" }}
-        />
-        <Column
-          field="priority"
-          header={this.addSortIndicator("Priority", "priority")}
-          sortable
-          sortFunction={this.sortByPriority}
+          columnKey="viewIssueLink"
+          header="Link"
+          body={ViewIssueLink}
+          className={this.props.classes.viewLinkColumn}
         />
         <Column
           field="description"
@@ -150,12 +144,7 @@ class IssuesGrid extends React.PureComponent {
           field="status"
           header={this.addSortIndicator("Status", "status")}
           sortable
-        />
-        <Column
-          columnKey="viewIssueLink"
-          header="Link"
-          body={ViewIssueLink}
-          className={this.props.classes.viewLinkColumn}
+          style={{ width: "5em" }}
         />
       </DataTable>
     );
