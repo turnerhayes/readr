@@ -128,7 +128,7 @@ export class IssueDetail extends React.PureComponent {
     this.setState({
       replyContent: null,
       isReplying: false,
-    })
+    });
   }
 
   /**
