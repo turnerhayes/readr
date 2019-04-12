@@ -1,14 +1,36 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import { Typography, IconButton } from "@material-ui/core";
+import { Typography, IconButton, withStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
+
 import { IssuesGridContainer } from "+app/components/IssuesGrid";
+
+
+const styles = {
+  root: {
+    height: "100%",
+  },
+
+  gridContainer: {
+    flex: 1,
+    minHeight: 0,
+  },
+
+  grid: {
+    maxHeight: "100%",
+  },
+};
 
 /**
  * Issues page component
  */
-export class Issues extends React.PureComponent {
+class Issues extends React.PureComponent {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+  }
+
   /**
    * Renders the component
    *
@@ -18,6 +40,8 @@ export class Issues extends React.PureComponent {
     return (
       <Grid container
         direction="column"
+        wrap="nowrap"
+        className={this.props.classes.root}
       >
         <Grid item container
           justify="space-between"
@@ -38,10 +62,18 @@ export class Issues extends React.PureComponent {
             </IconButton>
           </Grid>
         </Grid>
-        <Grid item>
-          <IssuesGridContainer />
+        <Grid item
+          className={this.props.classes.gridContainer}
+        >
+          <IssuesGridContainer
+            className={this.props.classes.grid}
+          />
         </Grid>
       </Grid>
     );
   }
 }
+
+const StyledIssuesPage = withStyles(styles)(Issues);
+
+export { StyledIssuesPage as Issues };

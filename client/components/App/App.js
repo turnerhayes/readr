@@ -27,6 +27,7 @@ const styles = {
 
   mainContent: {
     flex: 1,
+    overflow: "hidden",
   },
 };
 
@@ -81,7 +82,7 @@ class App extends React.Component {
               />
               <Route
                 exact path="/issues"
-                component={Issues}
+                component={requireLogin(Issues)}
               />
               <Route
                 exact path="/"
