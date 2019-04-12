@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
+import { FilterTrigger } from "./Filter/FilterTrigger";
+import { TextFilter } from "./Filter/TextFilter";
 
 const ViewIssueLink = ({ id }) => (
   <Link
@@ -148,36 +150,32 @@ class IssuesGrid extends React.PureComponent {
    * @return {JSX.Element}
    */
   addSortIndicator = (content, field) => {
-    if (this.state.sortField === field) {
-      return (
-        <React.Fragment>
-          {content}
-          <Icon
-            title={`Sorted in ${
-              this.state.sortOrder > 0 ?
-                "descending" :
-                "ascending"
-            } order`}
-          >
-            {
+    const fieldIsSorted = this.state.sortField === field;
+
+    return (
+      <React.Fragment>
+        {content}
+        <Icon
+          title={
+            fieldIsSorted ?
+              `Sorted in ${
+                this.state.sortOrder > 0 ?
+                  "descending" :
+                  "ascending"
+              } order` :
+              undefined
+          }
+        >
+          {
+            fieldIsSorted && (
               this.state.sortOrder > 0 ?
                 "\u21A5" :
                 "\u21A7"
-            }
-          </Icon>
-        </React.Fragment>
-      );
-    }
-    else {
-      return (
-        <React.Fragment>
-          {content}
-          <Icon></Icon>
-        </React.Fragment>
-      );
-    }
-
-    return content;
+            )
+          }
+        </Icon>
+      </React.Fragment>
+    );
   }
 
   /**
@@ -201,6 +199,7 @@ class IssuesGrid extends React.PureComponent {
         key: "description",
         header: this.addSortIndicator("Description", "description"),
         sortable: true,
+        filterType: "text",
       },
     ];
 
@@ -226,6 +225,8 @@ class IssuesGrid extends React.PureComponent {
     const {
       sortField,
       sortOrder,
+      filterColumn,
+      filterValue,
     } = this.state;
 
     if (sortField) {
@@ -233,6 +234,12 @@ class IssuesGrid extends React.PureComponent {
         (a, b) => a.get(sortField).toLowerCase().localeCompare(
           b.get(sortField).toLowerCase()
         ) * sortOrder
+      );
+    }
+
+    if (filterColumn && filterValue) {
+      issues = issues.filter(
+        (issue) => issue.get(filterColumn).toLowerCase().includes(filterValue)
       );
     }
 
@@ -259,7 +266,7 @@ class IssuesGrid extends React.PureComponent {
       >
         {
           columnDefs.map(
-            ({ key, header, sortable, defaultSortOrder }) => (
+            ({ key, header, sortable, defaultSortOrder, filterType }) => (
               <Cell
                 key={key}
                 classes={{
@@ -276,6 +283,27 @@ class IssuesGrid extends React.PureComponent {
                 }
               >
                 {header}
+                {
+                  filterType && (
+                    filterType === "text" ?
+                      (
+                        <FilterTrigger>
+                          <TextFilter
+                            onChange={(value) => this.setState({
+                              filterColumn: key,
+                              filterValue: value,
+                            })}
+                            value={
+                              filterColumn === key ?
+                                filterValue :
+                                ""
+                            }
+                          />
+                        </FilterTrigger>
+                      ) :
+                      undefined
+                  )
+                }
               </Cell>
             )
           )
