@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import { Range } from "immutable";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
@@ -203,24 +202,9 @@ class IssuesGrid extends React.PureComponent {
       },
     ];
 
-    // const distinctStatuses = this.props.issues.map(
-    //   (issue) => issue.get("status")
-    // ).toSet();
-
     let {
       issues,
     } = this.props;
-
-    // / DEBUG
-    issues = issues.toList().concat(
-      // eslint-disable-next-line new-cap
-      ...Range(1, 4).map(
-        (num) => issues.toList().map(
-          (issue) => issue.set("id", issue.get("id") + (100 * num))
-        )
-      )
-    );
-    // / END DEBUG
 
     const {
       sortField,
