@@ -2,7 +2,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
-import { Typography, IconButton, withStyles } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import withStyles from "@material-ui/core/styles/withStyles";
 import AddIcon from "@material-ui/icons/Add";
 
 import { IssuesGridContainer } from "+app/components/IssuesGrid";
@@ -21,6 +25,16 @@ const styles = {
   grid: {
     maxHeight: "100%",
   },
+
+  searchContainer: {
+    marginRight: "auto",
+    marginLeft: "2em",
+  },
+
+  form: {
+    display: "flex",
+    alignContent: "center",
+  },
 };
 
 /**
@@ -37,6 +51,10 @@ class Issues extends React.PureComponent {
    * @return {JSX.Element}
    */
   render() {
+    const {
+      classes,
+    } = this.props;
+
     return (
       <Grid container
         direction="column"
@@ -44,12 +62,32 @@ class Issues extends React.PureComponent {
         className={this.props.classes.root}
       >
         <Grid item container
-          justify="space-between"
+          wrap="nowrap"
         >
           <Grid item>
             <Typography
               variant="h2"
             >Issues</Typography>
+          </Grid>
+          <Grid item
+            className={classes.searchContainer}
+          >
+            <form
+              action="/issues/search"
+              method="get"
+              className={classes.form}
+            >
+              <TextField
+                type="search"
+                label="Search Issues"
+                name="query"
+              />
+              <Button
+                type="submit"
+              >
+                Search
+              </Button>
+            </form>
           </Grid>
           <Grid item>
             <IconButton
@@ -74,6 +112,6 @@ class Issues extends React.PureComponent {
   }
 }
 
-const StyledIssuesPage = withStyles(styles)(Issues);
+const StyledIssues = withStyles(styles)(Issues);
 
-export { StyledIssuesPage as Issues };
+export { StyledIssues as Issues };

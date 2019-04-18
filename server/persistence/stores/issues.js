@@ -9,6 +9,7 @@ const UNALIASED_ISSUE_COLUMNS = [
 
 
 const ALIASED_ISSUE_COLUMNS = {
+  originMessageID: "origin_message_id",
   createdAt: "created_at",
   updatedAt: "updated_at",
   createdBy: "created_by",
@@ -56,7 +57,11 @@ const transformResultToIssueComment = (result) => {
   return result;
 };
 
-const getIssues = async ({ ids } = {}) => {
+const getIssues = async ({
+  ids,
+  originMessageIDs,
+  excludeStatuses = [],
+} = {}) => {
   const connection = await getDataConnection();
 
   let query = connection.select(UNALIASED_ISSUE_COLUMNS)
@@ -80,6 +85,29 @@ const getIssues = async ({ ids } = {}) => {
     } else {
       query = query.whereIn("id", ids);
     }
+  }
+
+  if (originMessageIDs && originMessageIDs.length > 0) {
+    if (originMessageIDs.length === 1) {
+      query = query.where({
+        origin_message_id: originMessageIDs[0],
+      });
+    } else {
+      query = query.whereIn(
+        "origin_message_id",
+        originMessageIDs
+      );
+    }
+  }
+
+  if (excludeStatuses && excludeStatuses.length > 0) {
+    if (excludeStatuses.length === 1) {
+      query = query.whereNot("status", excludeStatuses[0]);
+    }
+    query = query.whereNotIn(
+      "status",
+      excludeStatuses,
+    );
   }
 
   return query;
@@ -106,13 +134,18 @@ const getIssue = async ({
 
 const createIssue = async ({
   userID,
+  creatorText,
   issueData: {
     description,
     body,
+    originMessageID,
   },
 }) => {
-  if (userID === undefined) {
-    throw new Error("Cannot create an issue without specifying a userID");
+  if (userID === undefined && !creatorText) {
+    throw new Error(
+      "Cannot create an issue without specifying either a `userID` or a " +
+      "`creatorText` parameter"
+    );
   }
 
   const connection = await getDataConnection();
@@ -121,8 +154,11 @@ const createIssue = async ({
     description,
     body,
     status: "new",
+    origin_message_id: originMessageID,
     created_by: userID,
     updated_by: userID,
+    created_by_text: creatorText,
+    updated_by_text: creatorText,
   }).into("issues").returning("*");
 
   return transformResultToIssue(issue);
@@ -134,6 +170,7 @@ const updateIssue = async ({
   updates: {
     body,
     description,
+    status,
   },
 }) => {
   if (!userID) {
@@ -146,6 +183,7 @@ const updateIssue = async ({
     .update({
       body,
       description,
+      status,
       updated_at: connection.fn.now(),
       updated_by: userID,
     }).where({
@@ -208,6 +246,25 @@ const addComment = async ({
   return transformResultToIssueComment(comment);
 };
 
+const searchIssues = async ({ query }) => {
+  const connection = await getDataConnection();
+
+  query = query.toLowerCase();
+
+  const knexQuery = connection.select(UNALIASED_ISSUE_COLUMNS)
+    .select(ALIASED_ISSUE_COLUMNS).from(
+      "issues"
+    ).whereNull(
+      "deleted_at"
+    ).where(
+      connection.raw("LOWER(description)"), "like", `%${query}%`
+    ).orWhere(
+      connection.raw("LOWER(body)"), "like", `%${query}%`
+    );
+
+  return knexQuery;
+};
+
 module.exports = {
   getIssue,
   getIssues,
@@ -215,4 +272,5 @@ module.exports = {
   updateIssue,
   getComments,
   addComment,
+  searchIssues,
 };
