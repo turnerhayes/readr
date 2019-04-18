@@ -7,7 +7,6 @@ const logger = require("morgan");
 const { NOT_FOUND, INTERNAL_SERVER_ERROR } = require("http-status-codes");
 
 const Config = require("./config");
-const { startSchedule } = require("./mail/schedule-mail-check");
 
 const app = express();
 
@@ -30,7 +29,10 @@ if (Config.app.isDevelopment) {
   require("./middleware/prod")(app);
 }
 
-startSchedule();
+if (Config.mail.imap.enabled) {
+  const { startSchedule } = require("./mail/schedule-mail-check");
+  startSchedule();
+}
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
