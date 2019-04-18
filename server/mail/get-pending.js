@@ -3,6 +3,7 @@ const simpleParser = require("mailparser").simpleParser;
 const Imap = require("imap");
 const debug = require("debug")("fief:server:mail:get-pending");
 
+const Config = require("../config");
 const { PROCESSED_LABEL } = require("./constants");
 
 /**
@@ -12,11 +13,11 @@ const { PROCESSED_LABEL } = require("./constants");
  */
 const connect = async () => {
   const imap = new Imap({
-    user: process.env.FIEF_MAIL_IMAP_USERNAME,
-    password: process.env.FIEF_MAIL_IMAP_PASSWORD,
-    host: process.env.FIEF_MAIL_IMAP_HOST,
-    port: process.env.FIEF_MAIL_IMAP_PORT,
-    tls: !!process.env.FIEF_MAIL_IMAP_USE_TLS,
+    user: Config.mail.imap.username,
+    password: Config.mail.imap.password,
+    host: Config.mail.imap.host,
+    port: Config.mail.imap.port,
+    tls: Config.mail.imap.useTLS,
     debug,
   });
 
