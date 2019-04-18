@@ -62,12 +62,15 @@
     "http-errors": "^1.7.2",
     "http-status-codes": "^1.3.1",
     "if-env-defined": "^1.0.0",
+    "imap": "^0.8.19",
     "immutable": "^4.0.0-rc.12",
     "intl": "^1.2.5",
     "knex": "^0.16.3",
+    "mailparser": "^2.6.0",
     "material-ui-pickers": "^2.2.4",
     "morgan": "^1.9.1",
     "mustache": "^3.0.1",
+    "node-schedule": "^1.3.2",
     "passport": "^0.4.0",
     "passport-facebook-rwky": "^2.3.1",
     "passport-google-oauth20": "^2.0.0",
@@ -87,6 +90,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "spdy": "^4.0.0",
+    "turndown": "^5.0.3",
     "winston": "^3.2.1"
   },
   "devDependencies": {

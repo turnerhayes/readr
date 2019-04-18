@@ -3,6 +3,7 @@ exports.up = async function(knex, Promise) {
     table.increments("id");
     table.string("description").notNullable();
     table.text("body");
+    table.text("body_format").default("markdown");
     table.string("created_by_text");
     table.integer("created_by")
       .references("id")
@@ -12,6 +13,7 @@ exports.up = async function(knex, Promise) {
       .references("id")
       .inTable("users");
     table.string("status").notNullable();
+    table.string("origin_message_id").unique();
     table.timestamps(false, true);
     table.timestamp("deleted_at");
   });
