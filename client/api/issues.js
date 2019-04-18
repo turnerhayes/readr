@@ -1,12 +1,22 @@
 import { fromJS, OrderedMap } from "immutable";
 
+const transformResultToComment = (result) => {
+  return fromJS({
+    ...result,
+    createdAt: new Date(result.createdAt),
+    updatedAt: new Date(result.updatedAt),
+  });
+};
+
 const transformResultToIssue = (result) => {
-  return fromJS(
-    {
-      comments: [],
-      ...result,
-    }
-  );
+  return fromJS({
+    ...result,
+    comments: (result.comments || []).map(
+      transformResultToComment
+    ),
+    createdAt: new Date(result.createdAt),
+    updatedAt: new Date(result.updatedAt),
+  });
 };
 
 const issueArrayToMap = (issues) => {
@@ -23,7 +33,9 @@ const issueArrayToMap = (issues) => {
 };
 
 const issueCommentArrayToList = (issueComments) => {
-  return fromJS(issueComments);
+  return fromJS(
+    issueComments.map(transformResultToComment)
+  );
 };
 
 export const getIssue = async ({ id, includeComments = false } = {}) => {
@@ -52,18 +64,30 @@ export const getIssue = async ({ id, includeComments = false } = {}) => {
   );
 };
 
-export const getIssues = async ({ ids } = {}) => {
+export const getIssues = async ({ ids, includeClosed = false } = {}) => {
   let url = "/api/issues";
 
-  if (ids && ids.length > 0) {
-    const qs = new URLSearchParams();
+  const qs = new URLSearchParams();
 
+  let hasQs = false;
+
+  if (ids && ids.length > 0) {
     for (const id of ids) {
       qs.append("id", id);
     }
 
+    hasQs = true;
+  }
+
+  if (includeClosed) {
+    qs.append("includeClosed", 1);
+    hasQs = true;
+  }
+
+  if (hasQs) {
     url += `?${qs.toString()}`;
   }
+
 
   const response = await fetch(url);
 
@@ -134,7 +158,7 @@ export const updateIssue = async ({ issueID, updates }) => {
   if (response.status < 300) {
     const issue = await response.json();
 
-    return fromJS(issue);
+    return transformResultToIssue(issue);
   }
 
   throw new Error(
@@ -189,7 +213,7 @@ export const createIssueComment = async ({ issueID, commentData }) => {
   if (response.status < 300) {
     const issueComment = await response.json();
 
-    return fromJS(issueComment);
+    return transformResultToComment(issueComment);
   }
 
   throw new Error(
@@ -199,3 +223,38 @@ export const createIssueComment = async ({ issueID, commentData }) => {
   );
 };
 
+export const searchIssues = async ({ searchQuery }) => {
+  let url = "/api/issues/search";
+
+  const qs = new URLSearchParams();
+
+  qs.set("query", searchQuery);
+
+  url += `?${qs}`;
+
+  const response = await fetch(
+    url,
+    {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error searching issues");
+  }
+
+  if (response.status < 300) {
+    const results = await response.json();
+
+    return issueArrayToMap(results);
+  }
+
+  throw new Error(
+    `GET Request to /api/issues/search returned with status ${
+      response.status
+    }`
+  );
+};

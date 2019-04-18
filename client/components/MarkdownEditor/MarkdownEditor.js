@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classnames from "classnames";
 import {
   EditorState,
   convertToRaw,
@@ -15,9 +16,11 @@ import {
   CardContent,
   IconButton,
   withStyles,
+  CardHeader,
 } from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const MARKDOWN_DICTIONARY = {
   BOLD: "__",
@@ -74,11 +77,16 @@ SaveToolbarButton.propTypes = {
 class MarkdownEditor extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    className: PropTypes.string,
     editorState: PropTypes.instanceOf(EditorState).isRequired,
     toolbar: PropTypes.object,
-    toolbarCustomButtons: PropTypes.arrayOf(PropTypes.element),
     includeSaveButton: PropTypes.bool.isRequired,
     onSave: PropTypes.func,
+    cardAction: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.string,
+    ]),
+    raised: PropTypes.bool,
   }
 
   static defaultProps = {
@@ -132,29 +140,55 @@ class MarkdownEditor extends React.PureComponent {
   render() {
     const {
       toolbar,
-      toolbarCustomButtons,
       includeSaveButton,
       classes,
+      className,
+      cardAction,
+      raised,
       ...otherProps
     } = this.props;
 
-    let customButtons = toolbarCustomButtons;
+    const actions = [];
 
     if (includeSaveButton) {
-      if (!customButtons) {
-        customButtons = [];
-      }
-
-      customButtons.push(
+      actions.push(
         <SaveToolbarButton
-          key="save"
+          key="saveButton"
           onClick={this.handleSaveClick}
         />
       );
     }
 
+    if (cardAction) {
+      actions.push(
+        React.cloneElement(
+          cardAction,
+          {
+            key: "cardAction",
+          }
+        )
+      );
+    }
+
     return (
-      <Card>
+      <Card
+        className={classnames(
+          className,
+          classes.root
+        )}
+        raised={raised}
+      >
+        {
+          actions.length > 0 && (
+            <CardHeader
+              action={
+                <React.Fragment>
+                  {actions}
+                </React.Fragment>
+              }
+            />
+          )
+        }
         <CardContent>
           <Editor
             editorClassName={classes.editor}
@@ -162,7 +196,6 @@ class MarkdownEditor extends React.PureComponent {
               ...DEFAULT_TOOLBAR_OPTIONS,
               ...toolbar,
             }}
-            toolbarCustomButtons={customButtons}
             {...otherProps}
           />
         </CardContent>

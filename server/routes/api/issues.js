@@ -12,6 +12,7 @@ const {
   updateIssue,
   getComments,
   addComment,
+  searchIssues,
 } = require("../../persistence/stores/issues");
 const { ensureLoggedIn } = require("../utils");
 
@@ -22,7 +23,21 @@ router.route("/")
     ensureLoggedIn,
     async (req, res, next) => {
       try {
-        const issues = await getIssues();
+        let {
+          includeClosed,
+        } = req.query;
+
+        includeClosed = !!includeClosed;
+
+        const excludeStatuses = [];
+
+        if (!includeClosed) {
+          excludeStatuses.push("closed");
+        }
+
+        const issues = await getIssues({
+          excludeStatuses,
+        });
 
         res.json(issues);
       } catch (ex) {
@@ -54,6 +69,23 @@ router.route("/")
           .json(issue);
       } catch (ex) {
         next(ex);
+      }
+    }
+  );
+
+router.route("/search")
+  .get(
+    async (req, res, next) => {
+      const { query } = req.query;
+
+      try {
+        const results = await searchIssues({
+          query,
+        });
+
+        res.json(results);
+      } catch (ex) {
+        return next(ex);
       }
     }
   );

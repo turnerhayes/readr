@@ -41,6 +41,7 @@ module.exports = {
         "capIsNewExceptions": [
           "Map",
           "OrderedMap",
+          "List",
           "Set",
         ],
       },
