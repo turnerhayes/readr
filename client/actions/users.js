@@ -35,6 +35,8 @@ export function fetchUsers({ ids } = {}) {
           status: "complete",
         },
       });
+
+      return users;
     } catch (ex) {
       dispatch({
         type: FETCH_GET_USERS_FAIL,

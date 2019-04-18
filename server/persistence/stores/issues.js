@@ -60,6 +60,7 @@ const transformResultToIssueComment = (result) => {
 const getIssues = async ({
   ids,
   originMessageIDs,
+  excludeStatuses = [],
 } = {}) => {
   const connection = await getDataConnection();
 
@@ -97,6 +98,16 @@ const getIssues = async ({
         originMessageIDs
       );
     }
+  }
+
+  if (excludeStatuses && excludeStatuses.length > 0) {
+    if (excludeStatuses.length === 1) {
+      query = query.whereNot("status", excludeStatuses[0]);
+    }
+    query = query.whereNotIn(
+      "status",
+      excludeStatuses,
+    );
   }
 
   return query;
@@ -159,6 +170,7 @@ const updateIssue = async ({
   updates: {
     body,
     description,
+    status,
   },
 }) => {
   if (!userID) {
@@ -171,6 +183,7 @@ const updateIssue = async ({
     .update({
       body,
       description,
+      status,
       updated_at: connection.fn.now(),
       updated_by: userID,
     }).where({
@@ -233,6 +246,25 @@ const addComment = async ({
   return transformResultToIssueComment(comment);
 };
 
+const searchIssues = async ({ query }) => {
+  const connection = await getDataConnection();
+
+  query = query.toLowerCase();
+
+  const knexQuery = connection.select(UNALIASED_ISSUE_COLUMNS)
+    .select(ALIASED_ISSUE_COLUMNS).from(
+      "issues"
+    ).whereNull(
+      "deleted_at"
+    ).where(
+      connection.raw("LOWER(description)"), "like", `%${query}%`
+    ).orWhere(
+      connection.raw("LOWER(body)"), "like", `%${query}%`
+    );
+
+  return knexQuery;
+};
+
 module.exports = {
   getIssue,
   getIssues,
@@ -240,4 +272,5 @@ module.exports = {
   updateIssue,
   getComments,
   addComment,
+  searchIssues,
 };

@@ -1,33 +1,60 @@
-import React, { useCallback } from "react";
-import { useMappedState, useDispatch } from "redux-react-hook";
+import React from "react";
+import PropTypes from "prop-types";
+import ImmutablePropTypes from "react-immutable-proptypes";
+import { connect } from "react-redux";
 
 import { fetchIssues } from "+app/actions";
 
 import { IssuesGrid } from "./IssuesGrid";
 
-export const IssuesGridContainer = (props) => {
-  const mapState = useCallback(
-    (state) => ({
-      issues: state.issues.get("items"),
-      isFetched: state.issues.get("isFetched"),
-    }),
-    []
-  );
+/**
+ * Inner container that adds lifecycle event handlers
+ */
+class IssuesGridInnerContainer extends React.PureComponent {
+  static propTypes = {
+    issues: ImmutablePropTypes.mapOf(
+      ImmutablePropTypes.map
+    ),
+    fetchIssues: PropTypes.func,
+  }
 
-  const { issues, isFetched } = useMappedState(mapState);
+  /**
+   */
+  componentDidMount() {
+    this.props.fetchIssues();
+  }
 
-  const dispatch = useDispatch();
+  /**
+   * Renders the component.
+   *
+   * @return {JSX.Element}
+   */
+  render() {
+    return (
+      <IssuesGrid
+        {...this.props}
+      />
+    );
+  }
+}
 
-  if (!isFetched) {
+const mapStateToProps = (state) => ({
+  issues: state.issues.get("items") === null ?
+    null :
+    state.issues.get("items").filter(
+      (issue) => issue.get("status") !== "closed"
+    ),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchIssues() {
     dispatch(
       fetchIssues()
     );
-  }
+  },
+});
 
-  return (
-    <IssuesGrid
-      {...props}
-      issues={issues}
-    />
-  );
-};
+export const IssuesGridContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(IssuesGridInnerContainer);

@@ -19,10 +19,34 @@ const getUserIDsFromIssues = (issues) => {
               }
             }
           );
+
+          if (issue.get("comments", List()).size > 0) {
+            idSet.concat(getUserIDsFromIssues(issue.get("comments")));
+          }
         }
       );
     }
   );
+};
+
+const getMissingUserIDs = async ({
+  items,
+  getState,
+  dispatch,
+}) => {
+  const referencedUserIDs = getUserIDsFromIssues(items);
+
+  const missingUserIDs = referencedUserIDs.subtract(
+    getState().users.get("items").keySeq()
+  );
+
+  if (!missingUserIDs.isEmpty()) {
+    await dispatch(
+      fetchUsers({
+        ids: missingUserIDs.toArray(),
+      })
+    );
+  }
 };
 
 export const FETCH_GET_ISSUES_START = "FETCH_GET_ISSUES_START";
@@ -55,19 +79,11 @@ export function fetchIssues({ ids } = {}) {
 
       const issues = await api.getIssues({ ids });
 
-      const issueUserIDs = getUserIDsFromIssues(issues);
-
-      const missingUserIDs = issueUserIDs.subtract(
-        getState().users.get("items").keySeq()
-      );
-
-      if (!missingUserIDs.isEmpty()) {
-        dispatch(
-          fetchUsers({
-            ids: missingUserIDs.toArray(),
-          })
-        );
-      }
+      await getMissingUserIDs({
+        items: issues,
+        getState,
+        dispatch,
+      });
 
       dispatch({
         type: FETCH_GET_ISSUES_COMPLETE,
@@ -128,19 +144,11 @@ export function fetchIssue({ id, includeComments = false }) {
 
       const issue = await api.getIssue({ id, includeComments });
 
-      const issueUserIDs = getUserIDsFromIssues(List.of(issue));
-
-      const missingUserIDs = issueUserIDs.subtract(
-        getState().users.get("items").keySeq()
-      );
-
-      if (!missingUserIDs.isEmpty()) {
-        dispatch(
-          fetchUsers({
-            ids: missingUserIDs.toArray(),
-          })
-        );
-      }
+      await getMissingUserIDs({
+        items: List.of(issue),
+        getState,
+        dispatch,
+      });
 
       dispatch({
         type: FETCH_GET_ISSUE_COMPLETE,
@@ -201,19 +209,11 @@ export function fetchIssueComments({ issueID }) {
 
       const issueComments = await api.getIssueComments({ issueID });
 
-      const issueCommentUserIDs = getUserIDsFromIssues(issueComments);
-
-      const missingUserIDs = issueCommentUserIDs.subtract(
-        getState().users.get("items").keySeq()
-      );
-
-      if (!missingUserIDs.isEmpty()) {
-        dispatch(
-          fetchUsers({
-            ids: missingUserIDs.toArray(),
-          })
-        );
-      }
+      await getMissingUserIDs({
+        items: issueComments,
+        getState,
+        dispatch,
+      });
 
       dispatch({
         type: FETCH_GET_ISSUE_COMMENTS_COMPLETE,
@@ -346,6 +346,8 @@ export function updateIssue({ issueID, updates }) {
           status: "complete",
         },
       });
+
+      return issue;
     } catch (ex) {
       dispatch({
         type: FETCH_UPDATE_ISSUE_FAIL,
@@ -428,6 +430,71 @@ export function addIssueComment({ issueID, commentData }) {
         },
         api: {
           callName: "createIssueComment",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
+    }
+  };
+}
+
+export const FETCH_SEARCH_ISSUES_START =
+  "FETCH_SEARCH_ISSUES_START";
+
+export const FETCH_SEARCH_ISSUES_FAIL =
+  "FETCH_SEARCH_ISSUES_FAIL";
+
+export const FETCH_SEARCH_ISSUES_COMPLETE =
+  "FETCH_SEARCH_ISSUES_COMPLETE";
+
+/**
+ * Action creator for creating an issue comment
+ *
+ * @param {object} args
+ * @param {object} args.searchQuery the query to search
+ *
+ * @return {function} an action creator function
+ */
+export function searchIssues({ searchQuery }) {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_START,
+        payload: {
+          searchQuery,
+        },
+        api: {
+          callName: "searchIssues",
+          status: "started",
+        },
+      });
+
+      const results = await api.searchIssues({
+        searchQuery,
+      });
+
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_COMPLETE,
+        payload: {
+          results,
+        },
+        api: {
+          callName: "searchIssues",
+          status: "complete",
+        },
+      });
+
+      return results;
+    } catch (ex) {
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_FAIL,
+        payload: {
+          searchQuery,
+        },
+        api: {
+          callName: "searchIssues",
           status: "complete",
         },
         error: ex,
