@@ -6,6 +6,7 @@ import { Grid, withStyles } from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "material-ui-pickers";
 import { useMappedState } from "redux-react-hook";
 import DateFnsUtils from "@date-io/date-fns";
+import qs from "qs";
 
 import { requireLogin } from "+app/components/requireLogin";
 import { Home } from "+app/components/Home";
@@ -17,6 +18,8 @@ import { Issues } from "+app/components/Issues";
 import { IssueDetailContainer } from "+app/components/IssueDetail";
 import { AddIssueContainer } from "+app/components/AddIssue";
 import { LoginPage } from "+app/components/LoginPage";
+import { NotFoundPage } from "+app/components/NotFoundPage";
+import { IssuesSearchPage } from "+app/components/IssuesSearchPage";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
 
 const styles = {
@@ -70,8 +73,20 @@ class App extends React.Component {
                 exact path="/issues/add"
                 component={requireLogin(AddIssueContainer)}
               />
+              {<Route
+                exact path="/issues/search"
+                component={requireLogin(({ location }) => {
+                  const search = qs.parse(location.search.replace(/^\?/, ""));
+
+                  return (
+                    <IssuesSearchPage
+                      search={search}
+                    />
+                  );
+                })}
+              />}
               <Route
-                exact path="/issues/:issueID"
+                exact path="/issues/:issueID(\d+)"
                 component={requireLogin(({ match, ...props }) => (
                   <IssueDetailContainer
                     id={Number(match.params.issueID)}
@@ -86,6 +101,9 @@ class App extends React.Component {
               <Route
                 exact path="/"
                 component={requireLogin(Home)}
+              />
+              <Route
+                component={NotFoundPage}
               />
             </Switch>
           </Grid>
