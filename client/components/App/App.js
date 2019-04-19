@@ -11,9 +11,7 @@ import qs from "qs";
 import { requireLogin } from "+app/components/requireLogin";
 import { Home } from "+app/components/Home";
 import { TopNav } from "+app/components/TopNav";
-import {
-  RentPaymentsContainer as RentPayments,
-} from "+app/components/RentPayments";
+import { RentPaymentsContainer } from "+app/components/RentPayments";
 import { Issues } from "+app/components/Issues";
 import { IssueDetailContainer } from "+app/components/IssueDetail";
 import { AddIssueContainer } from "+app/components/AddIssue";
@@ -21,6 +19,31 @@ import { LoginPage } from "+app/components/LoginPage";
 import { NotFoundPage } from "+app/components/NotFoundPage";
 import { IssuesSearchPage } from "+app/components/IssuesSearchPage";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
+
+const WrappedHome = requireLogin(Home);
+const WrappedIssues = requireLogin(Issues);
+const WrappedAddIssueContainer = requireLogin(AddIssueContainer);
+const WrappedRentPayments = requireLogin(RentPaymentsContainer);
+
+const IssueDetail = requireLogin(
+  ({ match, ...props }) => (
+    <IssueDetailContainer
+      id={Number(match.params.issueID)}
+      {...props}
+    />
+  )
+);
+
+const IssuesSearch = requireLogin(({ location }) => {
+  const queryString = location.search.replace(/^\?/, "");
+  const search = queryString ? qs.parse(queryString) : null;
+
+  return (
+    <IssuesSearchPage
+      search={search}
+    />
+  );
+});
 
 const styles = {
   root: {
@@ -68,40 +91,27 @@ class App extends React.Component {
             <Switch>
               <Route
                 exact path="/rent"
-                component={requireLogin(RentPayments)}
+                component={WrappedRentPayments}
               />
               <Route
                 exact path="/issues/add"
-                component={requireLogin(AddIssueContainer)}
+                component={WrappedAddIssueContainer}
               />
               {<Route
                 exact path="/issues/search"
-                component={requireLogin(({ location }) => {
-                  const search = qs.parse(location.search.replace(/^\?/, ""));
-
-                  return (
-                    <IssuesSearchPage
-                      search={search}
-                    />
-                  );
-                })}
+                component={IssuesSearch}
               />}
               <Route
                 exact path="/issues/:issueID(\d+)"
-                component={requireLogin(({ match, ...props }) => (
-                  <IssueDetailContainer
-                    id={Number(match.params.issueID)}
-                    {...props}
-                  />
-                ))}
+                component={IssueDetail}
               />
               <Route
                 exact path="/issues"
-                component={requireLogin(Issues)}
+                component={WrappedIssues}
               />
               <Route
                 exact path="/"
-                component={requireLogin(Home)}
+                component={WrappedHome}
               />
               <Route
                 component={NotFoundPage}

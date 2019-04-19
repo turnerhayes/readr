@@ -17,7 +17,7 @@ const styles = {
   },
 };
 
-const IssuesSearchPage = ({ classes, search: { query } }) => {
+const IssuesSearchPage = ({ classes, search }) => {
   const mapState = useCallback(
     (state) => {
       const resultIDs = state.issues.get("searchResults");
@@ -41,10 +41,10 @@ const IssuesSearchPage = ({ classes, search: { query } }) => {
 
   const dispatch = useDispatch();
 
-  if (results === null) {
+  if (search !== null && results === null) {
     dispatch(
       searchIssues({
-        searchQuery: query,
+        searchQuery: search.query,
       })
     );
 
@@ -113,7 +113,7 @@ IssuesSearchPage.propTypes = {
   classes: PropTypes.object.isRequired,
   search: PropTypes.shape({
     query: PropTypes.string,
-  }).isRequired,
+  }),
 };
 
 const StyledIssuesSearchPage = withStyles(styles)(IssuesSearchPage);
