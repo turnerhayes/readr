@@ -8,13 +8,29 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import withStyles from "@material-ui/core/styles/withStyles";
 import AddIcon from "@material-ui/icons/Add";
+
 import { IssuesGridContainer } from "+app/components/IssuesGrid";
 
+
 const styles = {
+  root: {
+    height: "100%",
+  },
+
+  gridContainer: {
+    flex: 1,
+    minHeight: 0,
+  },
+
+  grid: {
+    maxHeight: "100%",
+  },
+
   searchContainer: {
     marginRight: "auto",
     marginLeft: "2em",
   },
+
   form: {
     display: "flex",
     alignContent: "center",
@@ -42,6 +58,8 @@ class Issues extends React.PureComponent {
     return (
       <Grid container
         direction="column"
+        wrap="nowrap"
+        className={this.props.classes.root}
       >
         <Grid item container
           wrap="nowrap"
@@ -82,8 +100,12 @@ class Issues extends React.PureComponent {
             </IconButton>
           </Grid>
         </Grid>
-        <Grid item>
-          <IssuesGridContainer />
+        <Grid item
+          className={this.props.classes.gridContainer}
+        >
+          <IssuesGridContainer
+            className={this.props.classes.grid}
+          />
         </Grid>
       </Grid>
     );
