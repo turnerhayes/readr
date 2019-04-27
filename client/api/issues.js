@@ -1,4 +1,4 @@
-import { fromJS, OrderedMap } from "immutable";
+import { fromJS, OrderedMap, Set, Map } from "immutable";
 
 const transformResultToComment = (result) => {
   return fromJS({
@@ -223,12 +223,26 @@ export const createIssueComment = async ({ issueID, commentData }) => {
   );
 };
 
-export const searchIssues = async ({ searchQuery }) => {
+export const searchIssues = async ({ searchQuery, statuses, activityBy }) => {
   let url = "/api/issues/search";
 
   const qs = new URLSearchParams();
 
-  qs.set("query", searchQuery);
+  if (searchQuery) {
+    qs.set("query", searchQuery);
+  }
+
+  if (statuses && statuses.length > 0) {
+    for (const status of statuses) {
+      qs.append("status", status);
+    }
+  }
+
+  if (activityBy && activityBy.length > 0) {
+    for (const user of activityBy) {
+      qs.append("activityBy", JSON.stringify(user));
+    }
+  }
 
   url += `?${qs}`;
 
@@ -254,6 +268,46 @@ export const searchIssues = async ({ searchQuery }) => {
 
   throw new Error(
     `GET Request to /api/issues/search returned with status ${
+      response.status
+    }`
+  );
+};
+
+export const getIssueUsers = async ({ nameFilter }) => {
+  let url = "/api/issues/issueUsers";
+
+  if (nameFilter) {
+    const qs = new URLSearchParams();
+
+    qs.set("nameFilter", nameFilter);
+
+    url += `?${qs}`;
+  }
+
+  const response = await fetch(
+    url,
+    {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Error getting issue users");
+  }
+
+  if (response.status < 300) {
+    const results = await response.json();
+
+    return Set(
+      results.map(Map)
+    );
+  }
+
+  throw new Error(
+    `GET Request to /api/issues/issueUsers returned with status ${
       response.status
     }`
   );

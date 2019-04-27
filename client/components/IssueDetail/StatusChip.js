@@ -8,11 +8,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Popper from "@material-ui/core/Popper";
 import Paper from "@material-ui/core/Paper";
 
-const STATUS_VALUES = [
-  "new",
-  "blocked",
-  "closed",
-];
+import { ISSUE_STATUSES } from "+app/constants";
 
 
 export const StatusChip = ({ currentStatus, onChange }) => {
@@ -69,7 +65,7 @@ export const StatusChip = ({ currentStatus, onChange }) => {
                 >
                   <MenuList>
                     {
-                      STATUS_VALUES.map(
+                      ISSUE_STATUSES.map(
                         (status) => status === currentStatus ?
                           null : (
                             <MenuItem
@@ -94,6 +90,6 @@ export const StatusChip = ({ currentStatus, onChange }) => {
 };
 
 StatusChip.propTypes = {
-  currentStatus: PropTypes.oneOf(STATUS_VALUES).isRequired,
+  currentStatus: PropTypes.oneOf(ISSUE_STATUSES).isRequired,
   onChange: PropTypes.func.isRequired,
 };

@@ -14,15 +14,23 @@ const userArrayToMap = (userArray) => {
 };
 
 export const getUsers = async ({ ids }) => {
+  let url = "/api/users";
+
+  const qs = new URLSearchParams();
+
+  if (ids && ids.length > 0) {
+    for (const id of ids) {
+      qs.append("ids", id);
+    }
+  }
+
+  url += `?${qs}`;
+
   const response = await fetch(
-    "/api/users",
+    url,
     {
-      body: JSON.stringify({
-        ids,
-      }),
       headers: {
         "Accept": "application/json",
-        "Content-type": "application/json",
       },
     }
   );

@@ -246,23 +246,283 @@ const addComment = async ({
   return transformResultToIssueComment(comment);
 };
 
-const searchIssues = async ({ query }) => {
+const searchIssues = async ({
+  query,
+  status,
+  activityBy,
+}) => {
+  if (
+    !query &&
+    (
+      !status ||
+      status.length === 0
+    ) &&
+    (
+      !activityBy ||
+      activityBy.length === 0
+    )
+  ) {
+    throw new Error(
+      "No search criteria specified"
+    );
+  }
+
   const connection = await getDataConnection();
 
-  query = query.toLowerCase();
-
-  const knexQuery = connection.select(UNALIASED_ISSUE_COLUMNS)
+  let knexQuery = connection.select(UNALIASED_ISSUE_COLUMNS)
     .select(ALIASED_ISSUE_COLUMNS).from(
       "issues"
     ).whereNull(
       "deleted_at"
-    ).where(
-      connection.raw("LOWER(description)"), "like", `%${query}%`
-    ).orWhere(
-      connection.raw("LOWER(body)"), "like", `%${query}%`
     );
 
+  if (query) {
+    query = query.toLowerCase();
+
+    knexQuery = knexQuery.where(
+      function(builder) {
+        return builder.where(
+          connection.raw(
+            "LOWER(description)"
+          ),
+          "like",
+          `%${query}%`
+        ).orWhere(
+          connection.raw(
+            "LOWER(body)"
+          ),
+          "like",
+          `%${query}%`
+        );
+      }
+    );
+  }
+
+  if (status && status.length > 0) {
+    if (status.length === 1) {
+      knexQuery = knexQuery.where({
+        status: status[0],
+      });
+    } else {
+      knexQuery = knexQuery.whereIn(
+        "status",
+        status
+      );
+    }
+  }
+
+  if (activityBy && activityBy.length > 0) {
+    knexQuery = knexQuery.where(
+      (builder) => {
+        let subQuery;
+
+        const registeredUsers = [];
+        const freetext = [];
+
+        for (const { id, text } of activityBy) {
+          if (id !== undefined) {
+            registeredUsers.push(id);
+          } else {
+            freetext.push(text);
+          }
+        }
+
+        if (freetext.length === 1) {
+          subQuery = builder.where({
+            created_by_text: freetext[0],
+          }).orWhere({
+            updated_by_text: freetext[0],
+          });
+        } else if (freetext.length > 1) {
+          subQuery = builder.whereIn(
+            "created_by_text",
+            freetext
+          ).orWhere(
+            "updated_by_text",
+            freetext
+          );
+        }
+
+        if (registeredUsers.length === 1) {
+          if (subQuery) {
+            subQuery = subQuery.orWhere({
+              "created_by": registeredUsers[0],
+            });
+          } else {
+            subQuery = builder.where({
+              "created_by": registeredUsers[0],
+            });
+          }
+          subQuery = subQuery.orWhere({
+            "updated_by": registeredUsers[0],
+          }).orWhereExists(
+            connection.select().from("issue_comments")
+              .where({
+                "issue_comments.issue_id": connection.ref("issues.id"),
+              }).where(
+                (builder) => {
+                  return builder.where({
+                    "issue_comments.created_by": registeredUsers[0],
+                  }).orWhere({
+                    "issue_comments.updated_by": registeredUsers[0],
+                  });
+                }
+              )
+          );
+        } else if (registeredUsers.length > 1) {
+          subQuery = subQuery.orWhereIn(
+            "created_by",
+            registeredUsers
+          ).orWhereIn(
+            "updated_by",
+            registeredUsers
+          ).orWhereExists(
+            connection.select().from("issue_comments")
+              .where({
+                "issue_comments.issue_id": connection.ref("issues.id"),
+              }).where(
+                (builder) => {
+                  return builder.whereIn(
+                    "issue_comments.created_by",
+                    registeredUsers
+                  ).orWhereIn(
+                    "issue_comments.updated_by",
+                    registeredUsers
+                  );
+                }
+              )
+          );
+        }
+
+        return subQuery;
+      }
+    );
+  }
+
   return knexQuery;
+};
+
+const getIssueUsers = async ({
+  nameFilter,
+}) => {
+  const connection = await getDataConnection();
+
+  if (nameFilter) {
+    nameFilter = nameFilter.toLowerCase();
+  }
+
+  const getUserIDSubQuery = (columnName, tableName) => {
+    let subquery = connection.select({
+      userID: "users.id",
+      firstName: "first_name",
+      middleName: "middle_name",
+      lastName: "last_name",
+      displayName: "display_name",
+      text: connection.raw("null"),
+    }).from(tableName).join(
+      "users",
+      "users.id",
+      "=",
+      tableName + "." + columnName
+    )
+      .whereNull(tableName + ".deleted_at")
+      .whereNull("users.deleted_at")
+      .whereNotNull(tableName + "." + columnName);
+
+    if (nameFilter) {
+      subquery = subquery.where(
+        connection.raw("LOWER(users.first_name)"),
+        "like",
+        `%${nameFilter}%`
+      ).orWhere(
+        connection.raw("LOWER(users.middle_name)"),
+        "like",
+        `%${nameFilter}%`
+      ).orWhere(
+        connection.raw("LOWER(users.last_name)"),
+        "like",
+        `%${nameFilter}%`
+      ).orWhere(
+        connection.raw("LOWER(users.display_name)"),
+        "like",
+        `%${nameFilter}%`
+      );
+    }
+
+    return subquery;
+  };
+
+  const getTextSubquery = (columnName) => {
+    let query = connection.select({
+      userID: connection.raw("null"),
+      firstName: connection.raw("null"),
+      middleName: connection.raw("null"),
+      lastName: connection.raw("null"),
+      displayName: connection.raw("null"),
+      text: columnName,
+    }).from("issues").whereNull("deleted_at")
+      .whereNotNull(columnName);
+
+    if (nameFilter) {
+      query = query.where(
+        connection.raw(`LOWER(${columnName})`),
+        "like",
+        `%${nameFilter}%`
+      );
+    }
+
+    return query;
+  };
+
+  const results = await connection.distinct(
+    "userID",
+    "text",
+    "firstName",
+    "middleName",
+    "lastName",
+    "displayName",
+  ).from(
+    // This weird syntax seems to be the only way to get Knex
+    // to generate a proper subquery as the from table
+    {
+      issue_users: getUserIDSubQuery("created_by", "issues")
+        .unionAll(
+          getUserIDSubQuery("updated_by", "issues")
+        ).unionAll(
+          getUserIDSubQuery("created_by", "issue_comments")
+        ).unionAll(
+          getUserIDSubQuery("updated_by", "issue_comments")
+        ).unionAll(
+          getTextSubquery("created_by_text")
+        ).unionAll(
+          getTextSubquery("updated_by_text")
+        ),
+    }
+  );
+
+  return results.map(
+    ({ userID, text, displayName, firstName, middleName, lastName }) => {
+      if (text !== null) {
+        return { text };
+      }
+
+      if (displayName !== null) {
+        return {
+          id: userID,
+          name: displayName,
+        };
+      }
+
+      return {
+        id: userID,
+        name: [
+          firstName,
+          middleName,
+          lastName,
+        ].filter((name) => name).join(" "),
+      };
+    }
+  );
 };
 
 module.exports = {
@@ -273,4 +533,5 @@ module.exports = {
   getComments,
   addComment,
   searchIssues,
+  getIssueUsers,
 };

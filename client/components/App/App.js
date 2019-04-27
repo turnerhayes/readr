@@ -17,7 +17,7 @@ import { IssueDetailContainer } from "+app/components/IssueDetail";
 import { AddIssueContainer } from "+app/components/AddIssue";
 import { LoginPage } from "+app/components/LoginPage";
 import { NotFoundPage } from "+app/components/NotFoundPage";
-import { IssuesSearchPage } from "+app/components/IssuesSearchPage";
+import { IssuesSearchPageContainer } from "+app/components/IssuesSearchPage";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
 
 const WrappedHome = requireLogin(Home);
@@ -39,7 +39,8 @@ const IssuesSearch = requireLogin(({ location }) => {
   const search = queryString ? qs.parse(queryString) : null;
 
   return (
-    <IssuesSearchPage
+    <IssuesSearchPageContainer
+      location={location}
       search={search}
     />
   );

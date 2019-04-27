@@ -7,6 +7,7 @@ import {
   FETCH_GET_ISSUE_COMMENTS_COMPLETE,
   FETCH_GET_ISSUE_COMPLETE,
   FETCH_SEARCH_ISSUES_COMPLETE,
+  ISSUES_CLEAR_SEARCH_RESULTS,
 } from "+app/actions";
 
 const initialState = Map({
@@ -52,6 +53,10 @@ export const IssuesReducer = (state = initialState, action) => {
             (result) => result.get("id")
           )
         );
+    }
+
+    case ISSUES_CLEAR_SEARCH_RESULTS: {
+      return state.delete("searchResults");
     }
 
     case FETCH_GET_ISSUE_COMMENTS_COMPLETE: {
