@@ -80,7 +80,7 @@ class Issues extends React.PureComponent {
               <TextField
                 type="search"
                 label="Search Issues"
-                name="query"
+                name="q"
               />
               <Button
                 type="submit"

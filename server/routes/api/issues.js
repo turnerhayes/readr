@@ -13,6 +13,7 @@ const {
   getComments,
   addComment,
   searchIssues,
+  getIssueUsers,
 } = require("../../persistence/stores/issues");
 const { ensureLoggedIn } = require("../utils");
 
@@ -73,14 +74,49 @@ router.route("/")
     }
   );
 
+router.route("/issueUsers")
+  .get(
+    async (req, res, next) => {
+      const {
+        nameFilter,
+      } = req.query;
+
+      try {
+        const names = await getIssueUsers({ nameFilter });
+
+        res.json(names);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  );
+
 router.route("/search")
   .get(
     async (req, res, next) => {
-      const { query } = req.query;
+      let { query, status, activityBy } = req.query;
+
+      if (status && !Array.isArray(status)) {
+        status = [status];
+      }
+
+      if (activityBy) {
+        if (!Array.isArray(activityBy)) {
+          activityBy = [activityBy];
+        }
+
+        if (activityBy.length > 0) {
+          activityBy = activityBy.map(
+            (user) => JSON.parse(user)
+          );
+        }
+      }
 
       try {
         const results = await searchIssues({
           query,
+          status,
+          activityBy,
         });
 
         res.json(results);

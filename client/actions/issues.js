@@ -453,17 +453,22 @@ export const FETCH_SEARCH_ISSUES_COMPLETE =
  * Action creator for creating an issue comment
  *
  * @param {object} args
- * @param {object} args.searchQuery the query to search
+ * @param {string} [args.searchQuery] the query to search
+ * @param {string[]} [args.statuses] results must be in one of these statuses
+ * @param {string[]} [args.activityBy] results must contain some action taken
+ * by one of these users (either the issue or one of its comments)
  *
  * @return {function} an action creator function
  */
-export function searchIssues({ searchQuery }) {
+export function searchIssues({ searchQuery, statuses, activityBy }) {
   return async (dispatch) => {
     try {
       dispatch({
         type: FETCH_SEARCH_ISSUES_START,
         payload: {
           searchQuery,
+          statuses,
+          activityBy,
         },
         api: {
           callName: "searchIssues",
@@ -473,6 +478,8 @@ export function searchIssues({ searchQuery }) {
 
       const results = await api.searchIssues({
         searchQuery,
+        statuses,
+        activityBy,
       });
 
       dispatch({
@@ -492,6 +499,8 @@ export function searchIssues({ searchQuery }) {
         type: FETCH_SEARCH_ISSUES_FAIL,
         payload: {
           searchQuery,
+          statuses,
+          activityBy,
         },
         api: {
           callName: "searchIssues",
@@ -505,3 +514,10 @@ export function searchIssues({ searchQuery }) {
   };
 }
 
+export const ISSUES_CLEAR_SEARCH_RESULTS = "ISSUES_CLEAR_SEARCH_RESULTS";
+
+export const clearIssuesSearchResults = () => {
+  return {
+    type: ISSUES_CLEAR_SEARCH_RESULTS,
+  };
+};
