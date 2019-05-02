@@ -76,6 +76,16 @@ let webpackConfig = {
 
     new webpack.EnvironmentPlugin({
       NODE_ENV: Config.app.environment,
+      ...Object.keys(Config.auth.providers).reduce(
+        (enabled, provider) => {
+          if (Config.auth.providers[provider].isEnabled) {
+            enabled[`ENABLED_AUTH_PROVIDER_${provider.toUpperCase()}`] = true;
+          }
+
+          return enabled;
+        },
+        {}
+      ),
     }),
 
     new MiniCssExtractPlugin({

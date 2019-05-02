@@ -14,6 +14,8 @@ const {
   addComment,
   searchIssues,
   getIssueUsers,
+  markIssueSeen,
+  markIssueCommentSeen,
 } = require("../../persistence/stores/issues");
 const { ensureLoggedIn } = require("../utils");
 
@@ -38,6 +40,7 @@ router.route("/")
 
         const issues = await getIssues({
           excludeStatuses,
+          userID: req.user.id,
         });
 
         res.json(issues);
@@ -62,6 +65,11 @@ router.route("/")
         const issue = await createIssue({
           userID: req.user.id,
           issueData,
+        });
+
+        await markIssueSeen({
+          issueID: issue.id,
+          userID: req.user.id,
         });
 
         res
@@ -117,6 +125,7 @@ router.route("/search")
           query,
           status,
           activityBy,
+          userID: req.user.id,
         });
 
         res.json(results);
@@ -144,6 +153,7 @@ router.route("/:issueID")
       try {
         const issue = await getIssue({
           id: issueID,
+          userID: req.user.id,
           includeComments,
         });
 
@@ -189,6 +199,37 @@ router.route("/:issueID")
     }
   );
 
+router.route("/:issueID/seen")
+  .put(
+    ensureLoggedIn,
+    async (req, res, next) => {
+      let { issueID } = req.params;
+
+      const includeComments = Boolean(req.query.includeComments);
+
+      issueID = Number(issueID);
+
+      if (isNaN(issueID)) {
+        const err = new Error("Must provide an integer issueID parameter");
+        err.status = BAD_REQUEST;
+
+        return next(err);
+      }
+
+      try {
+        const marked = await markIssueSeen({
+          issueID,
+          includeComments,
+          userID: req.user.id,
+        });
+
+        res.json(marked);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  );
+
 router.route("/:issueID/comments")
   .get(
     ensureLoggedIn,
@@ -205,7 +246,10 @@ router.route("/:issueID/comments")
       }
 
       try {
-        const comments = await getComments({ issueID });
+        const comments = await getComments({
+          issueID,
+          userID: req.user.id,
+        });
 
         res.json(comments);
       } catch (ex) {
@@ -242,6 +286,11 @@ router.route("/:issueID/comments")
           issueID,
           userID: req.user.id,
           commentData,
+        });
+
+        await markIssueCommentSeen({
+          issueCommentID: comment.id,
+          userID: req.user.id,
         });
 
         res
