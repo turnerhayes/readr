@@ -4,6 +4,10 @@ import {
   FETCH_GET_ISSUES_COMPLETE,
   FETCH_UPDATE_ISSUE_COMPLETE,
   FETCH_CREATE_ISSUE_COMPLETE,
+  FETCH_GET_ISSUE_COMMENTS_COMPLETE,
+  FETCH_GET_ISSUE_COMPLETE,
+  FETCH_SEARCH_ISSUES_COMPLETE,
+  ISSUES_CLEAR_SEARCH_RESULTS,
 } from "+app/actions";
 
 const initialState = Map({
@@ -11,17 +15,23 @@ const initialState = Map({
   isFetched: false,
 });
 
+const updateIssues = (state, issues) => {
+  return state.updateIn(
+    [
+      "items",
+    ],
+    (issueItems) => (issueItems || Map()).merge(issues)
+  );
+};
+
 export const IssuesReducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_GET_ISSUES_COMPLETE: {
-      return state.mergeIn(
-        [
-          "items",
-        ],
-        action.payload.issues
-      ).set("isFetched", true);
+      return updateIssues(state, action.payload.issues)
+        .set("isFetched", true);
     }
 
+    case FETCH_GET_ISSUE_COMPLETE:
     case FETCH_CREATE_ISSUE_COMPLETE:
     case FETCH_UPDATE_ISSUE_COMPLETE: {
       return state.setIn(
@@ -30,6 +40,35 @@ export const IssuesReducer = (state = initialState, action) => {
           action.payload.issue.get("id"),
         ],
         action.payload.issue
+      );
+    }
+
+    case FETCH_SEARCH_ISSUES_COMPLETE: {
+      return updateIssues(state, action.payload.results)
+        .setIn(
+          [
+            "searchResults",
+          ],
+          action.payload.results.map(
+            (result) => result.get("id")
+          )
+        );
+    }
+
+    case ISSUES_CLEAR_SEARCH_RESULTS: {
+      return state.delete("searchResults");
+    }
+
+    case FETCH_GET_ISSUE_COMMENTS_COMPLETE: {
+      const { issueComments, issueID } = action.payload;
+
+      return state.setIn(
+        [
+          "items",
+          issueID,
+          "comments",
+        ],
+        issueComments
       );
     }
 

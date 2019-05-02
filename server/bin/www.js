@@ -107,6 +107,6 @@ function onListening() {
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(Config.app.address.port);
+server.listen(Config.app.address.port, "0.0.0.0");
 server.on("error", onError);
 server.on("listening", onListening);

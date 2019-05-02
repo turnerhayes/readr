@@ -1,43 +1,58 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
-import {
-  Grid,
-  Typography,
-  IconButton,
-} from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
+import classnames from "classnames";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import ListItem from "@material-ui/core/ListItem";
+import List from "@material-ui/core/List";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
 import CancelEditingIcon from "@material-ui/icons/Cancel";
-import SaveIcon from "@material-ui/icons/Save";
+import withStyles from "@material-ui/core/styles/withStyles";
+import ReplyIcon from "@material-ui/icons/Reply";
+import EditIcon from "@material-ui/icons/Edit";
 import ReactMarkdown from "react-markdown";
-import parseISO from "date-fns/parseISO";
-import formatRelative from "date-fns/formatRelative";
+import { EditorState } from "draft-js";
 
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { MarkdownEditor } from "../MarkdownEditor";
+import { MarkdownEditor } from "+app/components/MarkdownEditor";
+import { IssueHeader } from "+app/components/IssueDetail/IssueHeader";
+import { IssueComment } from "+app/components/IssueDetail/IssueComment";
+import { StatusChip } from "+app/components/IssueDetail/StatusChip";
 
 
-const SaveToolbarButton = ({ onClick }) => {
-  return (
-    <IconButton
-      onClick={onClick}
-    >
-      <SaveIcon />
-    </IconButton>
-  );
-};
+const styles = (theme) => ({
+  root: {
+    height: "100%",
+    overflow: "auto",
+  },
 
-SaveToolbarButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
-};
+  fullWidth: {
+    width: "100%",
+  },
+
+  gutters: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+  },
+
+  chip: {
+    alignSelf: "flex-start",
+    marginTop: "1em",
+  },
+});
 
 /**
  * Issue detail component
  */
-export class IssueDetail extends React.PureComponent {
+class IssueDetail extends React.PureComponent {
   static propTypes = {
+    className: PropTypes.string,
+    classes: PropTypes.object.isRequired,
     issue: ImmutablePropTypes.map.isRequired,
     updateIssue: PropTypes.func.isRequired,
+    addComment: PropTypes.func.isRequired,
   }
 
   /**
@@ -53,17 +68,29 @@ export class IssueDetail extends React.PureComponent {
       editorState: MarkdownEditor.markdownToEditorState(
         props.issue.get("body")
       ),
+      currentStatus: props.issue.get("status"),
       isEditing: false,
+      isReplying: false,
+      replyContent: null,
     };
   }
 
   /**
-   * Converts the current editor state to a Markdown string
+   * Converts the current issue editor state to a Markdown string
    *
    * @return {string}
    */
-  getCurrentMarkdown = () => {
+  getCurrentIssueMarkdown = () => {
     return MarkdownEditor.editorStateToMarkdown(this.state.editorState);
+  }
+
+  /**
+   * Converts the current comment editor state to a Markdown string
+   *
+   * @return {string}
+   */
+  getCurrentCommentMarkdown = () => {
+    return MarkdownEditor.editorStateToMarkdown(this.state.replyContent);
   }
 
   /**
@@ -87,12 +114,80 @@ export class IssueDetail extends React.PureComponent {
   }
 
   /**
-   * Handles a click of the Save toolbar button
+   * Handles a click of the Save toolbar button for the issue editor
    */
-  handleSaveBodyClick = () => {
+  handleSaveIssueBodyClick = () => {
     this.props.updateIssue({
-      body: this.getCurrentMarkdown(),
+      body: this.getCurrentIssueMarkdown(),
     });
+  }
+
+  /**
+   * Handles a click of the Save toolbar button for the comment editor
+   */
+  handleSaveCommentClick = async () => {
+    await this.props.addComment({
+      body: this.getCurrentCommentMarkdown(),
+    });
+
+    this.closeReply();
+  }
+
+  /**
+   * Handles a click of the Reply button
+   */
+  handleReplyButtonClick = () => {
+    this.setState((prevState) => {
+      const newState = {
+        isReplying: true,
+      };
+
+      if (prevState.replyContent === null) {
+        newState.replyContent = EditorState.createEmpty();
+      }
+
+      return newState;
+    });
+  }
+
+  /**
+   * Handles change of the reply editor's state
+   *
+   * @param {EditorState} editorState the new editor state
+   */
+  handleReplyEditorContentChange = (editorState) => {
+    this.setState({
+      replyContent: editorState,
+    });
+  }
+
+  closeReply = () => {
+    this.setState({
+      replyContent: null,
+      isReplying: false,
+    });
+  }
+
+  handleStatusChange = ({ value }) => {
+    this.setState({
+      currentStatus: value,
+    });
+
+    const prevStatus = this.state.currentStatus;
+
+    Promise.resolve(
+      this.props.updateIssue({
+        status: value,
+      })
+    ).catch(
+      (ex) => {
+        this.setState({
+          currentStatus: prevStatus,
+        });
+
+        throw ex;
+      }
+    );
   }
 
   /**
@@ -101,64 +196,137 @@ export class IssueDetail extends React.PureComponent {
    * @return {JSX.Element}
    */
   render() {
+    const {
+      issue,
+      classes,
+      className,
+    } = this.props;
+
     return (
       <Grid container
         direction="column"
+        className={classnames(
+          classes.gutters,
+          classes.root,
+          className
+        )}
+        wrap="nowrap"
       >
-        <Grid item>
-          <Typography
-            variant="h1"
+        <Grid item container
+          justify="space-between"
+          alignItems="center"
+          wrap="nowrap"
+        >
+          <Grid item>
+            <Typography
+              variant="h1"
+            >
+              #{issue.get("id")}: {
+                issue.get("description")
+              }
+            </Typography>
+          </Grid>
+          <Grid item
+            className={this.props.classes.chip}
           >
-            #{this.props.issue.get("id")}: {
-              this.props.issue.get("description")
-            }
-          </Typography>
+            <StatusChip
+              currentStatus={this.state.currentStatus}
+              onChange={this.handleStatusChange}
+            />
+          </Grid>
         </Grid>
-        <Grid item>
-            Created {
-            formatRelative(
-              parseISO(this.props.issue.get("createdAt")),
-              new Date()
-            )
-          } by {
-            this.props.issue.getIn([
-              "createdBy",
-              "name",
-              "display",
-            ]) ||
-            this.props.issue.get("createdByText")
-          }
-        </Grid>
-        <Grid item>
-          <IconButton
-            onClick={this.handleToggleEnableEditingButtonClick}
-          >
-            {
-              this.state.isEditing ? (
-                <CancelEditingIcon />
-              ) : (
-                <EditIcon />
-              )
-            }
-          </IconButton>
+        <Grid item
+        >
           {
             this.state.isEditing ? (
               <MarkdownEditor
                 editorState={this.state.editorState}
                 onEditorStateChange={this.handleEditorStateChange}
-                toolbarCustomButtons={[
-                  (
-                    <SaveToolbarButton
-                      key="save"
-                      onClick={this.handleSaveBodyClick}
-                    />
-                  ),
-                ]}
+                includeSaveButton
+                raised
+                cardAction={
+                  <IconButton
+                    onClick={this.handleToggleEnableEditingButtonClick}
+                  >
+                    <CancelEditingIcon />
+                  </IconButton>
+                }
+                onSave={this.handleSaveIssueBodyClick}
               />
             ) : (
-              <ReactMarkdown
-                source={this.props.issue.get("body")}
-              />
+              <Card
+                className={classes.fullWidth}
+                raised
+              >
+                <IssueHeader
+                  issueOrComment={issue}
+                  action={
+                    <IconButton
+                      onClick={this.handleToggleEnableEditingButtonClick}
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  }
+                />
+                <CardContent>
+                  <ReactMarkdown
+                    source={issue.get("body")}
+                  />
+                </CardContent>
+              </Card>
+            )
+          }
+        </Grid>
+        <Grid item>
+          <List>
+            {
+              this.props.issue.get("comments").map(
+                (comment) => (
+                  <ListItem
+                    key={comment.get("id")}
+                    disableGutters
+                  >
+                    <IssueComment
+                      comment={comment}
+                      className={classes.fullWidth}
+                    />
+                  </ListItem>
+                )
+              ).toArray()
+            }
+            {
+              this.state.isReplying && (
+                <ListItem
+                  disableGutters
+                >
+                  <MarkdownEditor
+                    className={classes.fullWidth}
+                    editorState={this.state.replyContent}
+                    onEditorStateChange={this.handleReplyEditorContentChange}
+                    includeSaveButton
+                    onSave={this.handleSaveCommentClick}
+                    cardAction={
+                      <IconButton
+                        onClick={this.closeReply}
+                      >
+                        <CancelEditingIcon
+                        />
+                      </IconButton>
+                    }
+                  />
+                </ListItem>
+              )
+            }
+          </List>
+          {
+            !this.state.isReplying && (
+              <IconButton
+                onClick={this.handleReplyButtonClick}
+                title="Reply"
+                aria-label="Reply"
+              >
+                <ReplyIcon />
+              </IconButton>
             )
           }
         </Grid>
@@ -166,3 +334,7 @@ export class IssueDetail extends React.PureComponent {
     );
   }
 }
+
+const StyledIssueDetail = withStyles(styles)(IssueDetail);
+
+export { StyledIssueDetail as IssueDetail };

@@ -48,6 +48,13 @@ const findUser = async ({
     );
   }
 
+  if (provider) {
+    assert(
+      providerID,
+      "findUser() requires a `providerID` parameter if passed a `provider`"
+    );
+  }
+
   const connection = await getDataConnection();
 
   let query = connection.select(
@@ -71,6 +78,10 @@ const findUser = async ({
   }
 
   const results = await query;
+
+  if (results.length === 0) {
+    return null;
+  }
 
   return transformResultToUser(results[0]);
 };
@@ -108,8 +119,37 @@ const addUser = async ({
   return transformResultToUser(results[0]);
 };
 
+const getUsers = async ({
+  ids,
+}) => {
+  const connection = await getDataConnection();
+
+  let query = connection.select("id",
+    "username",
+    "first_name",
+    "middle_name",
+    "last_name",
+    "display_name",
+  ).from(
+    "users"
+  ).whereNull("deleted_at");
+
+  if (ids && ids.length > 0) {
+    if (ids.length === 1) {
+      query = query.where({
+        id: ids[0],
+      });
+    }
+  }
+
+  const users = await query;
+
+  return users.map(transformResultToUser);
+};
+
 module.exports = {
   findUser,
   addUser,
+  getUsers,
 };
 

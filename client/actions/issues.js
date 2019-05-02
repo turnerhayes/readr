@@ -1,5 +1,5 @@
 import * as api from "+app/api";
-import { Set } from "immutable";
+import { Set, List } from "immutable";
 import { fetchUsers } from "./users";
 
 const ISSUE_USER_ID_PROPERTIES = [
@@ -19,10 +19,34 @@ const getUserIDsFromIssues = (issues) => {
               }
             }
           );
+
+          if (issue.get("comments", List()).size > 0) {
+            idSet.concat(getUserIDsFromIssues(issue.get("comments")));
+          }
         }
       );
     }
   );
+};
+
+const getMissingUserIDs = async ({
+  items,
+  getState,
+  dispatch,
+}) => {
+  const referencedUserIDs = getUserIDsFromIssues(items);
+
+  const missingUserIDs = referencedUserIDs.subtract(
+    getState().users.get("items").keySeq()
+  );
+
+  if (!missingUserIDs.isEmpty()) {
+    await dispatch(
+      fetchUsers({
+        ids: missingUserIDs.toArray(),
+      })
+    );
+  }
 };
 
 export const FETCH_GET_ISSUES_START = "FETCH_GET_ISSUES_START";
@@ -55,19 +79,11 @@ export function fetchIssues({ ids } = {}) {
 
       const issues = await api.getIssues({ ids });
 
-      const issueUserIDs = getUserIDsFromIssues(issues);
-
-      const missingUserIDs = issueUserIDs.subtract(
-        getState().users.get("items").keySeq()
-      );
-
-      if (!missingUserIDs.isEmpty()) {
-        dispatch(
-          fetchUsers({
-            ids: missingUserIDs.toArray(),
-          })
-        );
-      }
+      await getMissingUserIDs({
+        items: issues,
+        getState,
+        dispatch,
+      });
 
       dispatch({
         type: FETCH_GET_ISSUES_COMPLETE,
@@ -87,6 +103,139 @@ export function fetchIssues({ ids } = {}) {
         },
         api: {
           callName: "fetchIssues",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
+    }
+  };
+}
+export const FETCH_GET_ISSUE_START = "FETCH_GET_ISSUE_START";
+
+export const FETCH_GET_ISSUE_FAIL = "FETCH_GET_ISSUE_FAIL";
+
+export const FETCH_GET_ISSUE_COMPLETE = "FETCH_GET_ISSUE_COMPLETE";
+
+/**
+ * Action creator for fetching issues
+ *
+ * @param {object} args
+ * @param {number} args.id the ID of the issue to get
+ * @param {number} args.includeComments if true, will also get all comments
+ * on the issue
+ *
+ * @return {function} an action creator function
+ */
+export function fetchIssue({ id, includeComments = false }) {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: FETCH_GET_ISSUE_START,
+        payload: {
+          id,
+        },
+        api: {
+          callName: "fetchIssue",
+          status: "started",
+        },
+      });
+
+      const issue = await api.getIssue({ id, includeComments });
+
+      await getMissingUserIDs({
+        items: List.of(issue),
+        getState,
+        dispatch,
+      });
+
+      dispatch({
+        type: FETCH_GET_ISSUE_COMPLETE,
+        payload: {
+          issue,
+        },
+        api: {
+          callName: "fetchIssue",
+          status: "complete",
+        },
+      });
+    } catch (ex) {
+      dispatch({
+        type: FETCH_GET_ISSUE_FAIL,
+        payload: {
+          id,
+        },
+        api: {
+          callName: "fetchIssue",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
+    }
+  };
+}
+
+export const FETCH_GET_ISSUE_COMMENTS_START = "FETCH_GET_ISSUE_COMMENTS_START";
+
+export const FETCH_GET_ISSUE_COMMENTS_FAIL = "FETCH_GET_ISSUE_COMMENTS_FAIL";
+
+export const FETCH_GET_ISSUE_COMMENTS_COMPLETE =
+  "FETCH_GET_ISSUE_COMMENTS_COMPLETE";
+
+/**
+ * Action creator for fetching issue comments
+ *
+ * @param {object} args
+ * @param {number} args.issueID the ID of the issue for which to get comments
+ *
+ * @return {function} an action creator function
+ */
+export function fetchIssueComments({ issueID }) {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: FETCH_GET_ISSUE_COMMENTS_START,
+        payload: {
+          issueID,
+        },
+        api: {
+          callName: "fetchIssueComments",
+          status: "started",
+        },
+      });
+
+      const issueComments = await api.getIssueComments({ issueID });
+
+      await getMissingUserIDs({
+        items: issueComments,
+        getState,
+        dispatch,
+      });
+
+      dispatch({
+        type: FETCH_GET_ISSUE_COMMENTS_COMPLETE,
+        payload: {
+          issueComments,
+          issueID,
+        },
+        api: {
+          callName: "fetchIssueComments",
+          status: "complete",
+        },
+      });
+
+      return issueComments;
+    } catch (ex) {
+      dispatch({
+        type: FETCH_GET_ISSUE_COMMENTS_FAIL,
+        payload: {
+          issueID,
+        },
+        api: {
+          callName: "fetchIssueComments",
           status: "complete",
         },
         error: ex,
@@ -197,6 +346,8 @@ export function updateIssue({ issueID, updates }) {
           status: "complete",
         },
       });
+
+      return issue;
     } catch (ex) {
       dispatch({
         type: FETCH_UPDATE_ISSUE_FAIL,
@@ -216,3 +367,227 @@ export function updateIssue({ issueID, updates }) {
   };
 }
 
+
+export const FETCH_CREATE_ISSUE_COMMENT_START =
+  "FETCH_CREATE_ISSUE_COMMENT_START";
+
+export const FETCH_CREATE_ISSUE_COMMENT_FAIL =
+  "FETCH_CREATE_ISSUE_COMMENT_FAIL";
+
+export const FETCH_CREATE_ISSUE_COMMENT_COMPLETE =
+  "FETCH_CREATE_ISSUE_COMMENT_COMPLETE";
+
+/**
+ * Action creator for creating an issue comment
+ *
+ * @param {object} args
+ * @param {object} args.issueID the ID of the issue with which to associate
+ * this comment
+ * @param {object} args.commentData the comment to create
+ *
+ * @return {function} an action creator function
+ */
+export function addIssueComment({ issueID, commentData }) {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_CREATE_ISSUE_COMMENT_START,
+        payload: commentData,
+        api: {
+          callName: "createIssueComment",
+          status: "started",
+        },
+      });
+
+      const comment = await api.createIssueComment({
+        issueID,
+        commentData,
+      });
+
+      dispatch({
+        type: FETCH_CREATE_ISSUE_COMMENT_COMPLETE,
+        payload: {
+          issueID,
+          comment,
+        },
+        api: {
+          callName: "createIssueComment",
+          status: "complete",
+        },
+      });
+
+      await dispatch(
+        fetchIssueComments({ issueID })
+      );
+
+      return comment;
+    } catch (ex) {
+      dispatch({
+        type: FETCH_CREATE_ISSUE_COMMENT_FAIL,
+        payload: {
+          issueID,
+          commentData,
+        },
+        api: {
+          callName: "createIssueComment",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
+    }
+  };
+}
+
+export const FETCH_SEARCH_ISSUES_START =
+  "FETCH_SEARCH_ISSUES_START";
+
+export const FETCH_SEARCH_ISSUES_FAIL =
+  "FETCH_SEARCH_ISSUES_FAIL";
+
+export const FETCH_SEARCH_ISSUES_COMPLETE =
+  "FETCH_SEARCH_ISSUES_COMPLETE";
+
+/**
+ * Action creator for creating an issue comment
+ *
+ * @param {object} args
+ * @param {string} [args.searchQuery] the query to search
+ * @param {string[]} [args.statuses] results must be in one of these statuses
+ * @param {string[]} [args.activityBy] results must contain some action taken
+ * by one of these users (either the issue or one of its comments)
+ *
+ * @return {function} an action creator function
+ */
+export function searchIssues({ searchQuery, statuses, activityBy }) {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_START,
+        payload: {
+          searchQuery,
+          statuses,
+          activityBy,
+        },
+        api: {
+          callName: "searchIssues",
+          status: "started",
+        },
+      });
+
+      const results = await api.searchIssues({
+        searchQuery,
+        statuses,
+        activityBy,
+      });
+
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_COMPLETE,
+        payload: {
+          results,
+        },
+        api: {
+          callName: "searchIssues",
+          status: "complete",
+        },
+      });
+
+      return results;
+    } catch (ex) {
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_FAIL,
+        payload: {
+          searchQuery,
+          statuses,
+          activityBy,
+        },
+        api: {
+          callName: "searchIssues",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
+    }
+  };
+}
+
+export const FETCH_MARK_ISSUE_SEEN_START =
+  "FETCH_MARK_ISSUE_SEEN_START";
+
+export const FETCH_MARK_ISSUE_SEEN_FAIL =
+  "FETCH_MARK_ISSUE_SEEN_FAIL";
+
+export const FETCH_MARK_ISSUE_SEEN_COMPLETE =
+  "FETCH_MARK_ISSUE_SEEN_COMPLETE";
+
+/**
+ * Action creator for marking an issue as seen by the current user
+ *
+ * @param {object} args
+ * @param {number} [args.id] the ID of the issue to mark
+ * @param {boolean} [args.includeComments] if true, will also mark all the
+ * issue's comments as seen by the user
+ *
+ * @return {function} an action creator function
+ */
+export function markIssueSeen({ id, includeComments }) {
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: FETCH_MARK_ISSUE_SEEN_START,
+        payload: {
+          id,
+          includeComments,
+        },
+        api: {
+          callName: "markIssueSeen",
+          status: "started",
+        },
+      });
+
+      const markedItems = await api.markIssueSeen({
+        id,
+        includeComments,
+      });
+
+      dispatch({
+        type: FETCH_MARK_ISSUE_SEEN_COMPLETE,
+        payload: {
+          markedItems,
+        },
+        api: {
+          callName: "markIssueSeen",
+          status: "complete",
+        },
+      });
+
+      return markedItems;
+    } catch (ex) {
+      dispatch({
+        type: FETCH_SEARCH_ISSUES_FAIL,
+        payload: {
+          id,
+          includeComments,
+        },
+        api: {
+          callName: "markIssueSeen",
+          status: "complete",
+        },
+        error: ex,
+      });
+
+      throw ex;
+    }
+  };
+}
+
+export const ISSUES_CLEAR_SEARCH_RESULTS = "ISSUES_CLEAR_SEARCH_RESULTS";
+
+export const clearIssuesSearchResults = () => {
+  return {
+    type: ISSUES_CLEAR_SEARCH_RESULTS,
+  };
+};

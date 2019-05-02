@@ -16,6 +16,10 @@ let {
 port = Number(port);
 externalPort = Number(externalPort);
 
+if (isNaN(externalPort)) {
+  externalPort = port;
+}
+
 const HTTP_DEFAULT_PORT = 80;
 const HTTPS_DEFAULT_PORT = 443;
 

@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import classnames from "classnames";
 import {
   EditorState,
   convertToRaw,
@@ -13,8 +14,13 @@ import {
 import {
   Card,
   CardContent,
+  IconButton,
   withStyles,
+  CardHeader,
 } from "@material-ui/core";
+import SaveIcon from "@material-ui/icons/Save";
+
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const MARKDOWN_DICTIONARY = {
   BOLD: "__",
@@ -50,14 +56,41 @@ const styles = {
   },
 };
 
+
+const SaveToolbarButton = ({ onClick }) => {
+  return (
+    <IconButton
+      onClick={onClick}
+    >
+      <SaveIcon />
+    </IconButton>
+  );
+};
+
+SaveToolbarButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+};
+
 /**
  * Markdown editor component
  */
 class MarkdownEditor extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
+    className: PropTypes.string,
     editorState: PropTypes.instanceOf(EditorState).isRequired,
     toolbar: PropTypes.object,
+    includeSaveButton: PropTypes.bool.isRequired,
+    onSave: PropTypes.func,
+    cardAction: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.string,
+    ]),
+    raised: PropTypes.bool,
+  }
+
+  static defaultProps = {
+    includeSaveButton: false,
   }
 
   /**
@@ -91,6 +124,15 @@ class MarkdownEditor extends React.PureComponent {
   }
 
   /**
+   * Handles a click of the Save toolbar button
+   */
+  handleSaveClick = () => {
+    if (this.props.onSave) {
+      this.props.onSave();
+    }
+  }
+
+  /**
    * Renders the component.
    *
    * @return {JSX.Element}
@@ -98,12 +140,55 @@ class MarkdownEditor extends React.PureComponent {
   render() {
     const {
       toolbar,
+      includeSaveButton,
       classes,
+      className,
+      cardAction,
+      raised,
       ...otherProps
     } = this.props;
 
+    const actions = [];
+
+    if (includeSaveButton) {
+      actions.push(
+        <SaveToolbarButton
+          key="saveButton"
+          onClick={this.handleSaveClick}
+        />
+      );
+    }
+
+    if (cardAction) {
+      actions.push(
+        React.cloneElement(
+          cardAction,
+          {
+            key: "cardAction",
+          }
+        )
+      );
+    }
+
     return (
-      <Card>
+      <Card
+        className={classnames(
+          className,
+          classes.root
+        )}
+        raised={raised}
+      >
+        {
+          actions.length > 0 && (
+            <CardHeader
+              action={
+                <React.Fragment>
+                  {actions}
+                </React.Fragment>
+              }
+            />
+          )
+        }
         <CardContent>
           <Editor
             editorClassName={classes.editor}
