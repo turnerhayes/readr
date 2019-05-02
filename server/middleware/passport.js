@@ -57,7 +57,7 @@ function getUserInfoFromOAuth20Profile(profile) {
 async function getOrCreateUser({ req, provider, profile }) {
   let user = await findUser({
     provider,
-    provderID: profile.id,
+    providerID: profile.id,
   });
 
   if (!user) {
@@ -108,9 +108,10 @@ if (Config.auth.providers.google.isEnabled) {
 
   passport.use(new GoogleOAuthStrategy(
     {
-      clientID: Config.auth.google.clientID,
-      clientSecret: Config.auth.google.clientSecret,
-      callbackURL: Config.app.address.origin + Config.auth.google.callbackURL,
+      clientID: Config.auth.providers.google.credentials.clientID,
+      clientSecret: Config.auth.providers.google.credentials.clientSecret,
+      callbackURL: Config.app.address.origin +
+        Config.auth.providers.google.callbackURL,
       passReqToCallback: true,
     },
     (req, accessToken, refreshToken, profile, done) => {

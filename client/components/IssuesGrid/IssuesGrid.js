@@ -7,17 +7,40 @@ import { withStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
 import { FilterTrigger } from "./Filter/FilterTrigger";
 import { TextFilter } from "./Filter/TextFilter";
+import { Badge } from "@material-ui/core";
 
-const ViewIssueLink = ({ id }) => (
-  <Link
-    to={`/issues/${id}`}
-  >
-    View
-  </Link>
-);
+const ViewIssueLink = ({ id, hasNew = false }) => {
+  const linkNode = (
+    <Link
+      to={`/issues/${id}`}
+    >
+      View
+    </Link>
+  );
+
+  if (hasNew) {
+    return (
+      <Badge
+        variant="dot"
+        color="primary"
+        title="New activity"
+        aria-label="New activity"
+      >
+        {linkNode}
+      </Badge>
+    );
+  } else {
+    return linkNode;
+  }
+};
 
 ViewIssueLink.propTypes = {
   id: PropTypes.number.isRequired,
+  hasNew: PropTypes.bool.isRequired,
+};
+
+ViewIssueLink.defaultProps = {
+  hasNew: false,
 };
 
 const cellStyles = {
@@ -191,6 +214,10 @@ class IssuesGrid extends React.PureComponent {
         content: ({ issue }) => (
           <ViewIssueLink
             id={issue.get("id")}
+            hasNew={
+              issue.get("hasNew") ||
+              issue.get("hasNewComments")
+            }
           />
         ),
       },
