@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
+import classnames from "classnames";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
@@ -22,6 +23,11 @@ import { StatusChip } from "+app/components/IssueDetail/StatusChip";
 
 
 const styles = (theme) => ({
+  root: {
+    height: "100%",
+    overflow: "auto",
+  },
+
   fullWidth: {
     width: "100%",
   },
@@ -42,6 +48,7 @@ const styles = (theme) => ({
  */
 class IssueDetail extends React.PureComponent {
   static propTypes = {
+    className: PropTypes.string,
     classes: PropTypes.object.isRequired,
     issue: ImmutablePropTypes.map.isRequired,
     updateIssue: PropTypes.func.isRequired,
@@ -192,12 +199,18 @@ class IssueDetail extends React.PureComponent {
     const {
       issue,
       classes,
+      className,
     } = this.props;
 
     return (
       <Grid container
         direction="column"
-        className={classes.gutters}
+        className={classnames(
+          classes.gutters,
+          classes.root,
+          className
+        )}
+        wrap="nowrap"
       >
         <Grid item container
           justify="space-between"
