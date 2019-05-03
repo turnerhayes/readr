@@ -69,46 +69,33 @@ const hasCommentsSubQuery = ({
     });
 };
 
-const seenCommentsSubQuery = ({
-  connection,
-  userID,
-}) => {
-  return connection.select("*")
-    .from("issue_comments")
-    .innerJoin(
-      "issue_comments_user_views",
-      "issue_comments_user_views.item_id",
-      "=",
-      "issue_comments.id"
-    ).whereNull("issue_comments.deleted_at")
-    .where({
-      "issue_comments.issue_id": connection.column("issues.id"),
-      "issue_comments_user_views.user_id": userID,
-    });
-};
-
-const outdatedViewsSubQuery = ({
-  connection,
-  userID,
-}) => {
-  return connection.select("*")
-    .from("issue_comments")
-    .innerJoin(
-      "issue_comments_user_views",
-      "issue_comments_user_views.item_id",
-      "=",
-      "issue_comments.id"
-    ).whereNull("issue_comments.deleted_at")
-    .where({
-      "issue_comments.issue_id": connection.column("issues.id"),
-      "issue_comments_user_views.user_id": userID,
-    }).where(
-      "issue_comments_user_views.last_seen",
-      "<",
-      connection.column("issue_comments.updated_at")
-    );
-};
-
+/*
+SELECT
+  comment_seen_data.last_seen
+FROM
+(
+  SELECT
+    issue_comments_user_views.last_seen
+  FROM
+    issue_comments
+    LEFT OUTER JOIN
+    issue_comments_user_views
+    ON
+    issue_comments_user_views.item_id = issue_comments.id
+    AND
+    issue_comments_user_views.user_id = 2
+    AND
+    (
+      issue_comments_user_views.last_seen >= issue_comments.updated_at
+    )
+  WHERE
+    issue_comments.deleted_at IS NULL
+    AND
+    issue_comments.issue_id = issues.id
+) AS comment_seen_data
+WHERE
+  comment_seen_data.last_seen IS NULL
+*/
 const addIssueLastSeenQuery = ({
   connection,
   query,
@@ -123,27 +110,37 @@ const addIssueLastSeenQuery = ({
     }).select({
       "hasNewComments": connection.raw(
         `EXISTS(
-          (:hasComments)
-        )
-        AND
-        (
-          NOT EXISTS(
-            (:seenComments)
-          ) OR EXISTS(
-            (:outdatedViews)
-          )
+          (:unseenComments)
         )
         `,
         {
-          hasComments: hasCommentsSubQuery({ connection }),
-          seenComments: seenCommentsSubQuery({
-            connection,
-            userID,
-          }),
-          outdatedViews: outdatedViewsSubQuery({
-            connection,
-            userID,
-          }),
+          unseenComments: connection.select(
+            "comment_last_seen_data.last_seen"
+          ).from(
+            (builder) => builder.select(
+              "issue_comments_user_views.last_seen"
+            ).from("issue_comments")
+              .leftOuterJoin(
+                "issue_comments_user_views",
+                (onBuilder) => onBuilder.on(
+                  "issue_comments_user_views.item_id",
+                  "=",
+                  "issue_comments.id"
+                ).andOn(
+                  "issue_comments_user_views.user_id",
+                  "=",
+                  userID
+                ).andOn(
+                  "issue_comments_user_views.last_seen",
+                  ">=",
+                  "issue_comments.updated_at"
+                )
+              ).whereNull("issue_comments.deleted_at")
+              .where({
+                "issue_comments.issue_id": connection.ref("issues.id"),
+              }).as("comment_last_seen_data")
+          )
+            .whereNull("comment_last_seen_data.last_seen"),
         }
       ),
     });
