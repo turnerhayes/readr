@@ -58,44 +58,6 @@ const transformResultToIssueComment = (result) => {
   return result;
 };
 
-const hasCommentsSubQuery = ({
-  connection,
-}) => {
-  return connection.select("*")
-    .from("issue_comments")
-    .whereNull("issue_comments.deleted_at")
-    .where({
-      "issue_comments.issue_id": connection.column("issues.id"),
-    });
-};
-
-/*
-SELECT
-  comment_seen_data.last_seen
-FROM
-(
-  SELECT
-    issue_comments_user_views.last_seen
-  FROM
-    issue_comments
-    LEFT OUTER JOIN
-    issue_comments_user_views
-    ON
-    issue_comments_user_views.item_id = issue_comments.id
-    AND
-    issue_comments_user_views.user_id = 2
-    AND
-    (
-      issue_comments_user_views.last_seen >= issue_comments.updated_at
-    )
-  WHERE
-    issue_comments.deleted_at IS NULL
-    AND
-    issue_comments.issue_id = issues.id
-) AS comment_seen_data
-WHERE
-  comment_seen_data.last_seen IS NULL
-*/
 const addIssueLastSeenQuery = ({
   connection,
   query,
