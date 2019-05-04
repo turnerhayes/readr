@@ -7,22 +7,25 @@ import ReactMarkdown from "react-markdown";
 
 import { IssueHeader } from "+app/components/IssueDetail/IssueHeader";
 
-export const IssueComment = ({ className, comment }) => {
-  return (
-    <Card
-      className={className}
-    >
-      <IssueHeader
-        issueOrComment={comment}
-      />
-      <CardContent>
-        <ReactMarkdown
-          source={comment.get("body")}
+export const IssueComment = React.forwardRef(
+  function IssueComment({ className, comment }, ref) {
+    return (
+      <Card
+        className={className}
+        ref={ref}
+      >
+        <IssueHeader
+          issueOrComment={comment}
         />
-      </CardContent>
-    </Card>
-  );
-};
+        <CardContent>
+          <ReactMarkdown
+            source={comment.get("body")}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+);
 
 IssueComment.propTypes = {
   className: PropTypes.string,

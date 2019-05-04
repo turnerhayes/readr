@@ -1,29 +1,18 @@
 import React, { useCallback, useState } from "react";
-import { Map, OrderedMap } from "immutable";
 import { useMappedState, useDispatch } from "redux-react-hook";
 import { Link } from "react-router-dom";
 import { Grid, Button, Typography } from "@material-ui/core";
 
 import { fetchIssues } from "+app/actions";
+import {
+  linkURLForNewComments,
+  linkURLForNewIssues,
+} from "+app/selectors/activity";
 
-const getNewCommentsLinkURL = (newComments) => {
-  if (newComments.size === 1) {
-    const issueID = newComments.keySeq().first();
-
-    return `/issues/${issueID}?comment=${newComments.get(issueID).first()}`;
-  }
-
-  return "/issues";
-};
-
-const getNewIssuesLinkURL = (newIssues) => {
-  if (newIssues.size === 1) {
-    const issueID = newIssues.keySeq().first();
-
-    return `/issues/${issueID}`;
-  }
-
-  return "/issues";
+// Use a single object for params so that reselect can use memoized
+// result with object equality comparison
+const commentsSelectorOptions = {
+  dedupe: true,
 };
 
 /**
@@ -34,30 +23,9 @@ const getNewIssuesLinkURL = (newIssues) => {
 export function Home() {
   const mapStateToProps = useCallback(
     (state) => {
-      const issues = state.issues.get("items", Map());
-
-      let newIssues = OrderedMap();
-      let newComments = OrderedMap();
-
-      issues.forEach(
-        (issue, issueID) => {
-          if (issue.get("hasNew")) {
-            newIssues = newIssues.set(issueID, issue);
-          }
-          if (!issue.get("newCommentIDs").isEmpty()) {
-            newComments = newComments.set(issueID, issue.get("newCommentIDs"));
-          }
-        }
-      );
-
-      // Remove any comments for new issues
-      newComments = newComments.filter(
-        (ids, issueID) => !newIssues.has(issueID)
-      );
-
       return {
-        newIssues,
-        newComments,
+        issuesURL: linkURLForNewIssues(state, commentsSelectorOptions),
+        commentsURL: linkURLForNewComments(state, commentsSelectorOptions),
       };
     },
     []
@@ -66,14 +34,13 @@ export function Home() {
   const [hasFetched, setHasFetched] = useState(false);
 
   const {
-    newIssues,
-    newComments,
+    issuesURL,
+    commentsURL,
   } = useMappedState(mapStateToProps);
 
   const dispatch = useDispatch();
 
   if (!hasFetched) {
-    // fetch updates
     dispatch(
       fetchIssues()
     );
@@ -86,12 +53,12 @@ export function Home() {
       direction="column"
     >
       {
-        newIssues.isEmpty() ?
+        issuesURL === null ?
           null :
           (
             <Grid item>
               <Link
-                to={getNewIssuesLinkURL(newIssues)}
+                to={issuesURL}
                 component={Button}
               >
                 New Issues
@@ -100,12 +67,12 @@ export function Home() {
           )
       }
       {
-        newComments.isEmpty() ?
+        commentsURL === null ?
           null :
           (
             <Grid item>
               <Link
-                to={getNewCommentsLinkURL(newComments)}
+                to={commentsURL}
                 component={Button}
               >
                 New Comments
@@ -114,7 +81,7 @@ export function Home() {
           )
       }
       {
-        newComments.isEmpty() && newIssues.isEmpty() && (
+        issuesURL === null && commentsURL === null && (
           <Grid item>
             <Typography
             >

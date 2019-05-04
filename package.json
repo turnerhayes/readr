@@ -91,6 +91,7 @@
     "redux-react-hook": "^3.2.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "scroll-into-view-if-needed": "^2.2.20",
     "spdy": "^4.0.0",
     "turndown": "^5.0.3",
     "winston": "^3.2.1"

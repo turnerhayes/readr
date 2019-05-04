@@ -2,6 +2,7 @@ import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
 import { useMappedState } from "redux-react-hook";
+import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -15,7 +16,9 @@ import PersonIcon from "@material-ui/icons/Person";
 import { Link } from "react-router-dom";
 
 import { AccountDropDown } from "+app/components/AccountDropDown";
+import { NewIssueIndicator } from "+app/components/NewIssueIndicator";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
+import { Grid } from "@material-ui/core";
 
 const AccountDropDownTrigger = ({ className }) => {
   const [state, setState] = useState({
@@ -64,8 +67,12 @@ AccountDropDownTrigger.propTypes = {
 };
 
 const styles = (theme) => ({
-  accountIcon: {
+  rightAligned: {
     marginLeft: "auto",
+  },
+
+  autoWidth: {
+    width: "auto",
   },
 
   pageLinks: {
@@ -121,34 +128,50 @@ function TopNav({ classes, location }) {
         >
           Fief
         </Typography>
-        <div
+        <Grid container
+          wrap="nowrap"
           className={classes.pageLinks}
         >
           {
             pageLinks.map(
               ({ path, text }) => (
-                <Button
+                <Grid item
                   key={path}
-                  component={Link}
-                  color="inherit"
-                  to={path}
-                  disabled={
-                    location.pathname === path
-                  }
                 >
-                  {text}
-                </Button>
+                  <Button
+                    component={Link}
+                    color="inherit"
+                    to={path}
+                    disabled={
+                      location.pathname === path
+                    }
+                  >
+                    {text}
+                  </Button>
+                </Grid>
               )
             )
           }
-        </div>
-        {
-          isLoggedIn && (
-            <AccountDropDownTrigger
-              className={classes.accountIcon}
-            />
-          )
-        }
+        </Grid>
+        <Grid container
+          wrap="nowrap"
+          className={classnames(
+            classes.rightAligned,
+            classes.autoWidth
+          )}
+        >
+          <Grid item>
+            <NewIssueIndicator />
+          </Grid>
+          <Grid item>
+            {
+              isLoggedIn && (
+                <AccountDropDownTrigger
+                />
+              )
+            }
+          </Grid>
+        </Grid>
       </Toolbar>
     </AppBar>
   );
