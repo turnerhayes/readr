@@ -42,6 +42,12 @@ const transformResultToIssue = (result) => {
     }
   }
 
+  if (result.newCommentIDs === null) {
+    result.newCommentIDs = [];
+  }
+
+  delete result.originMessageID;
+
   return result;
 };
 
@@ -70,41 +76,35 @@ const addIssueLastSeenQuery = ({
       userID,
       itemTable: "issues",
     }).select({
-      "hasNewComments": connection.raw(
-        `EXISTS(
-          (:unseenComments)
-        )
-        `,
-        {
-          unseenComments: connection.select(
-            "comment_last_seen_data.last_seen"
-          ).from(
-            (builder) => builder.select(
-              "issue_comments_user_views.last_seen"
-            ).from("issue_comments")
-              .leftOuterJoin(
-                "issue_comments_user_views",
-                (onBuilder) => onBuilder.on(
-                  "issue_comments_user_views.item_id",
-                  "=",
-                  "issue_comments.id"
-                ).andOn(
-                  "issue_comments_user_views.user_id",
-                  "=",
-                  userID
-                ).andOn(
-                  "issue_comments_user_views.last_seen",
-                  ">=",
-                  "issue_comments.updated_at"
-                )
-              ).whereNull("issue_comments.deleted_at")
-              .where({
-                "issue_comments.issue_id": connection.ref("issues.id"),
-              }).as("comment_last_seen_data")
-          )
-            .whereNull("comment_last_seen_data.last_seen"),
-        }
-      ),
+      "newCommentIDs": connection.select(
+        connection.raw("array_agg(comment_last_seen_data.comment_id)")
+      ).from(
+        (builder) => builder.select({
+          "comment_id": "issue_comments.id",
+        }).select(
+          "issue_comments_user_views.last_seen"
+        ).from("issue_comments")
+          .leftOuterJoin(
+            "issue_comments_user_views",
+            (onBuilder) => onBuilder.on(
+              "issue_comments_user_views.item_id",
+              "=",
+              "issue_comments.id"
+            ).andOn(
+              "issue_comments_user_views.user_id",
+              "=",
+              userID
+            ).andOn(
+              "issue_comments_user_views.last_seen",
+              ">=",
+              "issue_comments.updated_at"
+            )
+          ).whereNull("issue_comments.deleted_at")
+          .where({
+            "issue_comments.issue_id": connection.ref("issues.id"),
+          }).as("comment_last_seen_data")
+      )
+        .whereNull("comment_last_seen_data.last_seen"),
     });
   }
 
@@ -168,11 +168,12 @@ const getIssues = async ({
   query = addIssueLastSeenQuery({
     connection,
     query,
-    itemTable: "issues",
     userID,
   });
 
-  return query;
+  const issues = await query;
+
+  return issues.map(transformResultToIssue);
 };
 
 const getIssue = async ({

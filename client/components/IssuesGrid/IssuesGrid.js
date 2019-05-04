@@ -216,7 +216,7 @@ class IssuesGrid extends React.PureComponent {
             id={issue.get("id")}
             hasNew={
               issue.get("hasNew") ||
-              issue.get("hasNewComments")
+              !issue.get("newCommentIDs").isEmpty()
             }
           />
         ),
