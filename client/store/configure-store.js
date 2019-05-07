@@ -14,7 +14,7 @@ const middlewares = [
 
 // eslint-disable-next-line no-undef
 if (process.env.NODE_ENV === "development") {
-  const errorMiddleware = () =>(next) => (action) => {
+  const errorMiddleware = () => (next) => (action) => {
     if (action.error) {
       // eslint-disable-next-line no-console
       console.error(action.error);

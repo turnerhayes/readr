@@ -1,19 +1,15 @@
-import React, { useCallback, useState } from "react";
-import { useMappedState, useDispatch } from "redux-react-hook";
+import React, { useCallback } from "react";
+import { useMappedState } from "redux-react-hook";
 import { Link } from "react-router-dom";
 import { Grid, Button, Typography } from "@material-ui/core";
 
-import { fetchIssues } from "+app/actions";
 import {
-  linkURLForNewComments,
   linkURLForNewIssues,
-} from "+app/selectors/activity";
-
-// Use a single object for params so that reselect can use memoized
-// result with object equality comparison
-const commentsSelectorOptions = {
-  dedupe: true,
-};
+  linkURLForNewComments,
+  newIssueCount,
+  newCommentCount,
+  stateWithDedupedActivity,
+} from "+app/selectors/viewActivity";
 
 /**
  * Home component
@@ -23,30 +19,22 @@ const commentsSelectorOptions = {
 export function Home() {
   const mapStateToProps = useCallback(
     (state) => {
+      const deduped = stateWithDedupedActivity(state);
+
       return {
-        issuesURL: linkURLForNewIssues(state, commentsSelectorOptions),
-        commentsURL: linkURLForNewComments(state, commentsSelectorOptions),
+        issuesURL: linkURLForNewIssues(deduped),
+        commentsURL: linkURLForNewComments(deduped),
+        newIssueCount: newIssueCount(deduped),
+        newCommentCount: newCommentCount(deduped),
       };
     },
     []
   );
 
-  const [hasFetched, setHasFetched] = useState(false);
-
   const {
     issuesURL,
     commentsURL,
   } = useMappedState(mapStateToProps);
-
-  const dispatch = useDispatch();
-
-  if (!hasFetched) {
-    dispatch(
-      fetchIssues()
-    );
-
-    setHasFetched(true);
-  }
 
   return (
     <Grid container

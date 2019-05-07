@@ -16,6 +16,7 @@ const {
   getIssueUsers,
   markIssueSeen,
   markIssueCommentSeen,
+  getNewActivity,
 } = require("../../persistence/stores/issues");
 const { ensureLoggedIn } = require("../utils");
 
@@ -82,8 +83,25 @@ router.route("/")
     }
   );
 
+router.route("/activity")
+  .get(
+    ensureLoggedIn,
+    async (req, res, next) => {
+      try {
+        const activity = await getNewActivity({
+          userID: req.user.id,
+        });
+
+        res.json(activity);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  );
+
 router.route("/issueUsers")
   .get(
+    ensureLoggedIn,
     async (req, res, next) => {
       const {
         nameFilter,
@@ -101,6 +119,7 @@ router.route("/issueUsers")
 
 router.route("/search")
   .get(
+    ensureLoggedIn,
     async (req, res, next) => {
       let { query, status, activityBy } = req.query;
 
@@ -193,37 +212,6 @@ router.route("/:issueID")
         });
 
         res.json(issue);
-      } catch (ex) {
-        next(ex);
-      }
-    }
-  );
-
-router.route("/:issueID/seen")
-  .put(
-    ensureLoggedIn,
-    async (req, res, next) => {
-      let { issueID } = req.params;
-
-      const includeComments = Boolean(req.query.includeComments);
-
-      issueID = Number(issueID);
-
-      if (isNaN(issueID)) {
-        const err = new Error("Must provide an integer issueID parameter");
-        err.status = BAD_REQUEST;
-
-        return next(err);
-      }
-
-      try {
-        const marked = await markIssueSeen({
-          issueID,
-          includeComments,
-          userID: req.user.id,
-        });
-
-        res.json(marked);
       } catch (ex) {
         next(ex);
       }

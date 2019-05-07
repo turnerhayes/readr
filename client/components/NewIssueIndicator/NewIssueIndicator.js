@@ -1,30 +1,46 @@
-import React, { useCallback } from "react";
-import { useMappedState } from "redux-react-hook";
+import React, { useCallback, useState } from "react";
+import { useMappedState, useDispatch } from "redux-react-hook";
 import { Link } from "react-router-dom";
 import { IconButton, Badge } from "@material-ui/core";
 import IssueIcon from "@material-ui/icons/ReportProblem";
 import CommentIcon from "@material-ui/icons/Comment";
 
 import {
-  newActivity,
   linkURLForNewIssues,
   linkURLForNewComments,
-} from "+app/selectors/activity";
+  stateWithDedupedActivity,
+  newActivity,
+} from "+app/selectors/viewActivity";
+import { getNewActivity } from "+app/actions";
+import { List, Map } from "immutable";
 
 const NewIssueIndicator = () => {
   const mapStateToProps = useCallback(
     (state) => {
-      const activity = newActivity(state);
+      const deduped = stateWithDedupedActivity(state);
+      const activity = newActivity(deduped);
 
       return {
-        newIssues: activity.issues,
-        newComments: activity.comments,
-        issuesURL: linkURLForNewIssues(state),
-        commentsURL: linkURLForNewComments(state),
+        newIssues: activity.get("issues", List()),
+        newComments: activity.get("issueComments", Map()),
+        issuesURL: linkURLForNewIssues(deduped),
+        commentsURL: linkURLForNewComments(deduped),
       };
     },
     []
   );
+
+  const [hasFetched, setHasFetched] = useState(false);
+
+  const dispatch = useDispatch();
+
+  if (!hasFetched) {
+    dispatch(
+      getNewActivity()
+    );
+
+    setHasFetched(true);
+  }
 
   const {
     newIssues,

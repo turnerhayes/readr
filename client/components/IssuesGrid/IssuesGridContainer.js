@@ -4,6 +4,7 @@ import ImmutablePropTypes from "react-immutable-proptypes";
 import { connect } from "react-redux";
 
 import { fetchIssues } from "+app/actions";
+import { newActivity } from "+app/selectors/viewActivity";
 
 import { IssuesGrid } from "./IssuesGrid";
 
@@ -44,6 +45,7 @@ const mapStateToProps = (state) => ({
     state.issues.get("items").filter(
       (issue) => issue.get("status") !== "closed"
     ),
+  newActivity: newActivity(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,5 +1,4 @@
 const { getDataConnection } = require("../connections");
-const { addLastSeenQuery } = require("./utils");
 
 const UNALIASED_ISSUE_COLUMNS = [
   "id",
@@ -64,53 +63,6 @@ const transformResultToIssueComment = (result) => {
   return result;
 };
 
-const addIssueLastSeenQuery = ({
-  connection,
-  query,
-  userID,
-}) => {
-  if (userID) {
-    query = addLastSeenQuery({
-      connection,
-      query,
-      userID,
-      itemTable: "issues",
-    }).select({
-      "newCommentIDs": connection.select(
-        connection.raw("array_agg(comment_last_seen_data.comment_id)")
-      ).from(
-        (builder) => builder.select({
-          "comment_id": "issue_comments.id",
-        }).select(
-          "issue_comments_user_views.last_seen"
-        ).from("issue_comments")
-          .leftOuterJoin(
-            "issue_comments_user_views",
-            (onBuilder) => onBuilder.on(
-              "issue_comments_user_views.item_id",
-              "=",
-              "issue_comments.id"
-            ).andOn(
-              "issue_comments_user_views.user_id",
-              "=",
-              userID
-            ).andOn(
-              "issue_comments_user_views.last_seen",
-              ">=",
-              "issue_comments.updated_at"
-            )
-          ).whereNull("issue_comments.deleted_at")
-          .where({
-            "issue_comments.issue_id": connection.ref("issues.id"),
-          }).as("comment_last_seen_data")
-      )
-        .whereNull("comment_last_seen_data.last_seen"),
-    });
-  }
-
-  return query;
-};
-
 const getIssues = async ({
   ids,
   originMessageIDs,
@@ -164,12 +116,6 @@ const getIssues = async ({
       excludeStatuses,
     );
   }
-
-  query = addIssueLastSeenQuery({
-    connection,
-    query,
-    userID,
-  });
 
   const issues = await query;
 
@@ -266,19 +212,14 @@ const updateIssue = async ({
 const getComments = async ({ issueID, userID }) => {
   const connection = await getDataConnection();
 
-  const query = addLastSeenQuery({
-    connection,
-    userID,
-    itemTable: "issue_comments",
-    query: connection
-      .select(UNALIASED_ISSUE_COMMENT_COLUMNS)
-      .select(ALIASED_ISSUE_COMMENT_COLUMNS)
-      .from("issue_comments")
-      .where({
-        issue_id: issueID,
-      }).whereNull("deleted_at")
-      .orderBy("created_at", "asc"),
-  });
+  const query = connection
+    .select(UNALIASED_ISSUE_COMMENT_COLUMNS)
+    .select(ALIASED_ISSUE_COMMENT_COLUMNS)
+    .from("issue_comments")
+    .where({
+      issue_id: issueID,
+    }).whereNull("deleted_at")
+    .orderBy("created_at", "asc");
 
   const comments = await query;
 
@@ -473,13 +414,6 @@ const searchIssues = async ({
     );
   }
 
-  knexQuery = addIssueLastSeenQuery({
-    connection,
-    query: knexQuery,
-    itemTable: "issues",
-    userID,
-  });
-
   return knexQuery;
 };
 
@@ -606,103 +540,6 @@ const getIssueUsers = async ({
   );
 };
 
-const markIssueSeen = async ({
-  issueID,
-  userID,
-  includeComments = false,
-}) => {
-  const connection = await getDataConnection();
-
-  const values = {
-    user_id: userID,
-    item_id: issueID,
-    last_seen: connection.fn.now(),
-  };
-
-  const insertQuery = connection.insert(values)
-    .into("issues_user_views");
-
-  let query = connection.raw(
-    `:insertQuery ON CONFLICT (item_id, user_id) DO UPDATE SET
-      last_seen = EXCLUDED.last_seen
-      returning item_id
-    `,
-    {
-      insertQuery,
-    }
-  );
-
-  const { rows: [{ item_id: issueIDs }] } = await query;
-
-  if (issueIDs.length === 0) {
-    return null;
-  }
-
-  let comments;
-
-  if (includeComments) {
-    query = connection.raw(
-      `:insertQuery ON CONFLICT (item_id, user_id) DO UPDATE SET
-      last_seen = EXCLUDED.last_seen
-      returning item_id`,
-      {
-        insertQuery: connection.raw(
-          `INSERT INTO "issue_comments_user_views"
-          (item_id, user_id, last_seen)
-          :selectQuery`,
-          {
-            selectQuery: connection.select({
-              "item_id": "issue_comments.id",
-            }).select(
-              connection.raw("? as user_id", userID),
-              connection.raw("? as last_seen", values.last_seen),
-            ).from("issue_comments")
-              .where({
-                "issue_comments.issue_id": issueID,
-              }),
-          }
-        ),
-      }
-    );
-
-    ({ rows: comments } = await query);
-  }
-
-  return {
-    issues: issueIDs,
-    // eslint-disable-next-line camelcase
-    issueComments: comments && comments.map(({ item_id }) => item_id),
-  };
-};
-
-const markIssueCommentSeen = async ({
-  issueCommentID,
-  userID,
-}) => {
-  const connection = await getDataConnection();
-
-  const query = connection.raw(
-    `:insertQuery ON CONFLICT (item_id, user_id) DO
-    UPDATE SET
-      last_seen = EXCLUDED.last_seen`,
-    {
-      insertQuery: connection.insert({
-        item_id: issueCommentID,
-        user_id: userID,
-        last_seen: connection.fn.now(),
-      }).into("issue_comments_user_views"),
-    }
-  );
-
-  await query;
-
-  return {
-    issueComments: [
-      issueCommentID,
-    ],
-  };
-};
-
 module.exports = {
   getIssue,
   getIssues,
@@ -712,6 +549,4 @@ module.exports = {
   addComment,
   searchIssues,
   getIssueUsers,
-  markIssueSeen,
-  markIssueCommentSeen,
 };

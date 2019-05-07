@@ -1,5 +1,4 @@
 import { fromJS, OrderedMap, Set, Map } from "immutable";
-import qs from "qs";
 
 const transformResultToComment = (result) => {
   return fromJS({
@@ -314,47 +313,3 @@ export const getIssueUsers = async ({ nameFilter }) => {
   );
 };
 
-export const markIssueSeen = async ({ id, includeComments }) => {
-  let url = `/api/issues/${id}/seen`;
-
-  const queryParams = {};
-
-  if (includeComments) {
-    queryParams.includeComments = 1;
-  }
-
-  if (Object.keys(queryParams)) {
-    url += qs.stringify(
-      queryParams,
-      {
-        addQueryPrefix: true,
-      }
-    );
-  }
-
-  const response = await fetch(
-    url,
-    {
-      method: "PUT",
-      headers: {
-        "Accept": "application/json",
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Error setting issue seen");
-  }
-
-  if (response.status < 300) {
-    const results = await response.json();
-
-    return fromJS(results);
-  }
-
-  throw new Error(
-    `PUT Request to /api/issues/${id}/seen returned with status ${
-      response.status
-    }`
-  );
-};
