@@ -20,7 +20,7 @@ const updateIssues = (state, issues) => {
     [
       "items",
     ],
-    (issueItems) => (issueItems || Map()).merge(issues)
+    (issueItems) => (issueItems || Map()).mergeDeep(issues)
   );
 };
 
@@ -34,7 +34,7 @@ export const IssuesReducer = (state = initialState, action) => {
     case FETCH_GET_ISSUE_COMPLETE:
     case FETCH_CREATE_ISSUE_COMPLETE:
     case FETCH_UPDATE_ISSUE_COMPLETE: {
-      return state.setIn(
+      return state.mergeDeepIn(
         [
           "items",
           action.payload.issue.get("id"),

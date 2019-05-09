@@ -1,5 +1,9 @@
 import * as api from "+app/api";
 import { Set, List } from "immutable";
+
+import {
+  getLatestIssueUpdateDate,
+} from "+app/selectors/issues";
 import { fetchUsers } from "./users";
 
 const ISSUE_USER_ID_PROPERTIES = [
@@ -60,16 +64,18 @@ export const FETCH_GET_ISSUES_COMPLETE = "FETCH_GET_ISSUES_COMPLETE";
  *
  * @param {object} [args]
  * @param {number[]} [args.ids] a list of issue ids to get
+ * @param {Date} [args.since] only get comments updated after this date
  *
  * @return {function} an action creator function
  */
-export function fetchIssues({ ids } = {}) {
+export function fetchIssues({ ids, since } = {}) {
   return async (dispatch, getState) => {
     try {
       dispatch({
         type: FETCH_GET_ISSUES_START,
         payload: {
           ids,
+          since,
         },
         api: {
           callName: "fetchIssues",
@@ -77,7 +83,10 @@ export function fetchIssues({ ids } = {}) {
         },
       });
 
-      const issues = await api.getIssues({ ids });
+      const issues = await api.getIssues({
+        ids,
+        since,
+      });
 
       await getMissingUserIDs({
         items: issues,
@@ -100,6 +109,7 @@ export function fetchIssues({ ids } = {}) {
         type: FETCH_GET_ISSUES_FAIL,
         payload: {
           ids,
+          since,
         },
         api: {
           callName: "fetchIssues",
@@ -514,76 +524,6 @@ export function searchIssues({ searchQuery, statuses, activityBy }) {
   };
 }
 
-export const FETCH_MARK_ISSUE_SEEN_START =
-  "FETCH_MARK_ISSUE_SEEN_START";
-
-export const FETCH_MARK_ISSUE_SEEN_FAIL =
-  "FETCH_MARK_ISSUE_SEEN_FAIL";
-
-export const FETCH_MARK_ISSUE_SEEN_COMPLETE =
-  "FETCH_MARK_ISSUE_SEEN_COMPLETE";
-
-/**
- * Action creator for marking an issue as seen by the current user
- *
- * @param {object} args
- * @param {number} [args.id] the ID of the issue to mark
- * @param {boolean} [args.includeComments] if true, will also mark all the
- * issue's comments as seen by the user
- *
- * @return {function} an action creator function
- */
-export function markIssueSeen({ id, includeComments }) {
-  return async (dispatch) => {
-    try {
-      dispatch({
-        type: FETCH_MARK_ISSUE_SEEN_START,
-        payload: {
-          id,
-          includeComments,
-        },
-        api: {
-          callName: "markIssueSeen",
-          status: "started",
-        },
-      });
-
-      const markedItems = await api.markIssueSeen({
-        id,
-        includeComments,
-      });
-
-      dispatch({
-        type: FETCH_MARK_ISSUE_SEEN_COMPLETE,
-        payload: {
-          markedItems,
-        },
-        api: {
-          callName: "markIssueSeen",
-          status: "complete",
-        },
-      });
-
-      return markedItems;
-    } catch (ex) {
-      dispatch({
-        type: FETCH_SEARCH_ISSUES_FAIL,
-        payload: {
-          id,
-          includeComments,
-        },
-        api: {
-          callName: "markIssueSeen",
-          status: "complete",
-        },
-        error: ex,
-      });
-
-      throw ex;
-    }
-  };
-}
-
 export const ISSUES_CLEAR_SEARCH_RESULTS = "ISSUES_CLEAR_SEARCH_RESULTS";
 
 export const clearIssuesSearchResults = () => {
@@ -591,3 +531,27 @@ export const clearIssuesSearchResults = () => {
     type: ISSUES_CLEAR_SEARCH_RESULTS,
   };
 };
+
+export const FETCH_GET_NEW_ISSUES_START =
+  "FETCH_GET_NEW_ISSUES_START";
+
+export const FETCH_GET_NEW_ISSUES_FAIL =
+  "FETCH_GET_NEW_ISSUES_FAIL";
+
+export const FETCH_GET_NEW_ISSUES_COMPLETE =
+  "FETCH_GET_NEW_ISSUES_COMPLETE";
+
+/**
+ * Action creator for getting issues that haven't been fetched yet.
+ *
+ * @return {function} an action creator function
+ */
+export function getNewIssues() {
+  return async (dispatch, getState) => {
+    const latestUpdateDate = getLatestIssueUpdateDate(getState());
+
+    return fetchIssues({
+      since: latestUpdateDate,
+    })(dispatch, getState);
+  };
+}

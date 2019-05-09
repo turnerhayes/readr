@@ -26,17 +26,42 @@ const WrappedAddIssueContainer = requireLogin(AddIssueContainer);
 const WrappedRentPayments = requireLogin(RentPaymentsContainer);
 
 const IssueDetail = requireLogin(
-  ({ match, ...props }) => (
-    <IssueDetailContainer
-      id={Number(match.params.issueID)}
-      {...props}
-    />
-  )
+  ({ match, location, ...props }) => {
+    const issueID = Number(match.params.issueID);
+
+    let { comment: scrollToComment } = qs.parse(
+      location.search,
+      {
+        ignoreQueryPrefix: true,
+      }
+    );
+
+    if (scrollToComment !== undefined) {
+      scrollToComment = Number(scrollToComment);
+
+      if (isNaN(scrollToComment)) {
+        scrollToComment = undefined;
+      }
+    }
+
+    return (
+      <IssueDetailContainer
+        id={issueID}
+        scrollToComment={scrollToComment}
+        {...props}
+      />
+    );
+  }
 );
 
 const IssuesSearch = requireLogin(({ location }) => {
-  const queryString = location.search.replace(/^\?/, "");
-  const search = queryString ? qs.parse(queryString) : null;
+  const queryString = location.search;
+  const search = queryString ? qs.parse(
+    queryString,
+    {
+      ignoreQueryPrefix: true,
+    }
+  ) : null;
 
   return (
     <IssuesSearchPageContainer

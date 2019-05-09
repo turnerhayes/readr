@@ -14,9 +14,12 @@ const {
   addComment,
   searchIssues,
   getIssueUsers,
+  getNewActivity,
+} = require("../../persistence/stores/issues");
+const {
   markIssueSeen,
   markIssueCommentSeen,
-} = require("../../persistence/stores/issues");
+} = require("../../persistence/stores/viewActivity");
 const { ensureLoggedIn } = require("../utils");
 
 const router = new express.Router();
@@ -28,6 +31,7 @@ router.route("/")
       try {
         let {
           includeClosed,
+          since,
         } = req.query;
 
         includeClosed = !!includeClosed;
@@ -38,9 +42,23 @@ router.route("/")
           excludeStatuses.push("closed");
         }
 
+        if (since) {
+          since = new Date(since);
+
+          if (isNaN(since.getTime())) {
+            const err = new Error("since parameter is not a valid date");
+            err.status = BAD_REQUEST;
+
+            return next(err);
+          }
+        } else {
+          since = undefined;
+        }
+
         const issues = await getIssues({
           excludeStatuses,
           userID: req.user.id,
+          since,
         });
 
         res.json(issues);
@@ -82,8 +100,25 @@ router.route("/")
     }
   );
 
+router.route("/activity")
+  .get(
+    ensureLoggedIn,
+    async (req, res, next) => {
+      try {
+        const activity = await getNewActivity({
+          userID: req.user.id,
+        });
+
+        res.json(activity);
+      } catch (ex) {
+        next(ex);
+      }
+    }
+  );
+
 router.route("/issueUsers")
   .get(
+    ensureLoggedIn,
     async (req, res, next) => {
       const {
         nameFilter,
@@ -101,6 +136,7 @@ router.route("/issueUsers")
 
 router.route("/search")
   .get(
+    ensureLoggedIn,
     async (req, res, next) => {
       let { query, status, activityBy } = req.query;
 
@@ -193,37 +229,6 @@ router.route("/:issueID")
         });
 
         res.json(issue);
-      } catch (ex) {
-        next(ex);
-      }
-    }
-  );
-
-router.route("/:issueID/seen")
-  .put(
-    ensureLoggedIn,
-    async (req, res, next) => {
-      let { issueID } = req.params;
-
-      const includeComments = Boolean(req.query.includeComments);
-
-      issueID = Number(issueID);
-
-      if (isNaN(issueID)) {
-        const err = new Error("Must provide an integer issueID parameter");
-        err.status = BAD_REQUEST;
-
-        return next(err);
-      }
-
-      try {
-        const marked = await markIssueSeen({
-          issueID,
-          includeComments,
-          userID: req.user.id,
-        });
-
-        res.json(marked);
       } catch (ex) {
         next(ex);
       }

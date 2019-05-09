@@ -2,14 +2,16 @@ import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
 import { Link } from "react-router-dom";
+import { List, Map } from "immutable";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import Icon from "@material-ui/core/Icon";
-import { FilterTrigger } from "./Filter/FilterTrigger";
-import { TextFilter } from "./Filter/TextFilter";
 import { Badge } from "@material-ui/core";
 
-const ViewIssueLink = ({ id, hasNew = false }) => {
+import { FilterTrigger } from "./Filter/FilterTrigger";
+import { TextFilter } from "./Filter/TextFilter";
+
+const ViewIssueLink = ({ id, hasNewActivity = false }) => {
   const linkNode = (
     <Link
       to={`/issues/${id}`}
@@ -18,7 +20,7 @@ const ViewIssueLink = ({ id, hasNew = false }) => {
     </Link>
   );
 
-  if (hasNew) {
+  if (hasNewActivity) {
     return (
       <Badge
         variant="dot"
@@ -36,11 +38,11 @@ const ViewIssueLink = ({ id, hasNew = false }) => {
 
 ViewIssueLink.propTypes = {
   id: PropTypes.number.isRequired,
-  hasNew: PropTypes.bool.isRequired,
+  hasNewActivity: PropTypes.bool.isRequired,
 };
 
 ViewIssueLink.defaultProps = {
-  hasNew: false,
+  hasNewActivity: false,
 };
 
 const cellStyles = {
@@ -106,6 +108,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 2,
   },
 
   flipped: {
@@ -122,6 +125,7 @@ class IssuesGrid extends React.PureComponent {
     classes: PropTypes.object.isRequired,
     className: PropTypes.string,
     issues: ImmutablePropTypes.map,
+    newActivity: ImmutablePropTypes.map,
   }
 
   state = {
@@ -214,9 +218,11 @@ class IssuesGrid extends React.PureComponent {
         content: ({ issue }) => (
           <ViewIssueLink
             id={issue.get("id")}
-            hasNew={
-              issue.get("hasNew") ||
-              issue.get("hasNewComments")
+            hasNewActivity={
+              this.props.newActivity.get("issues", List())
+                .includes(issue.get("id")) ||
+              this.props.newActivity.get("issueComments", Map())
+                .has(issue.get("id"))
             }
           />
         ),
