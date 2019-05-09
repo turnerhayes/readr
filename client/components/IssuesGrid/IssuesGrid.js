@@ -108,6 +108,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    zIndex: 2,
   },
 
   flipped: {

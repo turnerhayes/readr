@@ -14,10 +14,12 @@ const {
   addComment,
   searchIssues,
   getIssueUsers,
-  markIssueSeen,
-  markIssueCommentSeen,
   getNewActivity,
 } = require("../../persistence/stores/issues");
+const {
+  markIssueSeen,
+  markIssueCommentSeen,
+} = require("../../persistence/stores/viewActivity");
 const { ensureLoggedIn } = require("../utils");
 
 const router = new express.Router();
@@ -29,6 +31,7 @@ router.route("/")
       try {
         let {
           includeClosed,
+          since,
         } = req.query;
 
         includeClosed = !!includeClosed;
@@ -39,9 +42,23 @@ router.route("/")
           excludeStatuses.push("closed");
         }
 
+        if (since) {
+          since = new Date(since);
+
+          if (isNaN(since.getTime())) {
+            const err = new Error("since parameter is not a valid date");
+            err.status = BAD_REQUEST;
+
+            return next(err);
+          }
+        } else {
+          since = undefined;
+        }
+
         const issues = await getIssues({
           excludeStatuses,
           userID: req.user.id,
+          since,
         });
 
         res.json(issues);

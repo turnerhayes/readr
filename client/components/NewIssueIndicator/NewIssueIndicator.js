@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { useMappedState, useDispatch } from "redux-react-hook";
 import { Link } from "react-router-dom";
+import { List, Map } from "immutable";
 import { IconButton, Badge } from "@material-ui/core";
 import IssueIcon from "@material-ui/icons/ReportProblem";
 import CommentIcon from "@material-ui/icons/Comment";
@@ -12,7 +13,10 @@ import {
   newActivity,
 } from "+app/selectors/viewActivity";
 import { getNewActivity } from "+app/actions";
-import { List, Map } from "immutable";
+
+import { start as startViewActivityPolling } from "+app/polling/viewActivity";
+
+startViewActivityPolling();
 
 const NewIssueIndicator = () => {
   const mapStateToProps = useCallback(

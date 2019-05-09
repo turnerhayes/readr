@@ -18,6 +18,10 @@ const getNewIssueActivity = async ({ userID }) => {
         "issues_user_views.last_seen",
         ">=",
         "issues.updated_at"
+      ).andOn(
+        "issues_user_views.user_id",
+        "=",
+        userID
       )
     ).leftOuterJoin(
       (builder) => builder.select(
@@ -61,6 +65,10 @@ const getNewIssueActivity = async ({ userID }) => {
 
   const results = await query;
 
+  if (results.length === 0) {
+    return null;
+  }
+
   const newActivity = {};
 
   for (const result of results) {
@@ -73,38 +81,16 @@ const getNewIssueActivity = async ({ userID }) => {
     }
 
     if (result.newCommentIDs.length > 0) {
-      if (!newActivity.comments) {
-        newActivity.comments = {};
+      if (!newActivity.issueComments) {
+        newActivity.issueComments = {};
       }
 
-      newActivity.comments[result.issueID] = result.newCommentIDs;
+      newActivity.issueComments[result.issueID] = result.newCommentIDs;
     }
   }
 
   return newActivity;
 };
-
-const getLatestIssueUpdateDate = async () => {
-  const connection = await getDataConnection();
-
-  const [{ max: latest }] = await connection.select(
-    connection.raw(
-      "GREATEST(?, ?) AS ??",
-      [
-        connection.max("issues.updated_at")
-          .from("issues")
-          .whereNull("issues.deleted_at"),
-        connection.max("issue_comments.updated_at")
-          .from("issue_comments")
-          .whereNull("issue_comments.deleted_at"),
-        "max",
-      ]
-    )
-  );
-
-  return latest;
-};
-
 
 const markIssueSeen = async ({
   issueID,
@@ -210,7 +196,6 @@ const markIssueCommentSeen = async ({
 
 module.exports = {
   getNewIssueActivity,
-  getLatestIssueUpdateDate,
   markIssueSeen,
   markIssueCommentSeen,
 };

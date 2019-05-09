@@ -1,11 +1,11 @@
 import { store } from "+app/store/configure-store";
-
 import {
   getNewActivity,
 } from "+app/actions";
 
 // 5 minute interval
-const POLL_DELAY_MS = 1000 * 60 * 5;
+// const POLL_DELAY_MS = 1000 * 60 * 5;
+const POLL_DELAY_MS = 1000 * 60 * 1;
 
 let timeoutHandle = null;
 

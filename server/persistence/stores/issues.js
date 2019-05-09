@@ -67,7 +67,7 @@ const getIssues = async ({
   ids,
   originMessageIDs,
   excludeStatuses = [],
-  userID,
+  since,
 } = {}) => {
   const connection = await getDataConnection();
 
@@ -110,10 +110,19 @@ const getIssues = async ({
   if (excludeStatuses && excludeStatuses.length > 0) {
     if (excludeStatuses.length === 1) {
       query = query.whereNot("status", excludeStatuses[0]);
+    } else {
+      query = query.whereNotIn(
+        "status",
+        excludeStatuses,
+      );
     }
-    query = query.whereNotIn(
-      "status",
-      excludeStatuses,
+  }
+
+  if (since) {
+    query = query.where(
+      "updated_at",
+      ">",
+      since
     );
   }
 

@@ -1,5 +1,9 @@
 import * as api from "+app/api";
 import { Set, List } from "immutable";
+
+import {
+  getLatestIssueUpdateDate,
+} from "+app/selectors/issues";
 import { fetchUsers } from "./users";
 
 const ISSUE_USER_ID_PROPERTIES = [
@@ -60,16 +64,18 @@ export const FETCH_GET_ISSUES_COMPLETE = "FETCH_GET_ISSUES_COMPLETE";
  *
  * @param {object} [args]
  * @param {number[]} [args.ids] a list of issue ids to get
+ * @param {Date} [args.since] only get comments updated after this date
  *
  * @return {function} an action creator function
  */
-export function fetchIssues({ ids } = {}) {
+export function fetchIssues({ ids, since } = {}) {
   return async (dispatch, getState) => {
     try {
       dispatch({
         type: FETCH_GET_ISSUES_START,
         payload: {
           ids,
+          since,
         },
         api: {
           callName: "fetchIssues",
@@ -77,7 +83,10 @@ export function fetchIssues({ ids } = {}) {
         },
       });
 
-      const issues = await api.getIssues({ ids });
+      const issues = await api.getIssues({
+        ids,
+        since,
+      });
 
       await getMissingUserIDs({
         items: issues,
@@ -100,6 +109,7 @@ export function fetchIssues({ ids } = {}) {
         type: FETCH_GET_ISSUES_FAIL,
         payload: {
           ids,
+          since,
         },
         api: {
           callName: "fetchIssues",
@@ -521,3 +531,27 @@ export const clearIssuesSearchResults = () => {
     type: ISSUES_CLEAR_SEARCH_RESULTS,
   };
 };
+
+export const FETCH_GET_NEW_ISSUES_START =
+  "FETCH_GET_NEW_ISSUES_START";
+
+export const FETCH_GET_NEW_ISSUES_FAIL =
+  "FETCH_GET_NEW_ISSUES_FAIL";
+
+export const FETCH_GET_NEW_ISSUES_COMPLETE =
+  "FETCH_GET_NEW_ISSUES_COMPLETE";
+
+/**
+ * Action creator for getting issues that haven't been fetched yet.
+ *
+ * @return {function} an action creator function
+ */
+export function getNewIssues() {
+  return async (dispatch, getState) => {
+    const latestUpdateDate = getLatestIssueUpdateDate(getState());
+
+    return fetchIssues({
+      since: latestUpdateDate,
+    })(dispatch, getState);
+  };
+}

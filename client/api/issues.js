@@ -1,4 +1,5 @@
 import { fromJS, OrderedMap, Set, Map } from "immutable";
+import qs from "qs";
 
 const transformResultToComment = (result) => {
   return fromJS({
@@ -11,7 +12,7 @@ const transformResultToComment = (result) => {
 const transformResultToIssue = (result) => {
   return fromJS({
     ...result,
-    comments: (result.comments || []).map(
+    issueComments: (result.issueComments || []).map(
       transformResultToComment
     ),
     createdAt: new Date(result.createdAt),
@@ -64,28 +65,29 @@ export const getIssue = async ({ id, includeComments = false } = {}) => {
   );
 };
 
-export const getIssues = async ({ ids, includeClosed = false } = {}) => {
+export const getIssues = async ({
+  ids,
+  since,
+  includeClosed = false,
+} = {}) => {
   let url = "/api/issues";
 
-  const qs = new URLSearchParams();
-
-  let hasQs = false;
+  const params = {};
 
   if (ids && ids.length > 0) {
-    for (const id of ids) {
-      qs.append("id", id);
-    }
-
-    hasQs = true;
+    params.id = ids;
   }
 
   if (includeClosed) {
-    qs.append("includeClosed", 1);
-    hasQs = true;
+    params.includeClosed = 1;
   }
 
-  if (hasQs) {
-    url += `?${qs.toString()}`;
+  if (since) {
+    params.since = since.toISOString();
+  }
+
+  if (Object.keys(params).length > 0) {
+    url += `?${qs.stringify(params)}`;
   }
 
 
@@ -128,7 +130,7 @@ export const createIssue = async (issueData) => {
   if (response.status < 300) {
     const issue = await response.json();
 
-    return fromJS(issue);
+    return transformResultToIssue(issue);
   }
 
   throw new Error(
@@ -312,4 +314,3 @@ export const getIssueUsers = async ({ nameFilter }) => {
     }`
   );
 };
-

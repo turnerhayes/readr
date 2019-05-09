@@ -8,11 +8,7 @@ import { history } from "+app/history";
 import { store } from "+app/store/configure-store";
 import { AppContainer } from "+app/components/App";
 
-import { start as startViewActivityPolling } from "+app/polling/viewActivity";
-
 import "./site.css";
-
-startViewActivityPolling();
 
 const run = () => {
   render(

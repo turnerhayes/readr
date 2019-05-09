@@ -5,11 +5,9 @@ const {
 
 const {
   getNewIssueActivity,
-  getLatestIssueUpdateDate,
   markIssueSeen,
 } = require("../../persistence/stores/viewActivity");
 const { ensureLoggedIn } = require("../utils");
-const { Logger } = require("../../loggers");
 
 const router = new express.Router();
 
@@ -21,24 +19,6 @@ router.route("/issues")
         const activity = await getNewIssueActivity({
           userID: req.user.id,
         });
-
-        let lastModified = null;
-
-        try {
-          lastModified = await getLatestIssueUpdateDate();
-        } catch (ex) {
-          Logger.error({
-            message: ex.message,
-            stack: ex.stack,
-          });
-        }
-
-        if (lastModified !== null) {
-          res.set({
-            "Cache-Control": "private, max-age=60000",
-            "Last-Modified": lastModified.toGMTString(),
-          });
-        }
 
         res.json(activity);
       } catch (ex) {
