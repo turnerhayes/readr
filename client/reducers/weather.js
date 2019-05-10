@@ -7,11 +7,7 @@ import {
 export const WeatherReducer = (state = OrderedMap(), action) => {
   switch (action.type) {
     case getSnowAlerts.actionTypes.complete: {
-      if (action.api.callName === getSnowAlerts.name) {
-        return action.payload;
-      }
-
-      return state;
+      return action.payload;
     }
     default: {
       return state;

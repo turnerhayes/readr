@@ -1,19 +1,19 @@
 import { Map } from "immutable";
 
 export const APIReducer = (state = Map(), action) => {
-  if ("api" in action) {
-    if (action.api.status === "complete") {
+  if (action.meta && "api" in action.meta) {
+    if (action.meta.api.status === "complete") {
       return state.deleteIn(
         [
           "calls",
-          action.api.callName,
+          action.meta.api.callName,
         ]
       );
     } else {
       return state.setIn(
         [
           "calls",
-          action.api.callName,
+          action.meta.api.callName,
         ],
         true
       );
