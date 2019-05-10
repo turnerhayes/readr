@@ -1,10 +1,12 @@
 import { Map, List, is } from "immutable";
 
-import { FETCH_NEW_ACTIVITY_COMPLETE } from "+app/actions";
+import {
+  getNewActivity,
+} from "+app/actions";
 
 export const viewActivityReducer = (state = Map(), action) => {
   switch (action.type) {
-    case FETCH_NEW_ACTIVITY_COMPLETE: {
+    case getNewActivity.actionTypes.complete: {
       const { newActivity } = action.payload;
 
       // If no new activity since the last activity check, make no changes

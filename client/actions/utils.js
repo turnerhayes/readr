@@ -36,9 +36,13 @@ export function createAPIAction(
           },
         });
 
-        const result = await executeAPICall(
-          ...args,
+        let result = await executeAPICall(
+          ...args
         );
+
+        if (typeof result === "function") {
+          result = await result(dispatch, getState);
+        }
 
         dispatch({
           type: actionTypes.complete,
