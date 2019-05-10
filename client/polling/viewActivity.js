@@ -4,8 +4,7 @@ import {
 } from "+app/actions";
 
 // 5 minute interval
-// const POLL_DELAY_MS = 1000 * 60 * 5;
-const POLL_DELAY_MS = 1000 * 60 * 1;
+const POLL_DELAY_MS = 1000 * 60 * 5;
 
 let timeoutHandle = null;
 
