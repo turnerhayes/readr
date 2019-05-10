@@ -9,6 +9,8 @@ stats.json
 *.crt
 *.key
 
+server/routes/api/forecast.json
+
 # Cruft
 .DS_Store
 npm-debug.log

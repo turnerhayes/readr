@@ -1,7 +1,9 @@
+/* global process */
+
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
-import { useMappedState } from "redux-react-hook";
+import { useMappedState, useDispatch } from "redux-react-hook";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -11,6 +13,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Popper from "@material-ui/core/Popper";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grid from "@material-ui/core/Grid";
 import HomeIcon from "@material-ui/icons/Home";
 import PersonIcon from "@material-ui/icons/Person";
 import { Link } from "react-router-dom";
@@ -18,7 +21,11 @@ import { Link } from "react-router-dom";
 import { AccountDropDown } from "+app/components/AccountDropDown";
 import { NewIssueIndicator } from "+app/components/NewIssueIndicator";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
-import { Grid } from "@material-ui/core";
+
+import {
+  getSnowAlerts,
+} from "+app/actions";
+import { SnowForecastIndicator } from "../SnowForecastIndicator";
 
 const AccountDropDownTrigger = ({ className }) => {
   const [state, setState] = useState({
@@ -40,6 +47,18 @@ const AccountDropDownTrigger = ({ className }) => {
     }),
     []
   );
+
+  const [hasFetchedWeather, setHasFetchedWeather] = useState(false);
+
+  const dispatch = useDispatch();
+
+  if (!hasFetchedWeather) {
+    dispatch(
+      getSnowAlerts()
+    );
+
+    setHasFetchedWeather(true);
+  }
 
   return (
     <IconButton
@@ -108,7 +127,9 @@ function TopNav({ classes, location }) {
     []
   );
 
-  const { isLoggedIn } = useMappedState(mapState);
+  const {
+    isLoggedIn,
+  } = useMappedState(mapState);
 
   return (
     <AppBar
@@ -160,6 +181,13 @@ function TopNav({ classes, location }) {
             classes.autoWidth
           )}
         >
+          {
+            process.env.IS_WEATHER_ENABLED && (
+              <Grid item>
+                <SnowForecastIndicator />
+              </Grid>
+            )
+          }
           <Grid item>
             <NewIssueIndicator />
           </Grid>

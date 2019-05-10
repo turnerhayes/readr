@@ -9,6 +9,7 @@ import { APIReducer } from "./api";
 import { UsersReducer } from "./users";
 import { IssuesReducer } from "./issues";
 import { viewActivityReducer } from "./viewActivity";
+import { WeatherReducer } from "./weather";
 
 export const reducer = combineReducers({
   rent: rentReducer,
@@ -17,5 +18,6 @@ export const reducer = combineReducers({
   users: UsersReducer,
   issues: IssuesReducer,
   viewActivity: viewActivityReducer,
+  weather: WeatherReducer,
   router: connectRouter(history),
 });

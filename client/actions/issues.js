@@ -122,6 +122,7 @@ export function fetchIssues({ ids, since } = {}) {
     }
   };
 }
+
 export const FETCH_GET_ISSUE_START = "FETCH_GET_ISSUE_START";
 
 export const FETCH_GET_ISSUE_FAIL = "FETCH_GET_ISSUE_FAIL";

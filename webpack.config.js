@@ -86,6 +86,10 @@ let webpackConfig = {
         },
         {}
       ),
+      IS_WEATHER_ENABLED: Boolean(
+        Config.weather.openWeatherMapAPIKey &&
+          Config.property.location
+      ),
     }),
 
     new MiniCssExtractPlugin({
