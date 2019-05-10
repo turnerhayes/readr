@@ -8,7 +8,7 @@ export const AddIssueContainer = connect(
   null,
   (dispatch) => ({
     async addIssue(issueData) {
-      const issue = await dispatch(
+      const { issue } = await dispatch(
         createIssue(issueData)
       );
 

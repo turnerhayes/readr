@@ -52,6 +52,8 @@ export function createAPIAction(
             status: "complete",
           },
         });
+
+        return result;
       } catch (ex) {
         dispatch({
           type: actionTypes.fail,

@@ -163,11 +163,7 @@ export const fetchIssueComments = createAPIAction(
  * @return {function} an action creator function
  */
 export const createIssue = createAPIAction(
-  async function createIssue(
-    {
-      issueData,
-    }
-  ) {
+  async function createIssue(issueData) {
     const issue = await api.createIssue(issueData);
 
     return {
