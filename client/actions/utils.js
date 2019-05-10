@@ -30,9 +30,11 @@ export function createAPIAction(
         dispatch({
           type: actionTypes.start,
           payload: args,
-          api: {
-            callName: executeAPICall.name,
-            status: "started",
+          meta: {
+            api: {
+              callName: executeAPICall.name,
+              status: "started",
+            },
           },
         });
 
@@ -47,9 +49,11 @@ export function createAPIAction(
         dispatch({
           type: actionTypes.complete,
           payload: result,
-          api: {
-            callName: executeAPICall.name,
-            status: "complete",
+          meta: {
+            api: {
+              callName: executeAPICall.name,
+              status: "complete",
+            },
           },
         });
 
@@ -58,9 +62,11 @@ export function createAPIAction(
         dispatch({
           type: actionTypes.fail,
           payload: args,
-          api: {
-            callName: executeAPICall.name,
-            status: "complete",
+          meta: {
+            api: {
+              callName: executeAPICall.name,
+              status: "complete",
+            },
           },
           error: ex,
         });
