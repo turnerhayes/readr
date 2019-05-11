@@ -4,6 +4,7 @@ const { promisify } = require("util");
 const path = require("path");
 const readFile = promisify(require("fs").readFile);
 const writeFile = promisify(require("fs").writeFile);
+const stat = promisify(require("fs").stat);
 const request = require("request-promise-native");
 
 const Config = require("../../config");
@@ -73,55 +74,74 @@ const getSnowDays = async () => {
   return snowDays;
 };
 
+const fetchAndCacheForecast = async () => {
+  const forecast = await fetchForecast();
+
+  try {
+    await writeFile(
+      FORECAST_CACHE_FILE,
+      JSON.stringify(
+        forecast,
+        null,
+        "  "
+      )
+    );
+  } catch (ex) {
+    Logger.error({
+      message: ex.message,
+      stack: ex.stack,
+    });
+  }
+
+  return forecast;
+};
+
 /**
  * Gets the forecast, from the cache or the API, as appropriate
  *
  * @return {Promise<object>}
  */
 async function getForecast() {
+  let forecastString;
+
   try {
-    const forecastString = await readFile(
+    forecastString = await readFile(
       FORECAST_CACHE_FILE,
       "utf8"
     );
-
-    const result = JSON.parse(
-      forecastString
-    );
-
-    if (result.error) {
-      const err = result.error;
-      err.code = "ENOENT";
-
-      throw err;
-    }
-
-    return result;
   } catch (ex) {
     if (ex.code === "ENOENT") {
-      const forecast = await fetchForecast();
-
-      try {
-        await writeFile(
-          FORECAST_CACHE_FILE,
-          JSON.stringify(
-            forecast,
-            null,
-            "  "
-          )
-        );
-      } catch (ex) {
-        Logger.error({
-          message: ex.message,
-          stack: ex.stack,
-        });
-      }
-
-      return forecast;
+      forecastString = await fetchAndCacheForecast();
     } else {
       throw ex;
     }
   }
+
+  let forecast;
+
+  const { ctime } = await stat(FORECAST_CACHE_FILE);
+
+  // Bust the cache after 12 hours
+  if (new Date() - ctime > 1000 * 60 * 60 * 12) {
+    Logger.info("Forecast cache file is old; refetching");
+    forecast = await fetchAndCacheForecast();
+  }
+
+  if (forecastString && !forecast) {
+    forecast = JSON.parse(
+      forecastString
+    );
+
+    if (forecast.error) {
+      Logger.error({
+        message: forecast.error.message,
+      });
+
+      return fetchAndCacheForecast();
+    }
+  }
+
+  return forecast;
 }
 
 router.route("/snow-alerts")
