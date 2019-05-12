@@ -7,6 +7,7 @@ const Config = {
   mail: require("./mail"),
   weather: require("./weather"),
   property: require("./property"),
+  redis: require("./redis"),
 };
 
 module.exports = Config;

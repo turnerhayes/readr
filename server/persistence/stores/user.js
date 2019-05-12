@@ -124,7 +124,8 @@ const getUsers = async ({
 }) => {
   const connection = await getDataConnection();
 
-  let query = connection.select("id",
+  let query = connection.select(
+    "id",
     "username",
     "first_name",
     "middle_name",
@@ -139,6 +140,11 @@ const getUsers = async ({
       query = query.where({
         id: ids[0],
       });
+    } else {
+      query = query.whereIn(
+        "id",
+        ids
+      );
     }
   }
 

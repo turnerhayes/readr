@@ -5,6 +5,7 @@ const {
   BAD_REQUEST,
 } = require("http-status-codes");
 
+const redisClient = require("../../persistence/redisClient");
 const {
   getIssue,
   getIssues,
@@ -23,6 +24,14 @@ const {
 const { ensureLoggedIn } = require("../utils");
 
 const router = new express.Router();
+
+const clearUnclosedIssuesCache = async () => {
+  if (!redisClient) {
+    return;
+  }
+
+  await redisClient.del("issues:unclosed");
+};
 
 router.route("/")
   .get(
@@ -55,11 +64,27 @@ router.route("/")
           since = undefined;
         }
 
+        if (redisClient && !since && !includeClosed) {
+          const issueJSON = await redisClient.get("issues:unclosed");
+
+          if (issueJSON) {
+            res.type("application/json").send(issueJSON);
+            return;
+          }
+        }
+
         const issues = await getIssues({
           excludeStatuses,
           userID: req.user.id,
           since,
         });
+
+        if (redisClient && !since && !includeClosed) {
+          redisClient.set(
+            "issues:unclosed",
+            JSON.stringify(issues),
+          );
+        }
 
         res.json(issues);
       } catch (ex) {
@@ -89,6 +114,8 @@ router.route("/")
           issueID: issue.id,
           userID: req.user.id,
         });
+
+        await clearUnclosedIssuesCache();
 
         res
           .status(CREATED)
@@ -227,6 +254,8 @@ router.route("/:issueID")
           userID: req.user.id,
           updates,
         });
+
+        await clearUnclosedIssuesCache();
 
         res.json(issue);
       } catch (ex) {
