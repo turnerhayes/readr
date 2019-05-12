@@ -15,6 +15,7 @@ import ReplyIcon from "@material-ui/icons/Reply";
 import EditIcon from "@material-ui/icons/Edit";
 import ReactMarkdown from "react-markdown";
 import { EditorState } from "draft-js";
+import scrollIntoViewIfNeeded from "scroll-into-view-if-needed";
 
 import { MarkdownEditor } from "+app/components/MarkdownEditor";
 import { IssueHeader } from "+app/components/IssueDetail/IssueHeader";
@@ -30,6 +31,10 @@ const styles = (theme) => ({
 
   fullWidth: {
     width: "100%",
+  },
+
+  highlightedComment: {
+    outline: "2px solid lightblue",
   },
 
   gutters: {
@@ -53,7 +58,10 @@ class IssueDetail extends React.PureComponent {
     issue: ImmutablePropTypes.map.isRequired,
     updateIssue: PropTypes.func.isRequired,
     addComment: PropTypes.func.isRequired,
+    scrollToComment: PropTypes.number,
   }
+
+  scrollCommentRef = React.createRef()
 
   /**
    * Constructs an IssueDetail component
@@ -72,7 +80,34 @@ class IssueDetail extends React.PureComponent {
       isEditing: false,
       isReplying: false,
       replyContent: null,
+      hasScrolledToComment: false,
     };
+  }
+
+  /**
+   */
+  componentDidMount() {
+    this.scrollToCommentRef();
+  }
+
+  /**
+   */
+  componentDidUpdate() {
+    this.scrollToCommentRef();
+  }
+
+  /**
+   * Scrolls to the appropriate comment if the page has not already been
+   * scrolled and the comment to scroll to has been mounted
+   */
+  scrollToCommentRef() {
+    if (this.scrollCommentRef.current && !this.state.hasScrolledToComment) {
+      scrollIntoViewIfNeeded(this.scrollCommentRef.current);
+
+      this.setState({
+        hasScrolledToComment: true,
+      });
+    }
   }
 
   /**
@@ -281,17 +316,28 @@ class IssueDetail extends React.PureComponent {
           <List>
             {
               this.props.issue.get("comments").map(
-                (comment) => (
-                  <ListItem
-                    key={comment.get("id")}
-                    disableGutters
-                  >
-                    <IssueComment
-                      comment={comment}
-                      className={classes.fullWidth}
-                    />
-                  </ListItem>
-                )
+                (comment) => {
+                  const shouldScroll = this.props.scrollToComment
+                    === comment.get("id");
+
+                  return (
+                    <ListItem
+                      key={comment.get("id")}
+                      disableGutters
+                    >
+                      <IssueComment
+                        ref={shouldScroll ? this.scrollCommentRef : undefined}
+                        comment={comment}
+                        className={classnames(
+                          classes.fullWidth,
+                          {
+                            [classes.highlightedComment]: shouldScroll,
+                          }
+                        )}
+                      />
+                    </ListItem>
+                  );
+                }
               ).toArray()
             }
             {

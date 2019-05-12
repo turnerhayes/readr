@@ -1,9 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ImmutablePropTypes from "react-immutable-proptypes";
+import { is } from "immutable";
 import { connect } from "react-redux";
 
-import { fetchIssues } from "+app/actions";
+import { fetchIssues, getNewIssues } from "+app/actions";
+import { newActivity } from "+app/selectors/viewActivity";
 
 import { IssuesGrid } from "./IssuesGrid";
 
@@ -16,6 +18,8 @@ class IssuesGridInnerContainer extends React.PureComponent {
       ImmutablePropTypes.map
     ),
     fetchIssues: PropTypes.func,
+    newActivity: ImmutablePropTypes.map,
+    getNewIssues: PropTypes.func.isRequired,
   }
 
   /**
@@ -25,14 +29,29 @@ class IssuesGridInnerContainer extends React.PureComponent {
   }
 
   /**
+   * @param {object} prevProps the previous component prop values
+   */
+  componentDidUpdate(prevProps) {
+    if (!is(prevProps.newActivity, this.props.newActivity)) {
+      this.props.getNewIssues();
+    }
+  }
+
+  /**
    * Renders the component.
    *
    * @return {JSX.Element}
    */
   render() {
+    const {
+      // eslint-disable-next-line no-unused-vars
+      getNewIssues,
+      ...props
+    } = this.props;
+
     return (
       <IssuesGrid
-        {...this.props}
+        {...props}
       />
     );
   }
@@ -44,12 +63,19 @@ const mapStateToProps = (state) => ({
     state.issues.get("items").filter(
       (issue) => issue.get("status") !== "closed"
     ),
+  newActivity: newActivity(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
   fetchIssues() {
     dispatch(
       fetchIssues()
+    );
+  },
+
+  getNewIssues() {
+    dispatch(
+      getNewIssues()
     );
   },
 });

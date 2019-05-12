@@ -12,7 +12,7 @@ const transformResultToComment = (result) => {
 const transformResultToIssue = (result) => {
   return fromJS({
     ...result,
-    comments: (result.comments || []).map(
+    issueComments: (result.issueComments || []).map(
       transformResultToComment
     ),
     createdAt: new Date(result.createdAt),
@@ -65,28 +65,29 @@ export const getIssue = async ({ id, includeComments = false } = {}) => {
   );
 };
 
-export const getIssues = async ({ ids, includeClosed = false } = {}) => {
+export const getIssues = async ({
+  ids,
+  since,
+  includeClosed = false,
+} = {}) => {
   let url = "/api/issues";
 
-  const qs = new URLSearchParams();
-
-  let hasQs = false;
+  const params = {};
 
   if (ids && ids.length > 0) {
-    for (const id of ids) {
-      qs.append("id", id);
-    }
-
-    hasQs = true;
+    params.id = ids;
   }
 
   if (includeClosed) {
-    qs.append("includeClosed", 1);
-    hasQs = true;
+    params.includeClosed = 1;
   }
 
-  if (hasQs) {
-    url += `?${qs.toString()}`;
+  if (since) {
+    params.since = since.toISOString();
+  }
+
+  if (Object.keys(params).length > 0) {
+    url += `?${qs.stringify(params)}`;
   }
 
 
@@ -129,7 +130,7 @@ export const createIssue = async (issueData) => {
   if (response.status < 300) {
     const issue = await response.json();
 
-    return fromJS(issue);
+    return transformResultToIssue(issue);
   }
 
   throw new Error(
@@ -309,51 +310,6 @@ export const getIssueUsers = async ({ nameFilter }) => {
 
   throw new Error(
     `GET Request to /api/issues/issueUsers returned with status ${
-      response.status
-    }`
-  );
-};
-
-export const markIssueSeen = async ({ id, includeComments }) => {
-  let url = `/api/issues/${id}/seen`;
-
-  const queryParams = {};
-
-  if (includeComments) {
-    queryParams.includeComments = 1;
-  }
-
-  if (Object.keys(queryParams)) {
-    url += qs.stringify(
-      queryParams,
-      {
-        addQueryPrefix: true,
-      }
-    );
-  }
-
-  const response = await fetch(
-    url,
-    {
-      method: "PUT",
-      headers: {
-        "Accept": "application/json",
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Error setting issue seen");
-  }
-
-  if (response.status < 300) {
-    const results = await response.json();
-
-    return fromJS(results);
-  }
-
-  throw new Error(
-    `PUT Request to /api/issues/${id}/seen returned with status ${
       response.status
     }`
   );

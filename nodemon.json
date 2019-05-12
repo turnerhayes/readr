@@ -4,5 +4,9 @@
 		"server",
 		"webpack.config.js"
 	],
-	"ignore": ["client", "tools", "logs"]
+	"ignore": [
+		"client",
+		"logs",
+		"server/routes/api/forecast.json"
+	]
 }

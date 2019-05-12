@@ -77,3 +77,15 @@ export const getIssue = (state, { id }) => {
 
   return issue;
 };
+
+export const getLatestIssueUpdateDate = (state) => state.issues.get("items")
+  .reduce(
+    (latest, issue) => {
+      if (latest === null || issue.get("updatedAt") > latest) {
+        return issue.get("updatedAt");
+      }
+
+      return latest;
+    },
+    null
+  );

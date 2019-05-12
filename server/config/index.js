@@ -5,6 +5,9 @@ const Config = {
   paths: require("./paths"),
   session: require("./session"),
   mail: require("./mail"),
+  weather: require("./weather"),
+  property: require("./property"),
+  redis: require("./redis"),
 };
 
 module.exports = Config;

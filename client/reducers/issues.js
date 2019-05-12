@@ -1,18 +1,17 @@
 import { Map } from "immutable";
 
 import {
-  FETCH_GET_ISSUES_COMPLETE,
-  FETCH_UPDATE_ISSUE_COMPLETE,
-  FETCH_CREATE_ISSUE_COMPLETE,
-  FETCH_GET_ISSUE_COMMENTS_COMPLETE,
-  FETCH_GET_ISSUE_COMPLETE,
-  FETCH_SEARCH_ISSUES_COMPLETE,
   ISSUES_CLEAR_SEARCH_RESULTS,
+  fetchIssues,
+  fetchIssue,
+  createIssue,
+  updateIssue,
+  searchIssues,
+  fetchIssueComments,
 } from "+app/actions";
 
 const initialState = Map({
   items: Map(),
-  isFetched: false,
 });
 
 const updateIssues = (state, issues) => {
@@ -20,21 +19,20 @@ const updateIssues = (state, issues) => {
     [
       "items",
     ],
-    (issueItems) => (issueItems || Map()).merge(issues)
+    (issueItems) => (issueItems || Map()).mergeDeep(issues)
   );
 };
 
 export const IssuesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case FETCH_GET_ISSUES_COMPLETE: {
-      return updateIssues(state, action.payload.issues)
-        .set("isFetched", true);
+    case fetchIssues.actionTypes.complete: {
+      return updateIssues(state, action.payload.issues);
     }
 
-    case FETCH_GET_ISSUE_COMPLETE:
-    case FETCH_CREATE_ISSUE_COMPLETE:
-    case FETCH_UPDATE_ISSUE_COMPLETE: {
-      return state.setIn(
+    case fetchIssue.actionTypes.complete:
+    case createIssue.actionTypes.complete:
+    case updateIssue.actionTypes.complete: {
+      return state.mergeDeepIn(
         [
           "items",
           action.payload.issue.get("id"),
@@ -43,7 +41,7 @@ export const IssuesReducer = (state = initialState, action) => {
       );
     }
 
-    case FETCH_SEARCH_ISSUES_COMPLETE: {
+    case searchIssues.actionTypes.complete: {
       return updateIssues(state, action.payload.results)
         .setIn(
           [
@@ -59,7 +57,7 @@ export const IssuesReducer = (state = initialState, action) => {
       return state.delete("searchResults");
     }
 
-    case FETCH_GET_ISSUE_COMMENTS_COMPLETE: {
+    case fetchIssueComments.actionTypes.complete: {
       const { issueComments, issueID } = action.payload;
 
       return state.setIn(
