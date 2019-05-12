@@ -6,15 +6,32 @@ const {
   findUser,
   addUser,
 } = require("../persistence/stores/user");
+const redisClient = require("../persistence/redisClient");
 const Config = require("../config");
 
-passport.serializeUser((user, done) => {
+passport.serializeUser(async (user, done) => {
+  if (redisClient !== null) {
+    await redisClient.set(`user:${user.id}`, JSON.stringify(user));
+  }
   done(null, user.id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const user = await findUser({ id });
+    let user;
+
+    if (redisClient !== null) {
+      const userString = await redisClient.get(`user:${id}`);
+
+      if (userString) {
+        user = JSON.parse(userString);
+      }
+    }
+
+    if (!user) {
+      user = await findUser({ id });
+    }
+
     done(null, user);
   } catch (ex) {
     done(ex);
