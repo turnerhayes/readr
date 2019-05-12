@@ -18,7 +18,14 @@
         "client",
       ],
       "plugins": [
-        "transform-react-remove-prop-types",
+        [
+          "transform-react-remove-prop-types",
+          {
+            "additionalLibraries": [
+              "react-immutable-proptypes"
+            ],
+          }
+        ],
         "@babel/plugin-transform-react-constant-elements",
         "@babel/plugin-transform-react-inline-elements"
       ]
