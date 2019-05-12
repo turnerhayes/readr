@@ -9,7 +9,8 @@ import * as api from "+app/api";
  * @return {function} an action creator function
  */
 export const getNewActivity = createAPIAction(
-  async function getNewActivity() {
+  "getNewActivity",
+  async () => {
     const newActivity = await api.getNewActivity();
 
     return {
@@ -29,12 +30,13 @@ export const getNewActivity = createAPIAction(
  * @return {function} an action creator function
  */
 export const markIssueSeen = createAPIAction(
-  async function markIssueSeen(
+  "markIssueSeen",
+  async (
     {
       id,
       includeComments,
     }
-  ) {
+  ) => {
     const markedItems = await api.markIssueSeen({
       id,
       includeComments,

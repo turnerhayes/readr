@@ -9,7 +9,8 @@ import * as api from "+app/api";
  * @return {function} an action creator function
  */
 export const fetchUsers = createAPIAction(
-  async function fetchUsers({ ids } = {}) {
+  "fetchUsers",
+  async ({ ids } = {}) => {
     const users = await api.getUsers({ ids });
 
     return {

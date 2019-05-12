@@ -66,12 +66,13 @@ const getMissingUsers = async ({
  * @return {function} an action creator function
  */
 export const fetchIssues = createAPIAction(
-  async function fetchIssues(
+  "fetchIssues",
+  async (
     {
       ids,
       since,
     } = {}
-  ) {
+  ) => {
     const issues = await api.getIssues({
       ids,
       since,
@@ -102,12 +103,13 @@ export const fetchIssues = createAPIAction(
  * @return {function} an action creator function
  */
 export const fetchIssue = createAPIAction(
-  async function fetchIssue(
+  "fetchIssue",
+  async (
     {
       id,
       includeComments = false,
     }
-  ) {
+  ) => {
     const issue = await api.getIssue({ id, includeComments });
 
     return async (dispatch, getState) => {
@@ -133,11 +135,12 @@ export const fetchIssue = createAPIAction(
  * @return {function} an action creator function
  */
 export const fetchIssueComments = createAPIAction(
-  async function fetchIssueComments(
+  "fetchIssueComments",
+  async (
     {
       issueID,
     }
-  ) {
+  ) => {
     const issueComments = await api.getIssueComments({ issueID });
 
     return async (dispatch, getState) => {
@@ -163,7 +166,8 @@ export const fetchIssueComments = createAPIAction(
  * @return {function} an action creator function
  */
 export const createIssue = createAPIAction(
-  async function createIssue(issueData) {
+  "createIssue",
+  async (issueData) => {
     const issue = await api.createIssue(issueData);
 
     return {
@@ -182,12 +186,13 @@ export const createIssue = createAPIAction(
  * @return {function} an action creator function
  */
 export const updateIssue = createAPIAction(
-  async function updateIssue(
+  "updateIssue",
+  async (
     {
       issueID,
       updates,
     }
-  ) {
+  ) => {
     const issue = await api.updateIssue({
       issueID,
       updates,
@@ -210,12 +215,13 @@ export const updateIssue = createAPIAction(
  * @return {function} an action creator function
  */
 export const addIssueComment = createAPIAction(
-  async function addIssueComment(
+  "addIssueComment",
+  async (
     {
       issueID,
       commentData,
     }
-  ) {
+  ) => {
     const comment = await api.createIssueComment({
       issueID,
       commentData,
@@ -240,13 +246,14 @@ export const addIssueComment = createAPIAction(
  * @return {function} an action creator function
  */
 export const searchIssues = createAPIAction(
-  async function searchIssues(
+  "searchIssues",
+  async (
     {
       searchQuery,
       statuses,
       activityBy,
     }
-  ) {
+  ) => {
     const results = await api.searchIssues({
       searchQuery,
       statuses,
