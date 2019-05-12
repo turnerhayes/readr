@@ -10,7 +10,7 @@ const { promisify } = require("util");
 const redis = require("redis");
 
 const client = redis.createClient({
-  host: Config.redis.host,
+  url: Config.redis.url,
 });
 
 client.on("error", (err) => {
