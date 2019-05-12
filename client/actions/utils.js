@@ -7,21 +7,23 @@ const FETCH_COMPLETE = "FETCH_COMPLETE";
 /**
  * Returns an action creator function
  *
+ * @param {string} callName a string identifying the call
  * @param {function} executeAPICall the function to call on the API
  *
  * @return {function} an action creator function
  */
 export function createAPIAction(
+  callName,
   executeAPICall,
 ) {
-  if (!executeAPICall.name) {
-    throw new Error("`executeAPICall` function must have a name");
+  if (!callName) {
+    throw new Error("`actionName` is required");
   }
 
   const actionTypes = Object.freeze({
-    start: `${FETCH_START}/${executeAPICall.name}`,
-    fail: `${FETCH_FAIL}/${executeAPICall.name}`,
-    complete: `${FETCH_COMPLETE}/${executeAPICall.name}`,
+    start: `${FETCH_START}/${callName}`,
+    fail: `${FETCH_FAIL}/${callName}`,
+    complete: `${FETCH_COMPLETE}/${callName}`,
   });
 
   const actionCreator = function(...args) {
@@ -32,7 +34,7 @@ export function createAPIAction(
           payload: args,
           meta: {
             api: {
-              callName: executeAPICall.name,
+              callName,
               status: "started",
             },
           },
@@ -51,7 +53,7 @@ export function createAPIAction(
           payload: result,
           meta: {
             api: {
-              callName: executeAPICall.name,
+              callName: callName,
               status: "complete",
             },
           },
@@ -64,7 +66,7 @@ export function createAPIAction(
           payload: args,
           meta: {
             api: {
-              callName: executeAPICall.name,
+              callName: callName,
               status: "complete",
             },
           },
@@ -80,7 +82,7 @@ export function createAPIAction(
     actionCreator,
     "name",
     {
-      value: executeAPICall.name,
+      value: callName,
     }
   );
 
