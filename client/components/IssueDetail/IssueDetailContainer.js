@@ -29,8 +29,6 @@ class InnerIssueDetailContainer extends React.PureComponent {
    */
   componentDidMount() {
     this.props.markIssueSeen();
-
-    this.props.fetchIssueComments();
   }
 
   /**
@@ -42,8 +40,6 @@ class InnerIssueDetailContainer extends React.PureComponent {
     const {
       fetchIssue,
       // eslint-disable-next-line no-unused-vars
-      fetchIssueComments,
-      // eslint-disable-next-line no-unused-vars
       markIssueSeen,
       ...props
     } = this.props;
@@ -53,6 +49,8 @@ class InnerIssueDetailContainer extends React.PureComponent {
 
       return null;
     }
+
+    fetchIssueComments();
 
     return (
       <IssueDetail

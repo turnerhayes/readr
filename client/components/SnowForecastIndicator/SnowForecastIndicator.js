@@ -9,7 +9,7 @@ import {
 export const SnowForecastIndicator = () => {
   const mapStateToProps = useCallback(
     (state) => ({
-      isSnowComing: !state.weather.isEmpty(),
+      isSnowComing: state.weather && !state.weather.isEmpty(),
     }),
     []
   );
