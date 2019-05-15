@@ -11,7 +11,13 @@ import { Badge } from "@material-ui/core";
 import { FilterTrigger } from "./Filter/FilterTrigger";
 import { TextFilter } from "./Filter/TextFilter";
 
-const ViewIssueLink = ({ id, hasNewActivity = false }) => {
+const viewIssueLinkStyles = {
+  badge: {
+    zIndex: -1,
+  },
+};
+
+let ViewIssueLink = ({ classes, id, hasNewActivity = false }) => {
   const linkNode = (
     <Link
       to={`/issues/${id}`}
@@ -27,6 +33,7 @@ const ViewIssueLink = ({ id, hasNewActivity = false }) => {
         color="primary"
         title="New activity"
         aria-label="New activity"
+        className={classes.badge}
       >
         {linkNode}
       </Badge>
@@ -37,6 +44,9 @@ const ViewIssueLink = ({ id, hasNewActivity = false }) => {
 };
 
 ViewIssueLink.propTypes = {
+  classes: PropTypes.shape({
+    badge: PropTypes.string.isRequired,
+  }).isRequired,
   id: PropTypes.number.isRequired,
   hasNewActivity: PropTypes.bool.isRequired,
 };
@@ -44,6 +54,8 @@ ViewIssueLink.propTypes = {
 ViewIssueLink.defaultProps = {
   hasNewActivity: false,
 };
+
+ViewIssueLink = withStyles(viewIssueLinkStyles)(ViewIssueLink);
 
 const cellStyles = {
   root: ({ columnCount }) => ({
@@ -108,7 +120,6 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 2,
   },
 
   flipped: {
