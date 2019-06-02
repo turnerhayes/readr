@@ -1,1 +1,0 @@
-export { NewIssueIndicator } from "./NewIssueIndicator";

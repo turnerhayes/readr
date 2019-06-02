@@ -1,5 +1,5 @@
 const DBConfig = {
-  connectionString: process.env.FIEF_DATA_DB_URL,
+  connectionString: process.env.READR_DATA_DB_URL,
 };
 
 module.exports = DBConfig;

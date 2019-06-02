@@ -8,8 +8,8 @@ router.route("/manifest.json")
   .get(
     (req, res) => {
       res.json({
-        short_name: "Fief",
-        name: "Fief",
+        short_name: "Readr",
+        name: "Readr",
         start_url: "/",
         display: "standalone",
       });

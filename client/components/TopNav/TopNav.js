@@ -1,9 +1,7 @@
-/* global process */
-
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router";
-import { useMappedState, useDispatch } from "redux-react-hook";
+import { useMappedState } from "redux-react-hook";
 import classnames from "classnames";
 import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -19,13 +17,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import { Link } from "react-router-dom";
 
 import { AccountDropDown } from "+app/components/AccountDropDown";
-import { NewIssueIndicator } from "+app/components/NewIssueIndicator";
 import { isLoggedIn as isLoggedInSelector } from "+app/selectors/auth";
-
-import {
-  getSnowAlerts,
-} from "+app/actions";
-import { SnowForecastIndicator } from "../SnowForecastIndicator";
 
 const AccountDropDownTrigger = ({ className }) => {
   const [state, setState] = useState({
@@ -47,18 +39,6 @@ const AccountDropDownTrigger = ({ className }) => {
     }),
     []
   );
-
-  const [hasFetchedWeather, setHasFetchedWeather] = useState(false);
-
-  const dispatch = useDispatch();
-
-  if (!hasFetchedWeather) {
-    dispatch(
-      getSnowAlerts()
-    );
-
-    setHasFetchedWeather(true);
-  }
 
   return (
     <IconButton
@@ -110,13 +90,8 @@ const styles = (theme) => ({
 function TopNav({ classes, location }) {
   const pageLinks = [
     {
-      path: "/rent",
-      text: "Rent Payments",
-    },
-
-    {
-      path: "/issues",
-      text: "Issues",
+      path: "/record",
+      text: "Record",
     },
   ];
 
@@ -147,7 +122,7 @@ function TopNav({ classes, location }) {
           variant="h6"
           color="inherit"
         >
-          Fief
+          Readr
         </Typography>
         <Grid container
           wrap="nowrap"
@@ -181,16 +156,6 @@ function TopNav({ classes, location }) {
             classes.autoWidth
           )}
         >
-          {
-            process.env.IS_WEATHER_ENABLED && (
-              <Grid item>
-                <SnowForecastIndicator />
-              </Grid>
-            )
-          }
-          <Grid item>
-            <NewIssueIndicator />
-          </Grid>
           <Grid item>
             {
               isLoggedIn && (

@@ -1,4 +1,4 @@
-const debug = require("debug")("fief:server:db");
+const debug = require("debug")("readr:server:db");
 const knex = require("knex");
 const pg = require("pg");
 

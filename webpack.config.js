@@ -43,6 +43,11 @@ let webpackConfig = {
       },
 
       {
+        test: /\.ogg$/,
+        loader: "raw-loader",
+      },
+
+      {
         test: /\.(jpg|png|gif)$/,
         use: [
           "file-loader",
@@ -85,10 +90,6 @@ let webpackConfig = {
           return enabled;
         },
         {}
-      ),
-      IS_WEATHER_ENABLED: Boolean(
-        Config.weather.openWeatherMapAPIKey &&
-          Config.property.location
       ),
     }),
 

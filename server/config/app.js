@@ -5,12 +5,12 @@ const DEFAULT_PORT = 7000;
 
 let {
   NODE_ENV: environment = "development",
-  FIEF_HOST: host = "localhost",
-  FIEF_PORT: port = process.env.PORT || DEFAULT_PORT,
-  FIEF_EXTERNAL_PORT: externalPort = port,
-  FIEF_APP_SSL_KEY: sslKeyPath,
-  FIEF_APP_SSL_CERT: sslCertPath,
-  FIEF_APP_IS_SECURE: isSecure,
+  READR_HOST: host = "localhost",
+  READR_PORT: port = process.env.PORT || DEFAULT_PORT,
+  READR_EXTERNAL_PORT: externalPort = port,
+  READR_APP_SSL_KEY: sslKeyPath,
+  READR_APP_SSL_CERT: sslCertPath,
+  READR_APP_IS_SECURE: isSecure,
 } = process.env;
 
 port = Number(port);

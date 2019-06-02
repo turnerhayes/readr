@@ -29,11 +29,6 @@ if (Config.app.isDevelopment) {
   require("./middleware/prod")(app);
 }
 
-if (Config.mail.imap.enabled) {
-  const { startSchedule } = require("./mail/schedule-mail-check");
-  startSchedule();
-}
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(NOT_FOUND));

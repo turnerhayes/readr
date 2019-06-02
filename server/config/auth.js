@@ -2,7 +2,7 @@ const AuthConfig = {
   providers: {},
 };
 
-const AUTH_KEY_REGEX = /^FIEF_AUTH_CREDENTIALS_([A-Z]+)_([A-Z_]+)$/;
+const AUTH_KEY_REGEX = /^READR_AUTH_CREDENTIALS_([A-Z]+)_([A-Z_]+)$/;
 
 const ALL_POSSIBLE_PROVIDERS = [
   "facebook",

@@ -1,4 +1,1 @@
-export {
-  App,
-  AppContainer,
-} from "./App";
+export { App } from "./App";

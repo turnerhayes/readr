@@ -6,11 +6,25 @@ import { StoreContext } from "redux-react-hook";
 
 import { history } from "+app/history";
 import { store } from "+app/store/configure-store";
-import { AppContainer } from "+app/components/App";
+import { ErrorHandler } from "+app/components/ErrorHandler";
+import { App } from "+app/components/App";
 
 import "./site.css";
 
 const run = () => {
+  let app = (
+    <App />
+  );
+
+  // eslint-disable-next-line no-undef
+  if (process.env.NODE_ENV === "development") {
+    app = (
+      <ErrorHandler>
+        {app}
+      </ErrorHandler>
+    );
+  }
+
   render(
     (
       <StoreContext.Provider
@@ -22,7 +36,7 @@ const run = () => {
           <ConnectedRouter
             history={history}
           >
-            <AppContainer />
+            {app}
           </ConnectedRouter>
         </Provider>
       </StoreContext.Provider>
