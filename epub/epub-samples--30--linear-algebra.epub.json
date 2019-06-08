@@ -1,0 +1,1829 @@
+{
+  "packages": [
+    {
+      "metadata": {
+        "title": "A First Course in Linear Algebra",
+        "language": "en",
+        "creator": {
+          "name": "Robert A. Beezer"
+        },
+        "identifiers": [
+          {
+            "id": "uid",
+            "scheme": ""
+          }
+        ]
+      },
+      "id": {
+        "id": "uid",
+        "scheme": ""
+      },
+      "manifest": {
+        "css0": {
+          "id": "css0",
+          "type": "text/css",
+          "ref": "EPUB/css/epub.css",
+          "properties": [
+            ""
+          ]
+        },
+        "css7": {
+          "id": "css7",
+          "type": "text/css",
+          "ref": "EPUB/css/commonltr.css",
+          "properties": [
+            ""
+          ]
+        },
+        "c1": {
+          "id": "c1",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/titlepage.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c2": {
+          "id": "c2",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/copyright.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c3": {
+          "id": "c3",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li2.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c4": {
+          "id": "c4",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li3.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c5": {
+          "id": "c5",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li4.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c6": {
+          "id": "c6",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/nav.xhtml",
+          "properties": [
+            "nav"
+          ]
+        },
+        "c7": {
+          "id": "c7",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li5.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c8": {
+          "id": "c8",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li8.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c9": {
+          "id": "c9",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li9.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c10": {
+          "id": "c10",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li10.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c11": {
+          "id": "c11",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li11.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c12": {
+          "id": "c12",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li12.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c13": {
+          "id": "c13",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li13.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c14": {
+          "id": "c14",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li14.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c15": {
+          "id": "c15",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li15.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c16": {
+          "id": "c16",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li16.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c17": {
+          "id": "c17",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li17.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c18": {
+          "id": "c18",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li18.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c19": {
+          "id": "c19",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li20.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c20": {
+          "id": "c20",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li21.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c21": {
+          "id": "c21",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li22.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c22": {
+          "id": "c22",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li25.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c23": {
+          "id": "c23",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li28.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c24": {
+          "id": "c24",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li29.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c25": {
+          "id": "c25",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li31.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c26": {
+          "id": "c26",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li32.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c27": {
+          "id": "c27",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li33.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c28": {
+          "id": "c28",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li34.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c29": {
+          "id": "c29",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li36.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c30": {
+          "id": "c30",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li43.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c31": {
+          "id": "c31",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li45.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c32": {
+          "id": "c32",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li46.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c33": {
+          "id": "c33",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li48.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c34": {
+          "id": "c34",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li50.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c35": {
+          "id": "c35",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li52.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c36": {
+          "id": "c36",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li53.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c37": {
+          "id": "c37",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li54.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c38": {
+          "id": "c38",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li55.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c39": {
+          "id": "c39",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li58.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c40": {
+          "id": "c40",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li59.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c41": {
+          "id": "c41",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li60.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c42": {
+          "id": "c42",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li61.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c43": {
+          "id": "c43",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li62.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c44": {
+          "id": "c44",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li63.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c45": {
+          "id": "c45",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li64.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c46": {
+          "id": "c46",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li65.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c47": {
+          "id": "c47",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li66.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c48": {
+          "id": "c48",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li67.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c49": {
+          "id": "c49",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li68.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c50": {
+          "id": "c50",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li69.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c51": {
+          "id": "c51",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li70.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c52": {
+          "id": "c52",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li71.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c53": {
+          "id": "c53",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li72.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c54": {
+          "id": "c54",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li73.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c55": {
+          "id": "c55",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li74.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c56": {
+          "id": "c56",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li75.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c57": {
+          "id": "c57",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li76.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c58": {
+          "id": "c58",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li77.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c59": {
+          "id": "c59",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li78.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c60": {
+          "id": "c60",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li79.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c61": {
+          "id": "c61",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li80.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c62": {
+          "id": "c62",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li81.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c63": {
+          "id": "c63",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li82.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c64": {
+          "id": "c64",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li83.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c65": {
+          "id": "c65",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li84.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c66": {
+          "id": "c66",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li85.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c67": {
+          "id": "c67",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li86.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c68": {
+          "id": "c68",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li87.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c69": {
+          "id": "c69",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li88.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c70": {
+          "id": "c70",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li89.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c71": {
+          "id": "c71",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li90.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c72": {
+          "id": "c72",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li91.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c73": {
+          "id": "c73",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li92.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c74": {
+          "id": "c74",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li93.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c75": {
+          "id": "c75",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li94.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c76": {
+          "id": "c76",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li95.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c77": {
+          "id": "c77",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li96.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c78": {
+          "id": "c78",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li97.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c79": {
+          "id": "c79",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li98.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c80": {
+          "id": "c80",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li100.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c81": {
+          "id": "c81",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li101.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c82": {
+          "id": "c82",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li102.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c83": {
+          "id": "c83",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li103.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c84": {
+          "id": "c84",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li104.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c85": {
+          "id": "c85",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li105.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c86": {
+          "id": "c86",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li106.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c87": {
+          "id": "c87",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li107.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c88": {
+          "id": "c88",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li108.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c89": {
+          "id": "c89",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li109.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c90": {
+          "id": "c90",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li110.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c91": {
+          "id": "c91",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li111.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c92": {
+          "id": "c92",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li112.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        },
+        "c93": {
+          "id": "c93",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li6.xhtml",
+          "properties": [
+            ""
+          ]
+        },
+        "c94": {
+          "id": "c94",
+          "type": "application/xhtml+xml",
+          "ref": "EPUB/xhtml/fcla-xml-2.30li7.xhtml",
+          "properties": [
+            "mathml"
+          ]
+        }
+      },
+      "spine": [
+        {
+          "linear": false,
+          "item": {
+            "id": "c1",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/titlepage.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c2",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/copyright.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c3",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li2.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c4",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li3.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c5",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li4.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c6",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/nav.xhtml",
+            "properties": [
+              "nav"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c7",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li5.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c8",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li8.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c9",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li9.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c10",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li10.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c11",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li11.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c12",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li12.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c13",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li13.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c14",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li14.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c15",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li15.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c16",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li16.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c17",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li17.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c18",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li18.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c19",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li20.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c20",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li21.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c21",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li22.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c22",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li25.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c23",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li28.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c24",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li29.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c25",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li31.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c26",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li32.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c27",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li33.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c28",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li34.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c29",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li36.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c30",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li43.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c31",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li45.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c32",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li46.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c33",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li48.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c34",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li50.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c35",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li52.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c36",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li53.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c37",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li54.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c38",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li55.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c39",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li58.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c40",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li59.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c41",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li60.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c42",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li61.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c43",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li62.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c44",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li63.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c45",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li64.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c46",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li65.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c47",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li66.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c48",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li67.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c49",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li68.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c50",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li69.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c51",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li70.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c52",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li71.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c53",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li72.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c54",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li73.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c55",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li74.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c56",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li75.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c57",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li76.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c58",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li77.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c59",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li78.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c60",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li79.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c61",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li80.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c62",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li81.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c63",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li82.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c64",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li83.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c65",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li84.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c66",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li85.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c67",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li86.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c68",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li87.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c69",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li88.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c70",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li89.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c71",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li90.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c72",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li91.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c73",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li92.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c74",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li93.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c75",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li94.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c76",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li95.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c77",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li96.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c78",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li97.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c79",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li98.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c80",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li100.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c81",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li101.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c82",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li102.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c83",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li103.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c84",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li104.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c85",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li105.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c86",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li106.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c87",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li107.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c88",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li108.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c89",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li109.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c90",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li110.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c91",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li111.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c92",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li112.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c93",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li6.xhtml",
+            "properties": [
+              ""
+            ]
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "c94",
+            "type": "application/xhtml+xml",
+            "ref": "EPUB/xhtml/fcla-xml-2.30li7.xhtml",
+            "properties": [
+              "mathml"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+.calibre {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 0;
+    margin-left: 5pt;
+    margin-right: 5pt;
+    margin-top: 0;
+    padding-left: 0;
+    padding-right: 0
+    }
+.calibre1 {
+    font-weight: bold;
+    line-height: 1.2
+    }
+.calibre2 {
+    display: block
+    }
+.calibre3 {
+    display: block
+    }
+.calibre4 {
+    font-style: italic
+    }
+.calibre5 {
+    font-weight: bold
+    }
+.chapter {
+    display: block;
+    font-size: 1.66667em;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 30px;
+    text-align: center;
+    text-indent: 0
+    }
+.p {
+    display: block;
+    font-size: 1.29167em;
+    line-height: 1.2;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 30px;
+    text-align: center;
+    text-indent: 0
+    }
+.p1 {
+    display: block;
+    font-size: 2em;
+    line-height: 1.2;
+    margin-bottom: 30px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 30px;
+    text-align: center;
+    text-indent: 0
+    }
+.p2 {
+    display: block;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    min-height: 16px
+    }
+.p3 {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 2px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    text-align: justify;
+    text-indent: 0
+    }
+.p4 {
+    display: block;
+    font-size: 1.29167em;
+    line-height: 1.2;
+    margin-bottom: 30px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    text-align: center;
+    text-indent: 0
+    }
+.p5 {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 2px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    text-align: justify;
+    text-indent: 2em
+    }
+.p6 {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 16px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 16px;
+    text-align: center;
+    text-indent: 0
+    }
+.p7 {
+    display: block;
+    margin-bottom: 2px;
+    margin-left: 4em;
+    margin-right: 4em;
+    margin-top: 1em;
+    text-indent: 0
+    }
+.p8 {
+    display: block;
+    margin-bottom: 2px;
+    margin-left: 6em;
+    margin-right: 4em;
+    margin-top: 1em;
+    text-indent: 0
+    }
+.s {
+    font-variant: small-caps
+    }

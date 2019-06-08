@@ -1,0 +1,150 @@
+{
+  "packages": [
+    {
+      "metadata": {
+        "title": "Free Stories 2019",
+        "date": "2019-01-15T05:00:00.000Z",
+        "publisher": "Baen Books",
+        "description": "<div><span style=\"font-family: sans-serif; font-size: medium; orphans: 2; widows: 2;\">In January of 2011 we started posting free short stories we thought might be of interest to Baen readers. The first stories were \"Space Hero\" by Patrick Lundrigan, the winner of the 2010 Jim Baen Memorial Short Story Contest, and \"Tanya, Princess of Elves,\" by Larry Correia, author of Monster Hunter International and set in that universe. As new stories are made available, they will be posted on the main page, then added to this book (to save the Baen Barflies the trouble of doing it themselves). This is our compilation of short stories for 2019.</span><br style=\"font-family: sans-serif; font-size: medium; orphans: 2; widows: 2;\"><br style=\"font-family: sans-serif; font-size: medium; orphans: 2; widows: 2;\"><span style=\"font-family: sans-serif; font-size: medium; orphans: 2; widows: 2;\">As is usual with such copyrighted material from Baen, the contents may be copied and shared but NOT sold. All commercial rights are reserved to Baen Books.</span></div>",
+        "language": "en",
+        "creator": {
+          "name": "Baen Books",
+          "fileAs": "Books, Baen",
+          "role": "aut"
+        },
+        "contributor": {
+          "name": "calibre (3.35.0) [https://calibre-ebook.com]",
+          "role": "bkp"
+        }
+      },
+      "manifest": {
+        "titlepage": {
+          "id": "titlepage",
+          "type": "application/xhtml+xml",
+          "ref": "titlepage.xhtml"
+        },
+        "contents": {
+          "id": "contents",
+          "type": "application/xhtml+xml",
+          "ref": "contents.xhtml"
+        },
+        "html6": {
+          "id": "html6",
+          "type": "application/xhtml+xml",
+          "ref": "fs2019_split_000.html"
+        },
+        "html5": {
+          "id": "html5",
+          "type": "application/xhtml+xml",
+          "ref": "fs2019_split_001.html"
+        },
+        "html4": {
+          "id": "html4",
+          "type": "application/xhtml+xml",
+          "ref": "fs2019_split_002.html"
+        },
+        "html3": {
+          "id": "html3",
+          "type": "application/xhtml+xml",
+          "ref": "fs2019_split_003.html"
+        },
+        "html2": {
+          "id": "html2",
+          "type": "application/xhtml+xml",
+          "ref": "fs2019_split_004.html"
+        },
+        "html1": {
+          "id": "html1",
+          "type": "application/xhtml+xml",
+          "ref": "fs2019_split_005.html"
+        },
+        "ncx": {
+          "id": "ncx",
+          "type": "application/x-dtbncx+xml",
+          "ref": "toc.ncx"
+        },
+        "page_css": {
+          "id": "page_css",
+          "type": "text/css",
+          "ref": "page_styles.css"
+        },
+        "css": {
+          "id": "css",
+          "type": "text/css",
+          "ref": "stylesheet.css"
+        },
+        "cover": {
+          "id": "cover",
+          "type": "image/jpeg",
+          "ref": "cover.jpeg"
+        }
+      },
+      "spine": [
+        {
+          "linear": false,
+          "item": {
+            "id": "titlepage",
+            "type": "application/xhtml+xml",
+            "ref": "titlepage.xhtml"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "contents",
+            "type": "application/xhtml+xml",
+            "ref": "contents.xhtml"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "html6",
+            "type": "application/xhtml+xml",
+            "ref": "fs2019_split_000.html"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "html5",
+            "type": "application/xhtml+xml",
+            "ref": "fs2019_split_001.html"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "html4",
+            "type": "application/xhtml+xml",
+            "ref": "fs2019_split_002.html"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "html3",
+            "type": "application/xhtml+xml",
+            "ref": "fs2019_split_003.html"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "html2",
+            "type": "application/xhtml+xml",
+            "ref": "fs2019_split_004.html"
+          }
+        },
+        {
+          "linear": false,
+          "item": {
+            "id": "html1",
+            "type": "application/xhtml+xml",
+            "ref": "fs2019_split_005.html"
+          }
+        }
+      ]
+    }
+  ]
+}

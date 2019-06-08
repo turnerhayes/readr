@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="c29bbfa0-c899-4dd7-9cc2-3f8a07991e31" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (3.35.0)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>Free Stories 2019</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="u6oPmVW6CMtXYNNJCVJnaRE" playOrder="1">
+      <navLabel>
+        <text>The Testimony of the Traitor Ratul</text>
+      </navLabel>
+      <content src="fs2019_split_002.html"/>
+    </navPoint>
+    <navPoint id="uRx3XIsBjVEegq2jjWOAbeD" playOrder="2">
+      <navLabel>
+        <text>Today I Remember</text>
+      </navLabel>
+      <content src="fs2019_split_003.html"/>
+    </navPoint>
+    <navPoint id="uEGYPnTXFlcIjTcmvtowgM9" playOrder="3">
+      <navLabel>
+        <text>Extracurricular</text>
+      </navLabel>
+      <content src="fs2019_split_004.html"/>
+    </navPoint>
+    <navPoint id="u69htuKlcq2woHoSfKrSFE6" playOrder="4">
+      <navLabel>
+        <text>Waiting for the Talisman</text>
+      </navLabel>
+      <content src="fs2019_split_005.html"/>
+    </navPoint>
+  </navMap>
+</ncx>

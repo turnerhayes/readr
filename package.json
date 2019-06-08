@@ -73,6 +73,7 @@
     "env-cmd": "^8.0.2",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
+    "fast-xml-parser": "^3.12.16",
     "file-loader": "^3.0.1",
     "history": "^4.9.0",
     "hoist-non-react-statics": "^3.3.0",
