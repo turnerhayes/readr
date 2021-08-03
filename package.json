@@ -114,7 +114,7 @@
     "webpack-cli": "^3.2.3",
     "webpack-merge": "^4.2.1",
     "winston": "^3.2.1",
-    "xmldom": "^0.1.27"
+    "xmldom": "^0.6.0"
   },
   "devDependencies": {
     "enzyme": "^3.9.0",
